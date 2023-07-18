@@ -1,6 +1,8 @@
 '''
 Model classes
 '''
+# pylint:disable=no-member
+from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
@@ -14,31 +16,65 @@ class BaseModel(models.Model):
     '''
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
 
     class Meta:
         '''Meta class for BaseModel'''
         abstract = True
 
 
-class Budget(BaseModel):
+class PaymentRelatedModel(BaseModel):
+    '''
+    Abstract model for Models that have a many-to-one relationship to Payment
+    '''
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.name} ({self.user})'
+
+    def get_total(self) -> Decimal:
+        '''
+        Get the total amount of the payments of this object as a Decimal
+        '''
+        return self.payment_set.aggregate(  # type: ignore
+            models.Sum('amount', default=0)
+        )['amount__sum']
+
+    class Meta:
+        '''Meta class for PaymentRelatedModel'''
+        abstract = True
+
+
+class Budget(PaymentRelatedModel):
     '''
     Model for a budget
     '''
     active = models.BooleanField(default=True)
 
-    def get_total(self) -> Decimal:
+    def add_from_csv(self, text: str):
         '''
-        Get the total amount in this Budget as a Decimal
+        Add payees and payments to this budget from a CSV formatted string
         '''
-        # pylint:disable=no-member
-        return self.payment_set.aggregate(  # type: ignore
-            models.Sum('amount', default=0)
-        )['amount__sum']
+        rows = text.split('\n')
+        for line in rows:
+            record = line.split(',')
+            print(record)
+            payee = Payee.objects.get_or_create(
+                name=record[0], user=self.user)[0]
+            print(payee)
+            payment = Payment(
+                user=self.user,
+                payee=payee,
+                budget=self,
+                amount=record[1],
+                date=datetime.strptime(record[2], '%d/%m/%Y'),
+            )
+            if len(record) >= 4:
+                payment.notes = record[3]
+            payment.save()
 
 
-class Payee(BaseModel):
+class Payee(PaymentRelatedModel):
     '''
     Model for a payee
     '''
@@ -56,3 +92,7 @@ class Payment(BaseModel):
     amount = models.DecimalField(decimal_places=2, max_digits=7)
     date = models.DateField()
     pending = models.BooleanField(default=False)
+    notes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.payee.name} £{self.amount} to {self.budget.name}'
