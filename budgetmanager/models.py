@@ -58,10 +58,8 @@ class Budget(PaymentRelatedModel):
         rows = text.split('\n')
         for line in rows:
             record = line.split(',')
-            print(record)
             payee = Payee.objects.get_or_create(
                 name=record[0], user=self.user)[0]
-            print(payee)
             payment = Payment(
                 user=self.user,
                 payee=payee,
@@ -91,7 +89,7 @@ class Payment(BaseModel):
         Budget, on_delete=models.CASCADE, limit_choices_to={'active': True})
     amount = models.DecimalField(decimal_places=2, max_digits=7)
     date = models.DateField()
-    pending = models.BooleanField(default=False)
+    pending = models.BooleanField(default=False, verbose_name='Exclude from total')
     notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
