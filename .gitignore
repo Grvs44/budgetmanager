@@ -1,3 +1,6 @@
 __pycache__
+budgetmanager.egg-info
+build
+dist
 db.sqlite3
 *.csv
