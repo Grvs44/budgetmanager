@@ -55,7 +55,7 @@ class Budget(PaymentRelatedModel):
         '''
         Add payees and payments to this budget from a CSV formatted string
         '''
-        rows = text.split('\n')
+        rows = text.trim().split('\n')
         for line in rows:
             record = line.split(',')
             payee = Payee.objects.get_or_create(
@@ -69,6 +69,8 @@ class Budget(PaymentRelatedModel):
             )
             if len(record) >= 4:
                 payment.notes = record[3]
+            if len(record) >= 5:
+                payment.pending = record[4] != ''
             payment.save()
 
 
