@@ -36,7 +36,7 @@ class PaymentRelatedModel(BaseModel):
         '''
         Get the total amount of the payments of this object as a Decimal
         '''
-        return self.payment_set.filter(pending=False).aggregate(  # type: ignore
+        return self.payment_set.filter(pending=False).aggregate(
             models.Sum('amount', default=0)
         )['amount__sum']
 
