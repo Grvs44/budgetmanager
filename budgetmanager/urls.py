@@ -4,7 +4,7 @@ URL configuration for budgetmanager app
 from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'clotheswear'  # pylint: disable=invalid-name
+app_name = 'budgetmanager'  # pylint: disable=invalid-name
 router = DefaultRouter()
 router.register(r'budget', views.BudgetViewSet)
 router.register(r'payee', views.PayeeViewSet)
