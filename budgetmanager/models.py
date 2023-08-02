@@ -6,6 +6,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -86,10 +87,26 @@ class Payment(BaseModel):
     Requires a payee and a budget
     Has an amount and date
     '''
-    payee = models.ForeignKey(Payee, on_delete=models.CASCADE)
+    payee = models.ForeignKey(
+        Payee,
+        on_delete=models.CASCADE,
+    )
     budget = models.ForeignKey(
-        Budget, on_delete=models.CASCADE, limit_choices_to={'active': True})
+        Budget,
+        on_delete=models.CASCADE,
+        limit_choices_to={'active': True}
+    )
     amount = models.DecimalField(decimal_places=2, max_digits=7)
     date = models.DateField()
-    pending = models.BooleanField(default=False, verbose_name='Exclude from total')
+    pending = models.BooleanField(
+        default=False, verbose_name='Exclude from total')
     notes = models.TextField(null=True, blank=True)
+
+    def clean(self):
+        errors = []
+        if self.user != self.budget.user:
+            errors.append('You can only access your own budgets')
+        if self.user != self.payee.user:
+            errors.append('You can only access your own payees')
+        if len(errors) != 0:
+            raise ValidationError(errors)
