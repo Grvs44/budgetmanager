@@ -30,7 +30,7 @@ class PaymentRelatedModel(BaseModel):
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.name} ({self.user})'
+        return str(self.name)
 
     def get_total(self) -> Decimal:
         '''
@@ -93,6 +93,3 @@ class Payment(BaseModel):
     date = models.DateField()
     pending = models.BooleanField(default=False, verbose_name='Exclude from total')
     notes = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.payee.name} £{self.amount} to {self.budget.name}'
