@@ -18,7 +18,15 @@ class BaseViewSet(ModelViewSet):
         return self.queryset.filter(user=self.request.user).all()
 
 
-class BudgetViewSet(BaseViewSet):
+class PaymentRelatedViewSet(BaseViewSet):
+    @action(methods=('GET',), detail=True)
+    def total(self, request, pk):
+        return Response({
+            'total': f'{self.get_object().total:.2f}'
+        })
+
+
+class BudgetViewSet(PaymentRelatedViewSet):
     queryset = models.Budget.objects
     serializer_class = serializers.BudgetSerializer
 
@@ -28,7 +36,7 @@ class BudgetViewSet(BaseViewSet):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class PayeeViewSet(BaseViewSet):
+class PayeeViewSet(PaymentRelatedViewSet):
     queryset = models.Payee.objects
     serializer_class = serializers.PayeeSerializer
 

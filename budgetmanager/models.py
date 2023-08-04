@@ -33,9 +33,10 @@ class PaymentRelatedModel(BaseModel):
     def __str__(self):
         return str(self.name)
 
-    def get_total(self) -> Decimal:
+    @property
+    def total(self) -> Decimal:
         '''
-        Get the total amount of the payments of this object as a Decimal
+        The total amount of the payments of this object
         '''
         return self.payment_set.filter(pending=False).aggregate(
             models.Sum('amount', default=0)
