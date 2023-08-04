@@ -24,6 +24,10 @@ class PayeeSerializer(BaseSerializer):
 
 
 class PaymentSerializer(BaseSerializer):
+    def validate(self, attrs):
+        models.Payment(**attrs).clean()
+        return attrs
+
     class Meta:
         model = models.Payment
         fields = ['id', 'notes', 'payee', 'budget',
