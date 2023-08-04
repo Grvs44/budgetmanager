@@ -17,3 +17,11 @@
     'knox',
   ]
   ```
+  - To disable the browsable API:
+    ```Python
+    REST_FRAMEWORK = {
+      'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+      )
+    }
+    ```
