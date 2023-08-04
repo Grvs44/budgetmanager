@@ -9,6 +9,7 @@ class BudgetAdmin(admin.ModelAdmin):
     list_display = ['user', 'name', 'active']
     list_display_links = list_display
     list_filter = ['user', 'active']
+    readonly_fields = ('user',)
     sortable_by = list_display
     search_fields = ['name']
     search_help_text = 'Search by budget name'
@@ -21,6 +22,7 @@ class PayeeAdmin(admin.ModelAdmin):
     list_display = ['user', 'name']
     list_display_links = list_display
     list_filter = ['user']
+    readonly_fields = ('user',)
     sortable_by = list_display
     search_fields = ['name']
     search_help_text = 'Search by payee name'
@@ -34,6 +36,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_display = ['user', 'budget', 'payee', 'date']
     list_display_links = list_display
     list_filter = ['user', 'budget', 'payee', 'date']
+    readonly_fields = ('user',)
     sortable_by = list_display
     list_per_page = 20
 
