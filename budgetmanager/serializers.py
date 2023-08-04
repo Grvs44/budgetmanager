@@ -14,13 +14,13 @@ class BaseSerializer(ModelSerializer):
 class BudgetSerializer(BaseSerializer):
     class Meta:
         model = models.Budget
-        fields = ['id', 'name', 'description', 'active', 'user']
+        fields = ('id', 'name', 'description', 'active', 'user')
 
 
 class PayeeSerializer(BaseSerializer):
     class Meta:
         model = models.Payee
-        fields = ['id', 'name', 'description', 'user']
+        fields = ('id', 'name', 'description', 'user')
 
 
 class PaymentSerializer(BaseSerializer):
@@ -30,5 +30,5 @@ class PaymentSerializer(BaseSerializer):
 
     class Meta:
         model = models.Payment
-        fields = ['id', 'notes', 'payee', 'budget',
-                  'amount', 'date', 'pending', 'user']
+        fields = ('id', 'notes', 'payee', 'budget',
+                  'amount', 'date', 'pending', 'user')

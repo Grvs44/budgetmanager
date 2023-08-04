@@ -12,7 +12,7 @@ from . import (
 
 
 class BaseViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, permissions.IsOwner]
+    permission_classes = (IsAuthenticated, permissions.IsOwner)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).all()
@@ -22,7 +22,7 @@ class BudgetViewSet(BaseViewSet):
     queryset = models.Budget.objects
     serializer_class = serializers.BudgetSerializer
 
-    @action(methods=['POST'], detail=True, url_path='csv')
+    @action(methods=('POST',), detail=True, url_path='csv')
     def add_from_csv(self, request, pk):
         self.get_object().add_from_csv(request.data['csv'])
         return Response(None, status=status.HTTP_204_NO_CONTENT)
