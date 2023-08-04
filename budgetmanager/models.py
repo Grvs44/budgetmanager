@@ -10,6 +10,12 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 
+def get_total_amount(user) -> Decimal:
+    return Payment.objects.filter(user=user).aggregate(
+        models.Sum('amount', default=0)
+    )['amount__sum']
+
+
 class BaseModel(models.Model):
     '''
     Abstract base model
