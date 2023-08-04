@@ -56,7 +56,7 @@ class Budget(PaymentRelatedModel):
         '''
         Add payees and payments to this budget from a CSV formatted string
         '''
-        rows = text.trim().split('\n')
+        rows = text.strip().split('\n')
         for line in rows:
             record = line.split(',')
             payee = Payee.objects.get_or_create(
