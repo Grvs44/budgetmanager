@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from . import (
-    filters,
     models,
     permissions,
     serializers,
@@ -14,11 +13,13 @@ from . import (
 
 class BaseViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, permissions.IsOwner]
-    filter_backends = [filters.OwnerFilter]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user).all()
 
 
 class BudgetViewSet(BaseViewSet):
-    queryset = models.Budget.objects.all()
+    queryset = models.Budget.objects
     serializer_class = serializers.BudgetSerializer
 
     @action(methods=['POST'], detail=True, url_path='csv')
@@ -28,10 +29,10 @@ class BudgetViewSet(BaseViewSet):
 
 
 class PayeeViewSet(BaseViewSet):
-    queryset = models.Payee.objects.all()
+    queryset = models.Payee.objects
     serializer_class = serializers.PayeeSerializer
 
 
 class PaymentViewSet(BaseViewSet):
-    queryset = models.Payment.objects.all()
+    queryset = models.Payment.objects
     serializer_class = serializers.PaymentSerializer
