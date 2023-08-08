@@ -49,8 +49,9 @@ class PaymentAdmin(BaseAdmin):
 
     def get_form(self, request, obj=..., change=..., **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
-        form.base_fields['budget'].queryset = form.base_fields['budget'].queryset.filter(
-            user=obj.user)
-        form.base_fields['payee'].queryset = form.base_fields['payee'].queryset.filter(
-            user=obj.user)
+        if obj is not None:
+            form.base_fields['budget'].queryset = form.base_fields['budget'].queryset.filter(
+                user=obj.user)
+            form.base_fields['payee'].queryset = form.base_fields['payee'].queryset.filter(
+                user=obj.user)
         return form
