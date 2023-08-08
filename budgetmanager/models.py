@@ -58,6 +58,8 @@ class Budget(PaymentRelatedModel):
     Model for a budget
     '''
     active = models.BooleanField(default=True)
+    shared_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, 'BudgetShare', blank=True)
 
     def add_from_csv(self, text: str):
         '''
@@ -80,6 +82,10 @@ class Budget(PaymentRelatedModel):
             if len(record) >= 5:
                 payment.pending = record[4] != ''
             payment.save()
+
+
+class BudgetShare(BaseModel):
+    budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
 
 
 class Payee(PaymentRelatedModel):
