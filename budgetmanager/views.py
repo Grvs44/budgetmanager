@@ -19,9 +19,9 @@ class TotalView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        return Response({
-            'total': f'{models.get_total_amount(request.user):.2f}'
-        })
+        return Response(
+            f'{models.get_total_amount(request.user):.2f}'
+        )
 
 
 class BaseViewSet(ModelViewSet):
