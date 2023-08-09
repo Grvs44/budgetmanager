@@ -59,7 +59,11 @@ class Budget(PaymentRelatedModel):
     '''
     active = models.BooleanField(default=True)
     shared_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, 'BudgetShare', blank=True)
+        settings.AUTH_USER_MODEL,
+        through='BudgetShare',
+        related_name='shared_budgets',
+        blank=True
+    )
 
     def add_from_csv(self, text: str):
         '''
@@ -86,6 +90,11 @@ class Budget(PaymentRelatedModel):
 
 class BudgetShare(BaseModel):
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
+    can_edit = models.BooleanField(default=False)
+
+    def clean(self):
+        if self.user == self.budget.user:
+            raise ValidationError('Budget owner cannot be a shared user')
 
 
 class Payee(PaymentRelatedModel):

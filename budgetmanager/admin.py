@@ -27,6 +27,16 @@ class BudgetAdmin(BaseAdmin):
     search_help_text = 'Search by budget name'
 
 
+@admin.register(models.BudgetShare)
+class BudgetShareAdmin(BaseAdmin):
+    '''Settings for the BudgetShare admin'''
+    list_display = ('user', 'budget', 'can_edit')
+    list_display_links = list_display
+    list_filter = list_display
+    sortable_by = list_display
+    readonly_fields = ('user', 'budget')
+
+
 @admin.register(models.Payee)
 class PayeeAdmin(BaseAdmin):
     '''Settings form the Payee admin'''
