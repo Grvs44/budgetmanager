@@ -26,14 +26,6 @@ class BudgetAdmin(BaseAdmin):
     search_fields = ('name',)
     search_help_text = 'Search by budget name'
 
-    def get_form(self, request, obj=..., change=..., **kwargs):
-        form = super().get_form(request, obj, change, **kwargs)
-        if obj is not None:
-            form.base_fields['shared_users'].queryset = (
-                form.base_fields['shared_users'].queryset.exclude(id=obj.user.id)
-            )
-        return form
-
 
 @admin.register(models.Payee)
 class PayeeAdmin(BaseAdmin):
