@@ -99,6 +99,11 @@ class BudgetShare(BaseModel):
     def clean(self):
         if self.user == self.budget.user:
             raise ValidationError('Budget owner cannot be a shared user')
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('budget', 'user'), name='One budget membership per user per budget'),
+        ]
 
 
 class Payee(PaymentRelatedModel):
