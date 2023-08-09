@@ -8,6 +8,7 @@ from . import views
 app_name = 'budgetmanager'  # pylint: disable=invalid-name
 router = DefaultRouter()
 router.register(r'budget', views.BudgetViewSet)
+router.register(r'share', views.BudgetShareViewSet)
 router.register(r'payee', views.PayeeViewSet)
 router.register(r'payment', views.PaymentViewSet)
 

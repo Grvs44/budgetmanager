@@ -24,6 +24,10 @@ class BaseModel(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 
+    @classmethod
+    def get_user_model(cls):
+        return cls._meta.get_field('user').related_model
+
     class Meta:
         '''Meta class for BaseModel'''
         abstract = True
