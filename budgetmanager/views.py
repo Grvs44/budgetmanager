@@ -6,11 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
 from . import (
     models,
     permissions,
     serializers,
 )
+from .pagination import Pagination
 
 
 class TotalView(APIView):
@@ -24,6 +26,7 @@ class TotalView(APIView):
 
 class BaseViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, permissions.IsOwner)
+    pagination_class = Pagination
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).all()
@@ -56,6 +59,7 @@ class BudgetShareViewSet(
     queryset = models.BudgetShare.objects
     serializer_class = serializers.BudgetShareSerializer
     permission_classes = (IsAuthenticated, permissions.CanAccessBudgetShare)
+    pagination_class = Pagination
 
     def get_queryset(self):
         return self.queryset.filter(
