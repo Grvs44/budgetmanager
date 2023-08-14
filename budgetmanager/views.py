@@ -3,6 +3,7 @@ from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -87,8 +88,9 @@ class PaymentViewSet(ModelViewSet):
     serializer_class = serializers.PaymentSerializer
     permission_classes = (IsAuthenticated, permissions.IsPaymentOwner)
     pagination_class = Pagination
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ('payee',)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ('payee', 'pending')
+    ordering_fields = ('amount', 'date')
 
     def get_queryset(self):
         return self.queryset.filter(payee__budget__user=self.request.user).all()
