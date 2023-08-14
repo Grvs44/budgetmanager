@@ -1,5 +1,6 @@
 # pylint: disable=no-member
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -37,6 +38,8 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     serializer_class = serializers.BudgetSerializer
     permission_classes = (IsAuthenticated, permissions.IsBudgetOwner)
     pagination_class = Pagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('active',)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).all()
@@ -57,6 +60,8 @@ class BudgetShareViewSet(
     serializer_class = serializers.BudgetShareSerializer
     permission_classes = (IsAuthenticated, permissions.CanAccessBudgetShare)
     pagination_class = Pagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('budget','user')
 
     def get_queryset(self):
         return self.queryset.filter(
@@ -70,6 +75,8 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     serializer_class = serializers.PayeeSerializer
     permission_classes = (IsAuthenticated, permissions.IsPayeeOwner)
     pagination_class = Pagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('budget',)
 
     def get_queryset(self):
         return self.queryset.filter(budget__user=self.request.user).all()
@@ -80,6 +87,8 @@ class PaymentViewSet(ModelViewSet):
     serializer_class = serializers.PaymentSerializer
     permission_classes = (IsAuthenticated, permissions.IsPaymentOwner)
     pagination_class = Pagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('payee',)
 
     def get_queryset(self):
         return self.queryset.filter(payee__budget__user=self.request.user).all()

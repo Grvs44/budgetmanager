@@ -14,7 +14,7 @@
   INSTALLED_APPS = [
     'budgetmanager',
     'rest_framework',
-    'knox',
+    'django_filters',
   ]
   ```
   - To disable the browsable API:
