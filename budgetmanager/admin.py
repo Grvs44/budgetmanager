@@ -3,21 +3,8 @@ from django.contrib import admin
 from . import models
 
 
-class BaseAdmin(admin.ModelAdmin):
-    readonly_fields = ('user',)
-    list_per_page = 20
-
-    def get_readonly_fields(self, request, obj=...):
-        if obj is None:
-            return tuple()
-        return self.readonly_fields
-
-    class Meta:
-        abstract = True
-
-
 @admin.register(models.Budget)
-class BudgetAdmin(BaseAdmin):
+class BudgetAdmin(admin.ModelAdmin):
     '''Settings for the Budget admin'''
     list_display = ('user', 'name', 'active')
     list_display_links = list_display
@@ -25,43 +12,43 @@ class BudgetAdmin(BaseAdmin):
     sortable_by = list_display
     search_fields = ('name',)
     search_help_text = 'Search by budget name'
+    list_per_page = 20
 
 
 @admin.register(models.BudgetShare)
-class BudgetShareAdmin(BaseAdmin):
+class BudgetShareAdmin(admin.ModelAdmin):
     '''Settings for the BudgetShare admin'''
     list_display = ('user', 'budget', 'can_edit')
     list_display_links = list_display
     list_filter = list_display
     sortable_by = list_display
     readonly_fields = ('user', 'budget')
+    list_per_page = 20
+
+    def get_readonly_fields(self, request, obj=...):
+        if obj is None:
+            return tuple()
+        return self.readonly_fields
 
 
 @admin.register(models.Payee)
-class PayeeAdmin(BaseAdmin):
+class PayeeAdmin(admin.ModelAdmin):
     '''Settings form the Payee admin'''
-    list_display = ('user', 'name')
+    list_display = ('budget', 'name')
     list_display_links = list_display
-    list_filter = ('user',)
+    list_filter = ('budget',)
     sortable_by = list_display
     search_fields = ('name',)
     search_help_text = 'Search by payee name'
+    list_per_page = 20
 
 
 @admin.register(models.Payment)
-class PaymentAdmin(BaseAdmin):
+class PaymentAdmin(admin.ModelAdmin):
     '''Settings for the Payment admin'''
     date_hierarchy = 'date'
-    list_display = ('user', 'budget', 'payee', 'date')
+    list_display = ('payee', 'date')
     list_display_links = list_display
-    list_filter = ('user', 'budget', 'payee', 'date')
+    list_filter = ('payee', 'date')
     sortable_by = list_display
-
-    def get_form(self, request, obj=..., change=..., **kwargs):
-        form = super().get_form(request, obj, change, **kwargs)
-        if obj is not None:
-            form.base_fields['budget'].queryset = form.base_fields['budget'].queryset.filter(
-                user=obj.user)
-            form.base_fields['payee'].queryset = form.base_fields['payee'].queryset.filter(
-                user=obj.user)
-        return form
+    list_per_page = 20

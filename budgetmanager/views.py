@@ -20,19 +20,11 @@ class TotalView(APIView):
 
     def get(self, request):
         return Response(
-            f'{models.get_total_amount(request.user):.2f}'
+            f'{models.Payment.get_total(request.user):.2f}'
         )
 
 
-class BaseViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated, permissions.IsOwner)
-    pagination_class = Pagination
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user).all()
-
-
-class PaymentRelatedViewSet(BaseViewSet):
+class PaymentRelatedMixin(ModelViewSet):
     @action(methods=('GET',), detail=True)
     def total(self, request, pk):
         return Response({
@@ -40,9 +32,14 @@ class PaymentRelatedViewSet(BaseViewSet):
         })
 
 
-class BudgetViewSet(PaymentRelatedViewSet):
+class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     queryset = models.Budget.objects
     serializer_class = serializers.BudgetSerializer
+    permission_classes = (IsAuthenticated, permissions.IsBudgetOwner)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user).all()
 
     @action(methods=('POST',), detail=True, url_path='csv')
     def add_from_csv(self, request, pk):
@@ -68,11 +65,21 @@ class BudgetShareViewSet(
         ).all()
 
 
-class PayeeViewSet(PaymentRelatedViewSet):
+class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     queryset = models.Payee.objects
     serializer_class = serializers.PayeeSerializer
+    permission_classes = (IsAuthenticated, permissions.IsPayeeOwner)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return self.queryset.filter(budget__user=self.request.user).all()
 
 
-class PaymentViewSet(BaseViewSet):
+class PaymentViewSet(ModelViewSet):
     queryset = models.Payment.objects
     serializer_class = serializers.PaymentSerializer
+    permission_classes = (IsAuthenticated, permissions.IsPaymentOwner)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return self.queryset.filter(payee__budget__user=self.request.user).all()

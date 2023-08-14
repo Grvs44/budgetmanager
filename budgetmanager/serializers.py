@@ -13,17 +13,15 @@ class UserSerializer(ModelSerializer):
         fields = ('username', 'first_name', 'last_name')
 
 
-class BaseSerializer(ModelSerializer):
+class BudgetSerializer(ModelSerializer):
     user = HiddenField(default=CurrentUserDefault())
 
-
-class BudgetSerializer(BaseSerializer):
     class Meta:
         model = models.Budget
         fields = ('id', 'name', 'description', 'active', 'user')
 
 
-class BudgetShareSerializer(BaseSerializer):
+class BudgetShareSerializer(ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -31,18 +29,13 @@ class BudgetShareSerializer(BaseSerializer):
         fields = ('id', 'budget', 'user')
 
 
-class PayeeSerializer(BaseSerializer):
+class PayeeSerializer(ModelSerializer):
     class Meta:
         model = models.Payee
-        fields = ('id', 'name', 'description', 'user')
+        fields = ('id', 'name', 'description', 'budget')
 
 
-class PaymentSerializer(BaseSerializer):
-    def validate(self, attrs):
-        models.Payment(**attrs).clean()
-        return attrs
-
+class PaymentSerializer(ModelSerializer):
     class Meta:
         model = models.Payment
-        fields = ('id', 'notes', 'payee', 'budget',
-                  'amount', 'date', 'pending', 'user')
+        fields = ('id', 'notes', 'payee', 'amount', 'date', 'pending')

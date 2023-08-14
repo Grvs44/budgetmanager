@@ -10,57 +10,20 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 
-def get_total_amount(user) -> Decimal:
-    return Payment.objects.filter(user=user).aggregate(
+def _get_total_amount(queryset) -> Decimal:
+    return queryset.filter(pending=False).aggregate(
         models.Sum('amount', default=0)
     )['amount__sum']
 
 
-class BaseModel(models.Model):
-    '''
-    Abstract base model
-    Has the user that own the entity, and a name and description
-    '''
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-
-    @classmethod
-    def get_user_model(cls):
-        return cls._meta.get_field('user').related_model
-
-    class Meta:
-        '''Meta class for BaseModel'''
-        abstract = True
-
-
-class PaymentRelatedModel(BaseModel):
-    '''
-    Abstract model for Models that have a many-to-one relationship to Payment
-    '''
-    name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return str(self.name)
-
-    @property
-    def total(self) -> Decimal:
-        '''
-        The total amount of the payments of this object
-        '''
-        return self.payment_set.filter(pending=False).aggregate(
-            models.Sum('amount', default=0)
-        )['amount__sum']
-
-    class Meta:
-        '''Meta class for PaymentRelatedModel'''
-        abstract = True
-
-
-class Budget(PaymentRelatedModel):
+class Budget(models.Model):
     '''
     Model for a budget
     '''
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
     active = models.BooleanField(default=True)
     shared_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -68,6 +31,9 @@ class Budget(PaymentRelatedModel):
         related_name='shared_budgets',
         blank=True
     )
+
+    def __str__(self):
+        return str(self.name)
 
     def add_from_csv(self, text: str):
         '''
@@ -77,11 +43,11 @@ class Budget(PaymentRelatedModel):
         for line in rows:
             record = line.split(',')
             payee = Payee.objects.get_or_create(
-                name=record[0], user=self.user)[0]
+                name=record[0],
+                budget=self
+            )[0]
             payment = Payment(
-                user=self.user,
                 payee=payee,
-                budget=self,
                 amount=record[1],
                 date=datetime.strptime(record[2], '%d/%m/%Y'),
             )
@@ -91,14 +57,26 @@ class Budget(PaymentRelatedModel):
                 payment.pending = record[4] != ''
             payment.save()
 
+    @property
+    def total(self):
+        '''The total amount of the Payments of this Budget'''
+        return _get_total_amount(Payment.objects.filter(payee__budget=self))
 
-class BudgetShare(BaseModel):
+    @classmethod
+    def get_user_model(cls):
+        return cls._meta.get_field('user').related_model
+
+
+class BudgetShare(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     can_edit = models.BooleanField(default=False)
 
     def clean(self):
         if self.user == self.budget.user:
             raise ValidationError('Budget owner cannot be a shared user')
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -106,13 +84,26 @@ class BudgetShare(BaseModel):
         ]
 
 
-class Payee(PaymentRelatedModel):
+class Payee(models.Model):
     '''
     Model for a payee
     '''
+    budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+    @property
+    def total(self):
+        '''
+        The total amount of the Payments of this Payee
+        '''
+        return _get_total_amount(self.payment_set)
 
 
-class Payment(BaseModel):
+class Payment(models.Model):
     '''
     Model for a payment
     Requires a payee and a budget
@@ -122,22 +113,13 @@ class Payment(BaseModel):
         Payee,
         on_delete=models.CASCADE,
     )
-    budget = models.ForeignKey(
-        Budget,
-        on_delete=models.CASCADE,
-        limit_choices_to={'active': True}
-    )
     amount = models.DecimalField(decimal_places=2, max_digits=7)
     date = models.DateField()
     pending = models.BooleanField(
         default=False, verbose_name='Exclude from total')
     notes = models.TextField(null=True, blank=True)
 
-    def clean(self):
-        errors = []
-        if self.user != self.budget.user:
-            errors.append('You can only access your own budgets')
-        if self.user != self.payee.user:
-            errors.append('You can only access your own payees')
-        if len(errors) != 0:
-            raise ValidationError(errors)
+    @classmethod
+    def get_total(cls, user):
+        '''Get the total amount of the user's Payments'''
+        return _get_total_amount(cls.objects.filter(payee_budget__user=user))
