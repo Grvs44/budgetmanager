@@ -3,7 +3,7 @@ from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -39,8 +39,10 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     serializer_class = serializers.BudgetSerializer
     permission_classes = (IsAuthenticated, permissions.IsBudgetOwner)
     pagination_class = Pagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('active',)
+    ordering_fields = ('name', 'id')
+    search_fields = ('name',)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).all()
@@ -62,7 +64,7 @@ class BudgetShareViewSet(
     permission_classes = (IsAuthenticated, permissions.CanAccessBudgetShare)
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('budget','user')
+    filterset_fields = ('budget', 'user')
 
     def get_queryset(self):
         return self.queryset.filter(
@@ -76,8 +78,10 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     serializer_class = serializers.PayeeSerializer
     permission_classes = (IsAuthenticated, permissions.IsPayeeOwner)
     pagination_class = Pagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('budget',)
+    ordering_fields = ('name', 'id')
+    search_fields = ('name',)
 
     def get_queryset(self):
         return self.queryset.filter(budget__user=self.request.user).all()
@@ -89,8 +93,14 @@ class PaymentViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, permissions.IsPaymentOwner)
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filterset_fields = ('payee', 'pending')
-    ordering_fields = ('amount', 'date')
+    filterset_fields = {
+        'payee': ('exact',),
+        'payee__budget': ('exact',),
+        'pending': ('exact',),
+        'amount': ('exact', 'gt', 'lt'),
+        'date': ('exact', 'gt', 'lt'),
+    }
+    ordering_fields = ('amount', 'date', 'id')
 
     def get_queryset(self):
         return self.queryset.filter(payee__budget__user=self.request.user).all()
