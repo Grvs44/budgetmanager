@@ -45,7 +45,9 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     search_fields = ('name',)
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user).all()
+        return self.request.user.shared_budgets.union(
+            self.queryset.filter(user=self.request.user)
+        ).all()
 
     @action(methods=('POST',), detail=True, url_path='csv')
     def add_from_csv(self, request, pk):
