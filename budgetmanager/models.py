@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 
 
 def _get_total_amount(queryset) -> Decimal:
@@ -35,6 +35,7 @@ class Budget(models.Model):
     def __str__(self):
         return str(self.name)
 
+    @transaction.atomic
     def add_from_csv(self, text: str):
         '''
         Add payees and payments to this budget from a CSV formatted string
