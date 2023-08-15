@@ -67,6 +67,20 @@ class Budget(models.Model):
     def get_user_model(cls):
         return cls._meta.get_field('user').related_model
 
+    def has_access(self, user, editable):
+        '''
+        Check if user has access to this Budget
+        editable: False for read access, True for write access
+        '''
+        res = (
+            self.user == user or
+            self.shared_users.contains(user) and (
+                (editable and self.shared_users.get(user).can_edit) or not editable
+            )
+        )
+        print(res)
+        return res
+
 
 class BudgetShare(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
