@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-from django.db.models import Q
+from django.db.models import Q, Subquery
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -45,8 +45,11 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     search_fields = ('name',)
 
     def get_queryset(self):
-        return self.request.user.shared_budgets.union(
-            self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(
+            Q(user=self.request.user) |
+            Q(id=Subquery(
+                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
+            ))
         ).all()
 
     @action(methods=('POST',), detail=True, url_path='csv')

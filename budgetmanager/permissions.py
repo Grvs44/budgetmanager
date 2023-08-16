@@ -14,13 +14,13 @@ class CanAccessBudgetShare(BasePermission):
         return obj.user == request.user or obj.budget.user == request.user
 
 
-class IsPayeeOwner(BasePermission):
+class IsPayeeOwner(IsBudgetOwner):
     def has_object_permission(self, request, view, obj):
         print('payee')
-        return obj.budget.has_access(request.user, request.method in SAFE_METHODS)
+        return super().has_object_permission(request, view, obj.budget)
 
 
-class IsPaymentOwner(BasePermission):
+class IsPaymentOwner(IsBudgetOwner):
     def has_object_permission(self, request, view, obj):
         print('payment')
-        return obj.payee.budget.has_access(request.user, request.method in SAFE_METHODS)
+        return super().has_object_permission(request, view, obj.payee.budget)

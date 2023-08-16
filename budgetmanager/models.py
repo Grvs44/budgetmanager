@@ -72,13 +72,14 @@ class Budget(models.Model):
         Check if user has access to this Budget
         editable: False for read access, True for write access
         '''
+        print(user)
         res = (
             self.user == user or
             self.shared_users.contains(user) and (
-                (editable and self.shared_users.get(user).can_edit) or not editable
+                (editable and self.budgetshare_set.get(user=user).can_edit) or not editable
             )
         )
-        print(res)
+        print('HAS ACCESS', res)
         return res
 
 
