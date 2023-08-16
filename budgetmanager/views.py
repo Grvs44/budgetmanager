@@ -89,7 +89,12 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     search_fields = ('name',)
 
     def get_queryset(self):
-        return self.queryset.filter(budget__user=self.request.user).all()
+        return self.queryset.filter(
+            Q(budget__user=self.request.user) |
+            Q(budget_id=Subquery(
+                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
+            ))
+        ).all()
 
 
 class PaymentViewSet(ModelViewSet):
@@ -108,4 +113,9 @@ class PaymentViewSet(ModelViewSet):
     ordering_fields = ('amount', 'date', 'id')
 
     def get_queryset(self):
-        return self.queryset.filter(payee__budget__user=self.request.user).all()
+        return self.queryset.filter(
+            Q(payee__budget__user=self.request.user) |
+            Q(payee__budget_id=Subquery(
+                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
+            ))
+        ).all()
