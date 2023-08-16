@@ -9,7 +9,6 @@ class IsBudgetOwner(BasePermission):
 
 class CanAccessBudgetShare(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print('share')
         return obj.user == request.user or obj.budget.user == request.user
 
 

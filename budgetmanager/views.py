@@ -73,8 +73,8 @@ class BudgetShareViewSet(
 
     def get_queryset(self):
         return self.queryset.filter(
-            Q(user=self.request.user)
-            | Q(budget__user=self.request.user)
+            Q(user=self.request.user) |
+            Q(budget__user=self.request.user)
         ).all()
 
 
