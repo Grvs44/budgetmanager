@@ -26,7 +26,7 @@ class BudgetShareSerializer(ModelSerializer):
 
     class Meta:
         model = models.BudgetShare
-        fields = ('id', 'budget', 'user')
+        fields = ('id', 'budget', 'user', 'can_edit')
 
 
 class PayeeSerializer(ModelSerializer):
