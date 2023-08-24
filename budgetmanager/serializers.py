@@ -1,7 +1,7 @@
 from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
-    CurrentUserDefault
+    CurrentUserDefault,
 )
 
 from . import models
@@ -19,11 +19,10 @@ class UserSerializer(ModelSerializer):
 
 
 class BaseSerializer(ModelSerializer):
-    modified_by_default = CurrentUserDefault()
     modified_by = PrimaryKeyRelatedField(read_only=True)
 
     def save(self, **kwargs):
-        self.instance.modified_by = self.modified_by_default(self)
+        self.instance.modified_by = self.context['request'].user
         return super().save(**kwargs)
 
 
