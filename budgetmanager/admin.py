@@ -47,7 +47,7 @@ class PayeeAdmin(admin.ModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     '''Settings for the Payment admin'''
     date_hierarchy = 'date'
-    list_display = ('payee', 'date')
+    list_display = ('payee', 'amount', 'date')
     list_display_links = list_display
     list_filter = ('payee', 'date')
     sortable_by = list_display

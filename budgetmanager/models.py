@@ -107,7 +107,7 @@ class Payee(models.Model):
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.name)
+        return f'{self.name} ({self.budget.name})'
 
     @property
     def total(self):
@@ -137,3 +137,8 @@ class Payment(models.Model):
     def get_total(cls, user):
         '''Get the total amount of the user's Payments'''
         return _get_total_amount(cls.objects.filter(payee_budget__user=user))
+
+    def __str__(self):
+        if self.amount.is_signed():
+            return f'{self.payee.name}: {abs(self.amount):.2f} from {self.payee.budget.name}'
+        return f'{self.payee.name}: {self.amount:.2f} to {self.payee.budget.name}'
