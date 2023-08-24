@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-from django.db.models import Q, Subquery
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -47,9 +47,8 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(user=self.request.user) |
-            Q(id=Subquery(
-                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
-            ))
+            Q(id__in=models.BudgetShare.objects.filter(
+                user=self.request.user).values('budget_id'))
         ).all()
 
     @action(methods=('POST',), detail=True, url_path='csv')
@@ -78,6 +77,11 @@ class BudgetShareViewSet(
             Q(budget__user=self.request.user)
         ).all()
 
+    @action(methods=('POST',), detail=True, url_path='transfer')
+    def make_budget_owner(self, request, pk):
+        self.get_object().transfer_budget()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
 
 class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     queryset = models.Payee.objects
@@ -92,9 +96,8 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(budget__user=self.request.user) |
-            Q(budget_id=Subquery(
-                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
-            ))
+            Q(budget_id__in=models.BudgetShare.objects.filter(
+                user=self.request.user).values('budget_id'))
         ).all()
 
 
@@ -116,7 +119,6 @@ class PaymentViewSet(ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(payee__budget__user=self.request.user) |
-            Q(payee__budget_id=Subquery(
-                models.BudgetShare.objects.filter(user=self.request.user).values('budget_id')
-            ))
+            Q(payee__budget_id__in=models.BudgetShare.objects.filter(
+                user=self.request.user).values('budget_id'))
         ).all()

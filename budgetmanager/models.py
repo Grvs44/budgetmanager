@@ -91,6 +91,18 @@ class BudgetShare(models.Model):
         if self.user == self.budget.user:
             raise ValidationError('Budget owner cannot be a shared user')
 
+    @transaction.atomic
+    def transfer_budget(self):
+        budget = self.budget
+        old_owner = budget.user
+        budget.user = self.user
+        self.delete()
+        budget.save()
+        BudgetShare.objects.create(user=old_owner, budget=budget, can_edit=True)
+
+    def __str__(self):
+        return f"{self.user} {'edit' if self.can_edit else 'access'} {self.budget.name}"
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
