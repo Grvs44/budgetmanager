@@ -60,6 +60,7 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
 
 class BudgetShareViewSet(
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     GenericViewSet

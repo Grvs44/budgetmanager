@@ -1,6 +1,7 @@
 from rest_framework.serializers import (
     ModelSerializer,
     HiddenField,
+    PrimaryKeyRelatedField,
     CurrentUserDefault
 )
 
@@ -23,6 +24,7 @@ class BudgetSerializer(ModelSerializer):
 
 class BudgetShareSerializer(ModelSerializer):
     user = UserSerializer(read_only=True)
+    budget = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.BudgetShare
