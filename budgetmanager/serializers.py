@@ -1,6 +1,5 @@
 from rest_framework.serializers import (
     ModelSerializer,
-    HiddenField,
     PrimaryKeyRelatedField,
     CurrentUserDefault
 )
@@ -11,33 +10,78 @@ from . import models
 class UserSerializer(ModelSerializer):
     class Meta:
         model = models.Budget.get_user_model()
-        fields = ('username', 'first_name', 'last_name')
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+        )
 
 
-class BudgetSerializer(ModelSerializer):
-    user = HiddenField(default=CurrentUserDefault())
+class BaseSerializer(ModelSerializer):
+    modified_by_default = CurrentUserDefault()
+    modified_by = PrimaryKeyRelatedField(read_only=True)
+
+    def save(self, **kwargs):
+        self.instance.modified_by = self.modified_by_default(self)
+        return super().save(**kwargs)
+
+
+class BudgetSerializer(BaseSerializer):
+    user = PrimaryKeyRelatedField(default=CurrentUserDefault(), read_only=True)
 
     class Meta:
         model = models.Budget
-        fields = ('id', 'name', 'description', 'active', 'user')
+        fields = (
+            'id',
+            'name',
+            'description',
+            'active',
+            'user',
+            'last_modified',
+            'modified_by',
+        )
 
 
 class BudgetShareSerializer(ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = PrimaryKeyRelatedField(read_only=True)
     budget = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.BudgetShare
-        fields = ('id', 'budget', 'user', 'can_edit')
+        fields = (
+            'id',
+            'budget',
+            'user',
+            'can_edit',
+            'added',
+            'added_by',
+        )
 
 
-class PayeeSerializer(ModelSerializer):
+class PayeeSerializer(BaseSerializer):
     class Meta:
         model = models.Payee
-        fields = ('id', 'name', 'description', 'budget')
+        fields = (
+            'id',
+            'name',
+            'description',
+            'budget',
+            'last_modified',
+            'modified_by',
+        )
 
 
-class PaymentSerializer(ModelSerializer):
+class PaymentSerializer(BaseSerializer):
     class Meta:
         model = models.Payment
-        fields = ('id', 'notes', 'payee', 'amount', 'date', 'pending')
+        fields = (
+            'id',
+            'notes',
+            'payee',
+            'amount',
+            'date',
+            'pending',
+            'last_modified',
+            'modified_by',
+        )

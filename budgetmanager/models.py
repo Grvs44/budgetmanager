@@ -16,20 +16,37 @@ def _get_total_amount(queryset) -> Decimal:
     )['amount__sum']
 
 
-class Budget(models.Model):
+class BaseModel(models.Model):
+    last_modified = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Budget(BaseModel):
     '''
     Model for a budget
     '''
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     active = models.BooleanField(default=True)
     shared_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='BudgetShare',
+        through_fields=('budget', 'user'),
         related_name='shared_budgets',
-        blank=True
+        blank=True,
     )
 
     def __str__(self):
@@ -75,7 +92,8 @@ class Budget(models.Model):
         res = (
             self.user == user or
             self.shared_users.contains(user) and (
-                (editable and self.budgetshare_set.get(user=user).can_edit) or not editable
+                (editable and self.budgetshare_set.get(
+                    user=user).can_edit) or not editable
             )
         )
         return res
@@ -86,6 +104,13 @@ class BudgetShare(models.Model):
                              on_delete=models.CASCADE)
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     can_edit = models.BooleanField(default=False)
+    added = models.DateTimeField(auto_now_add=True)
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+',
+    )
 
     def clean(self):
         if self.user == self.budget.user:
@@ -98,7 +123,8 @@ class BudgetShare(models.Model):
         budget.user = self.user
         self.delete()
         budget.save()
-        BudgetShare.objects.create(user=old_owner, budget=budget, can_edit=True)
+        BudgetShare.objects.create(
+            user=old_owner, budget=budget, can_edit=True)
 
     def __str__(self):
         return f"{self.user} {'edit' if self.can_edit else 'access'} {self.budget.name}"
@@ -110,7 +136,7 @@ class BudgetShare(models.Model):
         ]
 
 
-class Payee(models.Model):
+class Payee(BaseModel):
     '''
     Model for a payee
     '''
@@ -129,7 +155,7 @@ class Payee(models.Model):
         return _get_total_amount(self.payment_set)
 
 
-class Payment(models.Model):
+class Payment(BaseModel):
     '''
     Model for a payment
     Requires a payee and a budget

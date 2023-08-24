@@ -122,3 +122,25 @@ class PaymentViewSet(ModelViewSet):
             Q(payee__budget_id__in=models.BudgetShare.objects.filter(
                 user=self.request.user).values('budget_id'))
         ).all()
+
+
+class UserSerializer(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    queryset = models.Budget.get_user_model().objects
+    serializer_class = serializers.UserSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return self.queryset.filter(
+            Q(id=self.request.user.id) |
+            Q(id__in=models.BudgetShare.objects.filter(
+                budget__user=self.request.user
+            ).values('user_id')) |
+            Q(id__in=models.BudgetShare.objects.filter(
+                user=self.request.user
+            ).values('budget__user_id'))
+        )
