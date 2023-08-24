@@ -4,7 +4,11 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsBudgetOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.has_access(request.user, request.method not in SAFE_METHODS)
+        return obj.has_access(
+            request.user,
+            request.method not in SAFE_METHODS,
+            request.method == 'DELETE'
+        )
 
 
 class CanAccessBudgetShare(BasePermission):
@@ -17,11 +21,11 @@ class CanAccessBudgetShare(BasePermission):
         )
 
 
-class IsPayeeOwner(IsBudgetOwner):
+class IsPayeeOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return super().has_object_permission(request, view, obj.budget)
+        return obj.has_access(request.user, request.method not in SAFE_METHODS)
 
 
-class IsPaymentOwner(IsBudgetOwner):
+class IsPaymentOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return super().has_object_permission(request, view, obj.payee.budget)
+        return obj.has_access(request.user, request.method not in SAFE_METHODS)

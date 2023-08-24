@@ -84,14 +84,14 @@ class Budget(BaseModel):
     def get_user_model(cls):
         return cls._meta.get_field('user').related_model
 
-    def has_access(self, user, editable):
+    def has_access(self, user, editable: bool, requires_owner: bool = False):
         '''
         Check if user has access to this Budget
         editable: False for read access, True for write access
         '''
         res = (
             self.user == user or
-            self.shared_users.contains(user) and (
+            not requires_owner and self.shared_users.contains(user) and (
                 (editable and self.budgetshare_set.get(
                     user=user).can_edit) or not editable
             )
