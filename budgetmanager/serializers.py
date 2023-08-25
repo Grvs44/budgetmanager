@@ -3,8 +3,6 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     CurrentUserDefault,
-    Serializer,
-    UUIDField,
 )
 
 from . import models
