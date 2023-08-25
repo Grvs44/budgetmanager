@@ -124,7 +124,26 @@ class PaymentViewSet(ModelViewSet):
         ).all()
 
 
-class UserSerializer(
+class ShareCodeViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    queryset = models.ShareCode.objects
+    serializer_class = serializers.ShareCodeSerializer
+    permission_classes = (IsAuthenticated, permissions.CanAccessShareCode)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return self.queryset.filter(
+            Q(budget__user=self.request.user) |
+            Q(budget_id__in=models.BudgetShare.objects.filter(user=self.request.user).values('budget_id'))
+        )
+
+
+class UserViewSet(
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     GenericViewSet

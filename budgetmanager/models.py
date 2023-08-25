@@ -2,12 +2,14 @@
 Model classes
 '''
 # pylint:disable=no-member
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
+import uuid
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.utils import timezone
 
 
 def _get_total_amount(queryset) -> Decimal:
@@ -15,6 +17,9 @@ def _get_total_amount(queryset) -> Decimal:
         models.Sum('amount', default=0)
     )['amount__sum']
 
+
+def _get_sharecode_expiry():
+    return timezone.now() + timedelta(days=10)
 
 class BaseModel(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
@@ -180,3 +185,30 @@ class Payment(BaseModel):
         if self.amount.is_signed():
             return f'{self.payee.name}: {abs(self.amount):.2f} from {self.payee.budget.name}'
         return f'{self.payee.name}: {self.amount:.2f} to {self.payee.budget.name}'
+
+
+class ShareCode(models.Model):
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    budget = models.ForeignKey(
+        Budget,
+        on_delete=models.CASCADE,
+    )
+    can_edit = models.BooleanField(default=False)
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+',
+    )
+    expiry = models.DateTimeField(
+        default=_get_sharecode_expiry,
+        editable=False,
+    )
+
+    def __str__(self):
+        return str(self.id)

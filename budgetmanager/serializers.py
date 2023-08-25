@@ -84,3 +84,15 @@ class PaymentSerializer(BaseSerializer):
             'last_modified',
             'modified_by',
         )
+
+
+class ShareCodeSerializer(ModelSerializer):
+    class Meta:
+        model = models.ShareCode
+        fields = (
+            'id',
+            'budget',
+            'can_edit',
+            'added_by',
+            'expiry',
+        )

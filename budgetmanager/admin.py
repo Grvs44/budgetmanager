@@ -62,3 +62,13 @@ class PaymentAdmin(BaseAdmin):
     sortable_by = list_display
     list_per_page = 20
     readonly_fields = ('modified_by',)
+
+
+@admin.register(models.ShareCode)
+class ShareCodeAdmin(admin.ModelAdmin):
+    '''Settings for the ShareCode admin'''
+    list_display = ('id', 'budget', 'expiry')
+    list_display_links = list_display
+    list_filter = ('budget',)
+    sortable_by = ('budget', 'expiry')
+    list_per_page = 20

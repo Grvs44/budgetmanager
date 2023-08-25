@@ -11,6 +11,8 @@ router.register(r'budget', views.BudgetViewSet)
 router.register(r'share', views.BudgetShareViewSet)
 router.register(r'payee', views.PayeeViewSet)
 router.register(r'payment', views.PaymentViewSet)
+router.register(r'user', views.UserViewSet)
+router.register(r'code', views.ShareCodeViewSet)
 
 urlpatterns = router.urls + [
     path('total/', views.TotalView.as_view()),
