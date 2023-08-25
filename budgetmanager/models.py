@@ -21,6 +21,7 @@ def _get_total_amount(queryset) -> Decimal:
 def _get_sharecode_expiry():
     return timezone.now() + timedelta(days=10)
 
+
 class BaseModel(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(
@@ -212,3 +213,13 @@ class ShareCode(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    @transaction.atomic
+    def add_user(self, user):
+        BudgetShare.objects.create(
+            budget=self.budget,
+            user=user,
+            can_edit=self.can_edit,
+            added_by=self.added_by,
+        )
+        self.delete()

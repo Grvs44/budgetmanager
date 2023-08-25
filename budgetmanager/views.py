@@ -7,7 +7,11 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import (
+    GenericViewSet,
+    ModelViewSet,
+    ViewSet
+)
 
 from . import (
     models,
@@ -160,3 +164,14 @@ class UserViewSet(
                 user=self.request.user
             ).values('budget__user_id'))
         )
+
+
+class JoinBudgetView(GenericViewSet):
+    queryset = models.ShareCode.objects.all()
+    serializer_class = serializers.JoinBudgetSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'join'
+
+    def post(self, request):
+        self.get_object().add_user(request.user)
+        return Response(None, status.HTTP_204_NO_CONTENT)

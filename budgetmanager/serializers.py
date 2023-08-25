@@ -3,6 +3,8 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     CurrentUserDefault,
+    Serializer,
+    UUIDField,
 )
 
 from . import models
@@ -21,7 +23,10 @@ class UserSerializer(ModelSerializer):
 
 class BaseSerializer(ModelSerializer):
     modified_by = PrimaryKeyRelatedField(read_only=True)
-    modified_by_hidden = HiddenField(default=CurrentUserDefault(), source='modified_by')
+    modified_by_hidden = HiddenField(
+        default=CurrentUserDefault(),
+        source='modified_by'
+    )
 
 
 class BudgetSerializer(BaseSerializer):
@@ -89,7 +94,10 @@ class PaymentSerializer(BaseSerializer):
 
 class ShareCodeSerializer(ModelSerializer):
     added_by = PrimaryKeyRelatedField(read_only=True)
-    added_by_hidden = HiddenField(default=CurrentUserDefault(), source='added_by')
+    added_by_hidden = HiddenField(
+        default=CurrentUserDefault(),
+        source='added_by'
+    )
 
     class Meta:
         model = models.ShareCode
@@ -101,3 +109,7 @@ class ShareCodeSerializer(ModelSerializer):
             'added_by_hidden',
             'expiry',
         )
+
+
+class JoinBudgetSerializer(Serializer):
+    id = UUIDField()
