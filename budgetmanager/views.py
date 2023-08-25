@@ -47,8 +47,7 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(user=self.request.user) |
-            Q(id__in=models.BudgetShare.objects.filter(
-                user=self.request.user).values('budget_id'))
+            Q(id__in=self.request.user.budgetshare_set.values('budget_id'))
         ).all()
 
     @action(methods=('POST',), detail=True, url_path='csv')
@@ -96,8 +95,7 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(budget__user=self.request.user) |
-            Q(budget_id__in=models.BudgetShare.objects.filter(
-                user=self.request.user).values('budget_id'))
+            Q(budget_id__in=self.request.user.budgetshare_set.values('budget_id'))
         ).all()
 
 
@@ -119,8 +117,7 @@ class PaymentViewSet(ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(
             Q(payee__budget__user=self.request.user) |
-            Q(payee__budget_id__in=models.BudgetShare.objects.filter(
-                user=self.request.user).values('budget_id'))
+            Q(payee__budget_id__in=self.request.user.budgetshare_set.values('budget_id'))
         ).all()
 
 
@@ -139,7 +136,7 @@ class ShareCodeViewSet(
     def get_queryset(self):
         return self.queryset.filter(
             Q(budget__user=self.request.user) |
-            Q(budget_id__in=models.BudgetShare.objects.filter(user=self.request.user).values('budget_id'))
+            Q(budget_id__in=self.request.user.budgetshare_set.values('budget_id'))
         )
 
 
