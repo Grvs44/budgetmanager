@@ -54,7 +54,6 @@ class BudgetShareSerializer(ModelSerializer):
             'can_edit',
             'added',
             'added_by',
-            'modified_by_hidden',
         )
 
 
