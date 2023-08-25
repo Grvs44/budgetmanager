@@ -180,7 +180,10 @@ class Payment(BaseModel):
     @classmethod
     def get_total(cls, user):
         '''Get the total amount of the user's Payments'''
-        return _get_total_amount(cls.objects.filter(payee_budget__user=user))
+        return _get_total_amount(cls.objects.filter(
+            models.Q(payee__budget__user=user) |
+            models.Q(payee__budget_id__in=user.budgetshare_set.values('budget_id'))
+        ))
 
     def __str__(self):
         if self.amount.is_signed():
