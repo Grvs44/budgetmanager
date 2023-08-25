@@ -55,8 +55,16 @@ class PayeeAdmin(BaseAdmin):
 @admin.register(models.Payment)
 class PaymentAdmin(BaseAdmin):
     '''Settings for the Payment admin'''
+    @staticmethod
+    def _budget_name(obj):
+        return obj.payee.budget.name
+
+    @staticmethod
+    def _payee_name(obj):
+        return obj.payee.name
+
     date_hierarchy = 'date'
-    list_display = ('payee', 'amount', 'date')
+    list_display = (_budget_name, _payee_name, 'amount', 'date')
     list_display_links = list_display
     list_filter = ('payee__budget', 'payee', 'date')
     sortable_by = list_display
