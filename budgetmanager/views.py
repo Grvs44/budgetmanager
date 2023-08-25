@@ -133,7 +133,7 @@ class ShareCodeViewSet(
 ):
     queryset = models.ShareCode.objects
     serializer_class = serializers.ShareCodeSerializer
-    permission_classes = (IsAuthenticated, permissions.CanAccessShareCode)
+    permission_classes = (IsAuthenticated,)
     pagination_class = Pagination
 
     def get_queryset(self):
