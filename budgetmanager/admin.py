@@ -58,7 +58,7 @@ class PaymentAdmin(BaseAdmin):
     date_hierarchy = 'date'
     list_display = ('payee', 'amount', 'date')
     list_display_links = list_display
-    list_filter = ('payee', 'date')
+    list_filter = ('payee__budget', 'payee', 'date')
     sortable_by = list_display
     list_per_page = 20
     readonly_fields = ('modified_by',)
