@@ -109,7 +109,3 @@ class ShareCodeSerializer(ModelSerializer):
             'added_by_hidden',
             'expiry',
         )
-
-
-class JoinBudgetSerializer(Serializer):
-    id = UUIDField()

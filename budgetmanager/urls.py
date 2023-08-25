@@ -13,8 +13,8 @@ router.register(r'payee', views.PayeeViewSet)
 router.register(r'payment', views.PaymentViewSet)
 router.register(r'user', views.UserViewSet)
 router.register(r'code', views.ShareCodeViewSet)
-router.register(r'join', views.JoinBudgetView, basename='join')
 
 urlpatterns = router.urls + [
     path('total/', views.TotalView.as_view()),
+    path('join/', views.JoinBudgetView.as_view()),
 ]

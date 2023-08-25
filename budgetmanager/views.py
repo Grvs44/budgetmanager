@@ -1,23 +1,23 @@
 # pylint: disable=no-member
+import django.core.exceptions
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
+import rest_framework.exceptions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import (
-    GenericViewSet,
-    ModelViewSet,
-    ViewSet
-)
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from . import (
     models,
     permissions,
     serializers,
 )
+from .metadata import JoinBudgetMetadata
 from .pagination import Pagination
 
 
@@ -166,12 +166,16 @@ class UserViewSet(
         )
 
 
-class JoinBudgetView(GenericViewSet):
-    queryset = models.ShareCode.objects.all()
-    serializer_class = serializers.JoinBudgetSerializer
+class JoinBudgetView(APIView):
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'join'
+    metadata_class = JoinBudgetMetadata
 
     def post(self, request):
-        self.get_object().add_user(request.user)
-        return Response(None, status.HTTP_204_NO_CONTENT)
+        try:
+            get_object_or_404(
+                models.ShareCode,
+                pk=request.data.get('id')
+            ).add_user(request.user)
+            return Response(None, status.HTTP_204_NO_CONTENT)
+        except django.core.exceptions.ValidationError as exc:
+            raise rest_framework.exceptions.ValidationError(detail={'detail':exc})
