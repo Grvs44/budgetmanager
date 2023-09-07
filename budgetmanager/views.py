@@ -59,6 +59,9 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
         self.get_object().add_from_csv(request.data['csv'])
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class BudgetShareViewSet(
     mixins.RetrieveModelMixin,
