@@ -33,9 +33,9 @@ class TotalView(APIView):
 class PaymentRelatedMixin(ModelViewSet):
     @action(methods=('GET',), detail=True)
     def total(self, request, pk):
-        return Response({
-            'total': f'{self.get_object().total:.2f}'
-        })
+        return Response(
+            f'{self.get_object().total:.2f}'
+        )
 
 
 class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
