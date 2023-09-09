@@ -23,9 +23,9 @@ class CanAccessBudgetShare(BasePermission):
 
 class IsPayeeOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.has_access(request.user, request.method not in SAFE_METHODS)
+        return obj.budget.has_access(request.user, request.method not in SAFE_METHODS)
 
 
 class IsPaymentOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.has_access(request.user, request.method not in SAFE_METHODS)
+        return obj.payee.budget.has_access(request.user, request.method not in SAFE_METHODS)
