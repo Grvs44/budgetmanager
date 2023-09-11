@@ -59,6 +59,10 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
         self.get_object().add_from_csv(request.data['csv'])
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=('GET',), detail=True, url_path='edit')
+    def can_edit(self, request, pk):
+        return Response(self.get_object().has_access(request.user, True))
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -105,6 +109,10 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
             Q(budget_id__in=self.request.user.budgetshare_set.values('budget_id'))
         ).all()
 
+    @action(methods=('GET',), detail=True, url_path='edit')
+    def can_edit(self, request, pk):
+        return Response(self.get_object().budget.has_access(request.user, True))
+
 
 class PaymentViewSet(ModelViewSet):
     queryset = models.Payment.objects
@@ -126,6 +134,10 @@ class PaymentViewSet(ModelViewSet):
             Q(payee__budget__user=self.request.user) |
             Q(payee__budget_id__in=self.request.user.budgetshare_set.values('budget_id'))
         ).all()
+
+    @action(methods=('GET',), detail=True, url_path='edit')
+    def can_edit(self, request, pk):
+        return Response(self.get_object().payee.budget.has_access(request.user, True))
 
 
 class ShareCodeViewSet(
@@ -181,4 +193,5 @@ class JoinBudgetView(APIView):
             ).add_user(request.user)
             return Response(None, status.HTTP_204_NO_CONTENT)
         except django.core.exceptions.ValidationError as exc:
-            raise rest_framework.exceptions.ValidationError(detail={'detail':exc})
+            raise rest_framework.exceptions.ValidationError(
+                detail={'detail': exc})
