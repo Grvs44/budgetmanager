@@ -30,7 +30,7 @@ class TotalView(APIView):
         )
 
 
-class PaymentRelatedMixin(ModelViewSet):
+class PaymentRelatedMixin:
     @action(methods=('GET',), detail=True)
     def total(self, request, pk):
         return Response(
