@@ -180,6 +180,11 @@ class UserViewSet(
             ).values('budget__user_id'))
         )
 
+    @action(methods=('GET',), detail=False, url_path='me')
+    def get_current_user(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
 
 class JoinBudgetView(APIView):
     permission_classes = (IsAuthenticated,)
