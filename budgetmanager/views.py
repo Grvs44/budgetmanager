@@ -38,22 +38,9 @@ class PaymentRelatedMixin:
         )
 
 
-class PartialListMixin:
-    list_serializer_class = None
-
-    def get_serializer_class(self):
-        assert self.list_serializer_class is not None, (
-            f'{self.__class__.__name__} is missing a list_serializer_class attribute'
-        )
-        if self.action == 'list':
-            return self.list_serializer_class
-        return self.serializer_class
-
-
-class BudgetViewSet(PartialListMixin, PaymentRelatedMixin, ModelViewSet):
+class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     queryset = models.Budget.objects
     serializer_class = serializers.BudgetSerializer
-    list_serializer_class = serializers.BudgetListSerializer
     permission_classes = (IsAuthenticated, permissions.IsBudgetOwner)
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
@@ -106,10 +93,9 @@ class BudgetShareViewSet(
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class PayeeViewSet(PartialListMixin, PaymentRelatedMixin, ModelViewSet):
+class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     queryset = models.Payee.objects
     serializer_class = serializers.PayeeSerializer
-    list_serializer_class = serializers.PayeeListSerializer
     permission_classes = (IsAuthenticated, permissions.IsPayeeOwner)
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
@@ -128,10 +114,9 @@ class PayeeViewSet(PartialListMixin, PaymentRelatedMixin, ModelViewSet):
         return Response(self.get_object().budget.has_access(request.user, True))
 
 
-class PaymentViewSet(PartialListMixin, ModelViewSet):
+class PaymentViewSet(ModelViewSet):
     queryset = models.Payment.objects
     serializer_class = serializers.PaymentSerializer
-    list_serializer_class = serializers.PaymentListSerializer
     permission_classes = (IsAuthenticated, permissions.IsPaymentOwner)
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
