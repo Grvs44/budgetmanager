@@ -13,10 +13,11 @@ import { GlobalProvider } from './context/global'
 import BudgetPage, { budgetPageLoader } from './pages/BudgetPage'
 import PayeePage, { payeePageLoader } from './pages/PayeePage'
 import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
+import { rootPath } from './settings'
 
 const router = createBrowserRouter([
   {
-    path: '',
+    path: rootPath,
     element: <App />,
     errorElement: <ErrorPage />,
     loader: getCurrentUser,

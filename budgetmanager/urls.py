@@ -20,6 +20,5 @@ urlpatterns = [
     path('api/join/', views.JoinBudgetView.as_view()),
     path('api/', include('knox.urls')),
     path('manifest.json', views.manifest_view),
-    path('asset-manifest.json', views.asset_manifest_view),
     re_path(r'^.*$', views.index_view),
 ]

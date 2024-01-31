@@ -208,6 +208,3 @@ def index_view(request):
 
 def manifest_view(request):
     return render(request, 'budgetmanager/manifest.json', content_type='application/json')
-
-def asset_manifest_view(request):
-    return render(request, 'budgetmanager/asset-manifest.json', content_type='application/json')

@@ -1,18 +1,7 @@
-if [ -d budgetmanager/static/budgetmanager ]; then
-  rm budgetmanager/static/budgetmanager/*
-  echo a
-else
+if [ ! -d budgetmanager/static ]; then
   mkdir budgetmanager/static
-  mkdir budgetmanager/static/budgetmanager
-  echo b
-fi
-if [ -d budgetmanager/templates/budgetmanager ]; then
-  rmdir budgetmanager/templates/budgetmanager/*
-  echo c
-else
-  mkdir budgetmanager/templates
-  mkdir budgetmanager/templates/budgetmanager
-  echo d
+elif [ -d budgetmanager/static/budgetmanager ]; then
+  rm -r budgetmanager/static/budgetmanager
 fi
 mv budgetmanagerpwa/build/static budgetmanager/static/budgetmanager
-mv budgetmanagerpwa/build/* budgetmanager/templates/budgetmanager/
+mv budgetmanagerpwa/build/manifest.json budgetmanager/templates/budgetmanager/manifest.json
