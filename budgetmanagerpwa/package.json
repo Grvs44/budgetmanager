@@ -18,7 +18,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-router-dom": "latest",
-    "react-scripts": "latest",
+    "react-scripts": "^5.0.1",
     "typescript": "latest"
   },
   "scripts": {
