@@ -1,7 +1,6 @@
 # pylint: disable=no-member,unused-argument
 import django.core.exceptions
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
