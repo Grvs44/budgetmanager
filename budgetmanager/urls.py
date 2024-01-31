@@ -1,7 +1,7 @@
 '''
 URL configuration for budgetmanager app
 '''
-from django.urls import path
+from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 from . import views
 
@@ -14,7 +14,12 @@ router.register(r'payment', views.PaymentViewSet)
 router.register(r'user', views.UserViewSet)
 router.register(r'code', views.ShareCodeViewSet)
 
-urlpatterns = router.urls + [
-    path('total/', views.TotalView.as_view()),
-    path('join/', views.JoinBudgetView.as_view()),
+urlpatterns = [
+    path('api/', include(router.urls)),
+    path('api/total/', views.TotalView.as_view()),
+    path('api/join/', views.JoinBudgetView.as_view()),
+    path('api/', include('knox.urls')),
+    path('manifest.json', views.manifest_view),
+    path('asset-manifest.json', views.asset_manifest_view),
+    re_path(r'^.*$', views.index_view),
 ]

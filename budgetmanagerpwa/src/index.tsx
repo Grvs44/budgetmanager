@@ -8,7 +8,6 @@ import theme from './theme'
 import ErrorPage from './pages/ErrorPage'
 import JoinForm, { joinFormAction } from './pages/JoinForm'
 import { getCurrentUser } from './api/user'
-import { rootPath } from './settings'
 import Home, { homeLoader } from './pages/Home'
 import { GlobalProvider } from './context/global'
 import BudgetPage, { budgetPageLoader } from './pages/BudgetPage'
@@ -17,7 +16,7 @@ import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
 
 const router = createBrowserRouter([
   {
-    path: rootPath,
+    path: '',
     element: <App />,
     errorElement: <ErrorPage />,
     loader: getCurrentUser,

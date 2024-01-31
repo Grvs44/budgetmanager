@@ -2,7 +2,7 @@
   "name": "budgetmanagerpwa",
   "version": "0.0.1",
   "private": true,
-  "homepage": "/budgetmanager",
+  "homepage": "/budgetmanager/",
   "proxy": "http://localhost:8000",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

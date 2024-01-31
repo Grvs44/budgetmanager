@@ -1,7 +1,8 @@
-# pylint: disable=no-member
+# pylint: disable=no-member,unused-argument
 import django.core.exceptions
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -200,3 +201,13 @@ class JoinBudgetView(APIView):
         except django.core.exceptions.ValidationError as exc:
             raise rest_framework.exceptions.ValidationError(
                 detail={'detail': exc})
+
+
+def index_view(request):
+    return render(request, 'budgetmanager/index.html')
+
+def manifest_view(request):
+    return render(request, 'budgetmanager/manifest.json', content_type='application/json')
+
+def asset_manifest_view(request):
+    return render(request, 'budgetmanager/asset-manifest.json', content_type='application/json')
