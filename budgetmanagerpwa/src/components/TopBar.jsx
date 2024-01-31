@@ -37,28 +37,28 @@ export default function TopBar({ user, title }) {
       </AppBar>
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <List onClick={() => setOpen(false)}>
-          <Link to={`/${rootPath}`}>
+          <Link to={rootPath}>
             <ListItem>
               <ListItemButton>
                 <ListItemText>Home</ListItemText>
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to={`/${rootPath}/budget`}>
+          <Link to={`${rootPath}budget`}>
             <ListItem>
               <ListItemButton>
                 <ListItemText>Budgets</ListItemText>
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to={`/${rootPath}/payee`}>
+          <Link to={`${rootPath}payee`}>
             <ListItem>
               <ListItemButton>
                 <ListItemText>Payees</ListItemText>
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to={`/${rootPath}/payment`}>
+          <Link to={`${rootPath}payment`}>
             <ListItem>
               <ListItemButton>
                 <ListItemText>Payments</ListItemText>
