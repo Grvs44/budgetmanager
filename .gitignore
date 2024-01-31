@@ -1,17 +1,15 @@
 __pycache__
-budgetmanager.egg-info
+*.egg-info
 build
 dist
-db.sqlite3
+*.sqlite3
 *.csv
 
-# dependencies
 node_modules
 .pnp
 .pnp.js
 coverage
 
-# misc
 .DS_Store
 .env.local
 .env.development.local
