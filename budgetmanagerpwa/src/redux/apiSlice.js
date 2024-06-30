@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
+const PARTIAL = -1
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/budgetmanager/api/' }),
@@ -8,7 +9,13 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getBudgets: builder.query({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
-      providesTags: ['Budget'],
+      providesTags: (result, error, arg) =>
+        result
+          ? [
+              ...result.data.results.map(({ id }) => ({ type: 'Posts', id })),
+              { type: 'Budget', id: PARTIAL },
+            ]
+          : [{ type: 'Budget', id: PARTIAL }],
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName
       },
@@ -31,7 +38,7 @@ export const apiSlice = createApi({
         body,
         headers,
       }),
-      invalidatesTags: ['Budget'],
+      invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
     updateBudget: builder.mutation({
       query: (body) => ({
@@ -44,16 +51,31 @@ export const apiSlice = createApi({
         try {
           const query = await queryFulfilled
           dispatch(
-            apiSlice.util.updateQueryData('getBudget', undefined, (draft) => {
-              draft.results.push(query.data)
+            apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
               draft.results[draft.results.indexOf((e) => e.id == id)] =
                 query.data
+            })
+          )
+          dispatch(
+            apiSlice.util.updateQueryData('getBudget', undefined, (draft) => {
+              draft[draft.indexOf((e) => e.id == id)] = query.data
             })
           )
         } catch {
           console.log('useUpdateBudgetMutation error')
         }
       },
+    }),
+    deleteBudget: builder.mutation({
+      query: ({ id }) => ({
+        url: `budget/${id}/`,
+        method: 'DELETE',
+        headers,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Budget', id },
+        { type: 'Budget', id: PARTIAL },
+      ],
     }),
   }),
 })
@@ -63,4 +85,5 @@ export const {
   useGetBudgetQuery,
   useCreateBudgetMutation,
   useUpdateBudgetMutation,
+  useDeleteBudgetMutation,
 } = apiSlice
