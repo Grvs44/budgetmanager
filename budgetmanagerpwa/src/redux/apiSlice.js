@@ -7,6 +7,9 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/budgetmanager/api/' }),
   tagTypes: ['Budget'],
   endpoints: (builder) => ({
+    getCurrentUser: builder.query({
+      query: ()=>'user/me/',
+    }),
     getBudgets: builder.query({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
       providesTags: (data, error, arg) =>
@@ -82,6 +85,7 @@ export const apiSlice = createApi({
 })
 
 export const {
+  useGetCurrentUserQuery,
   useGetBudgetsQuery,
   useGetBudgetQuery,
   useCreateBudgetMutation,

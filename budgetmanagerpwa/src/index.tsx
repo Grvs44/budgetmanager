@@ -11,7 +11,6 @@ import ErrorPage from './pages/ErrorPage'
 import JoinForm, { joinFormAction } from './pages/JoinForm'
 import { getCurrentUser } from './api/user'
 import Home, { homeLoader } from './pages/Home'
-import { GlobalProvider } from './context/global'
 import BudgetPage from './pages/BudgetPage'
 import PayeePage, { payeePageLoader } from './pages/PayeePage'
 import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
@@ -22,7 +21,6 @@ const router = createBrowserRouter([
     path: rootPath,
     element: <App />,
     errorElement: <ErrorPage />,
-    loader: getCurrentUser,
     children: [
       {
         path: '',
@@ -73,12 +71,10 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <GlobalProvider>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </Provider>
-  </GlobalProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  </Provider>
 )
