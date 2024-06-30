@@ -10,15 +10,16 @@ export default function BudgetList() {
   const [page, setPage] = React.useState(0)
   const query = useGetBudgetsQuery(page)
   const [createBudget] = useCreateBudgetMutation()
+  console.log(page)
 
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
   const onCreateSubmit = async (data) => {
-    const budget = createBudget(data);
-    console.log('Created:' + budget)
+    createBudget(data);
     return null
   }
+
   return list.count ? (
     <Container>
     <Button onClick={() => setCreateOpen(true)}>

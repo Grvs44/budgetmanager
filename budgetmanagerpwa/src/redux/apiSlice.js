@@ -9,10 +9,10 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     getBudgets: builder.query({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
-      providesTags: (result, error, arg) =>
-        result
+      providesTags: (data, error, arg) =>
+        data
           ? [
-              ...result.data.results.map(({ id }) => ({ type: 'Posts', id })),
+              ...data.results.map(({ id }) => ({ type: 'Posts', id })),
               { type: 'Budget', id: PARTIAL },
             ]
           : [{ type: 'Budget', id: PARTIAL }],
@@ -30,6 +30,7 @@ export const apiSlice = createApi({
     }),
     getBudget: builder.query({
       query: (id) => `budget/${id}/`,
+      providesTags: ({ id }, error, arg) => [{ type: 'Budget', id }],
     }),
     createBudget: builder.mutation({
       query: (body) => ({
