@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import store from './redux/store'
 import App from './App'
 import theme from './theme'
 import ErrorPage from './pages/ErrorPage'
@@ -10,7 +12,7 @@ import JoinForm, { joinFormAction } from './pages/JoinForm'
 import { getCurrentUser } from './api/user'
 import Home, { homeLoader } from './pages/Home'
 import { GlobalProvider } from './context/global'
-import BudgetPage, { budgetPageLoader } from './pages/BudgetPage'
+import BudgetPage from './pages/BudgetPage'
 import PayeePage, { payeePageLoader } from './pages/PayeePage'
 import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
 import { rootPath } from './settings'
@@ -30,7 +32,6 @@ const router = createBrowserRouter([
       {
         path: 'budget',
         element: <BudgetPage />,
-        loader: budgetPageLoader,
       },
       {
         path: 'payee',
@@ -73,9 +74,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <GlobalProvider>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </GlobalProvider>
 )

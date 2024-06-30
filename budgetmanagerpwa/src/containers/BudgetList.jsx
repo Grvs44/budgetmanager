@@ -1,42 +1,40 @@
 import React from 'react'
-import { Button, Container } from '@mui/material'
+import { Button, Container, List, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { createBudget, getBudgets } from '../api/budget'
 import BudgetForm from '../components/BudgetForm'
-import List from '../components/List'
 import BudgetListItem from '../components/BudgetListItem'
-import { BudgetContext } from '../context/budget'
+import { useGetBudgetsQuery } from '../redux/apiSlice'
 
-export default function BudgetList({ list }) {
-  const { resetItems, addItem } = React.useContext(BudgetContext)
-
+export default function BudgetList() {
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [page, setPage] = React.useState(0)
+  const query = useGetBudgetsQuery(page)
 
-  React.useEffect(() => {
-    resetItems(list)
-  }, [list])
+  if (query.isLoading) return <p>Loading...</p>
+  const list = query.data
 
   const onCreateSubmit = async (data) => {
-    const budget = await createBudget(data)
+    /*const budget = await createBudget(data)
     console.log(budget)
-    addItem(budget)
+    addItem(budget)*/
     return null
   }
-
-  return (
+  return list.count ? (
     <Container>
-      <Button onClick={() => setCreateOpen(true)}>
-        <AddIcon /> New
-      </Button>
-      {list.count ? (
-        <List
-          Context={BudgetContext}
-          onNextPage={getBudgets}
-          ItemComponent={BudgetListItem}
-        />
-      ) : (
-        <p>No budgets</p>
-      )}
+    <Button onClick={() => setCreateOpen(true)}>
+      <AddIcon /> New
+    </Button>
+      <Typography>
+        Showing {list.results.length} of {list.count}
+      </Typography>
+      <List>
+        {list.results.map((item) => (
+          <BudgetListItem item={item} key={item.id} />
+        ))}
+      </List>
+      {list.next ? (
+        <Button onClick={() => setPage(page + 1)}>Load more</Button>
+      ) : null}
       <BudgetForm
         onClose={() => setCreateOpen(false)}
         onSubmit={onCreateSubmit}
@@ -44,5 +42,7 @@ export default function BudgetList({ list }) {
         title="Add budget"
       />
     </Container>
+  ) : (
+    <p>No budgets</p>
   )
 }
