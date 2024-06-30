@@ -15,6 +15,7 @@ export const apiSlice = createApi({
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg
       },
+      keepUnusedDataFor: 0,
     }),
   }),
 })
