@@ -1,16 +1,17 @@
-import React from "react";
-import { getPayments } from "../api/payment";
+import React from 'react'
+import { getPayments } from '../api/payment'
 import { useLoaderData } from 'react-router-dom'
-import { PaymentProvider } from "../context/payment";
-import PaymentList from "../containers/PaymentList";
-import { useTitle } from '../context/global'
+import { PaymentProvider } from '../context/payment'
+import PaymentList from '../containers/PaymentList'
+import { setTitle } from '../redux/titleSlice'
+import { useDispatch } from 'react-redux'
 
 export default function PaymentPage() {
   const { list } = useLoaderData()
-  const { setTitle } = useTitle()
+  const dispatch = useDispatch()
 
   React.useEffect(() => {
-    setTitle('Payments')
+    dispatch(setTitle('Payments'))
   }, [])
 
   return (

@@ -1,16 +1,17 @@
 import React from 'react'
 import { getPayees } from '../api/payee'
 import { useLoaderData } from 'react-router-dom'
-import { useTitle } from '../context/global'
+import { setTitle } from '../redux/titleSlice'
 import PayeeList from '../containers/PayeeList'
 import { PayeeProvider } from '../context/payee'
+import { useDispatch } from 'react-redux'
 
 export default function PayeePage() {
   const { list } = useLoaderData()
-  const { setTitle } = useTitle()
+  const dispatch = useDispatch()
 
   React.useEffect(() => {
-    setTitle('Payees')
+    dispatch(setTitle('Payees'))
   }, [])
 
   return (

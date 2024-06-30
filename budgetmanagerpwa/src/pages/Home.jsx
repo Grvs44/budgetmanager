@@ -2,15 +2,17 @@ import { Box, Typography } from '@mui/material'
 import React from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { getTotal } from '../api/user'
-import { useAccount, useTitle } from '../context/global'
+import { useAccount } from '../context/global'
+import { setTitle } from '../redux/titleSlice'
+import { useDispatch } from 'react-redux'
 
 export default function Home() {
   const { total } = useLoaderData()
   const { account } = useAccount()
-  const { setTitle } = useTitle()
+  const dispatch = useDispatch()
 
   React.useEffect(() => {
-    setTitle('Budget Manager')
+    dispatch(setTitle('Budget Manager'))
   }, [])
 
   return (
