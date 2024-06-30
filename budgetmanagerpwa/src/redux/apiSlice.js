@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
@@ -17,7 +18,34 @@ export const apiSlice = createApi({
       },
       keepUnusedDataFor: 0,
     }),
+    getBudget: builder.query({
+      query: (id) => `budget/${id}/`,
+    }),
+    createBudget: builder.mutation({
+      query: (body) => ({
+        url: 'budget/',
+        method: 'POST',
+        body,
+        headers:{'X-CSRFToken': Cookies.get('csrftoken'),}
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const query = await queryFulfilled
+          dispatch(
+            apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
+              draft.results.push(query.data)
+            })
+          )
+        } catch {
+          console.log('useCreateBudgetMutation error')
+        }
+      },
+    }),
   }),
 })
 
-export const { useGetBudgetsQuery } = apiSlice
+export const {
+  useGetBudgetsQuery,
+  useGetBudgetQuery,
+  useCreateBudgetMutation,
+} = apiSlice

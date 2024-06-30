@@ -3,20 +3,20 @@ import { Button, Container, List, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import BudgetForm from '../components/BudgetForm'
 import BudgetListItem from '../components/BudgetListItem'
-import { useGetBudgetsQuery } from '../redux/apiSlice'
+import { useCreateBudgetMutation, useGetBudgetsQuery } from '../redux/apiSlice'
 
 export default function BudgetList() {
   const [createOpen, setCreateOpen] = React.useState(false)
   const [page, setPage] = React.useState(0)
   const query = useGetBudgetsQuery(page)
+  const [createBudget] = useCreateBudgetMutation()
 
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
   const onCreateSubmit = async (data) => {
-    /*const budget = await createBudget(data)
-    console.log(budget)
-    addItem(budget)*/
+    const budget = createBudget(data);
+    console.log('Created:' + budget)
     return null
   }
   return list.count ? (
