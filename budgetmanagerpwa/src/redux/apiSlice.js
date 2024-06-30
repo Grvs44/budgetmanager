@@ -6,14 +6,15 @@ export const apiSlice = createApi({
     getBudgets: builder.query({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
       serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
+        return endpointName
       },
       merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results);
+        currentCache.results.push(...newItems.results)
+        currentCache.next = newItems.next
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      }
+        return currentArg !== previousArg
+      },
     }),
   }),
 })
