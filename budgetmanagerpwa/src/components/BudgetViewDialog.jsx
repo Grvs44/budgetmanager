@@ -7,26 +7,51 @@ import {
   Button,
 } from '@mui/material'
 import React from 'react'
+import { useGetBudgetQuery } from '../redux/apiSlice'
 
-export default function BudgetViewDialog({ open, onClose, onEdit, budget }) {
+export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{budget.name}</DialogTitle>
+      <ViewContent onClose={onClose} onEdit={onEdit} budgetId={budgetId} />
+    </Dialog>
+  )
+}
+
+function ViewContent({ onClose, onEdit, budgetId }) {
+  const { data, isLoading } = useGetBudgetQuery(budgetId)
+  let title, content
+  if (isLoading) {
+    title = 'Loading'
+    content = null
+  } else {
+    title = data.name
+    content = (
       <DialogContent>
-        <Typography>{budget.description}</Typography>
-        <Typography>{budget.active ? 'Active' : 'Inactive'}</Typography>
+        <Typography>{data.description}</Typography>
+        <Typography>{data.active ? 'Active' : 'Inactive'}</Typography>
         <Typography>
-          Last modified on {budget.last_modified} by {budget.modified_by}
+          Last modified on {data.last_modified} by {data.modified_by}
         </Typography>
       </DialogContent>
+    )
+  }
+  return (
+    <>
+      <DialogTitle>{title}</DialogTitle>
+      {content}
       <DialogActions>
         <Button type="button" onClick={onClose}>
           Close
         </Button>
-        <Button type="button" variant="contained" onClick={onEdit}>
+        <Button
+          type="button"
+          variant="contained"
+          onClick={onEdit}
+          disabled={isLoading}
+        >
           Edit
         </Button>
       </DialogActions>
-    </Dialog>
+    </>
   )
 }

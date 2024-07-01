@@ -53,18 +53,34 @@ export const apiSlice = createApi({
       }),
       async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
         try {
+          console.log('starting')
           const query = await queryFulfilled
+          console.log(query.data)
+          console.log('fulfilled')
           dispatch(
             apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
-              draft.results[draft.results.indexOf((e) => e.id == id)] =
+              console.log('a1')
+              console.log(draft)
+              const i = draft.results.indexOf((e) => e.id == id)
+              console.log(draft.results.find(e=>e.id===id))
+              console.log(i)
+              draft.results[i] =
                 query.data
+                console.log('a2')
+          console.log(draft.results)
             })
           )
+          console.log('dispatched 1/2')
           dispatch(
             apiSlice.util.updateQueryData('getBudget', undefined, (draft) => {
+              console.log('b1')
+              console.log(draft)
               draft[draft.indexOf((e) => e.id == id)] = query.data
+              console.log('b2')
+              console.log(draft)
             })
           )
+          console.log('dispatched 2/2')
         } catch {
           console.log('useUpdateBudgetMutation error')
         }

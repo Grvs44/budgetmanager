@@ -8,8 +8,10 @@ export default function BudgetListItem({ item }) {
   const [updateBudget] = useUpdateBudgetMutation()
   const [viewOpen, setViewOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
-  const onEdit = () => {
+  const [editBudget, setEditBudget] = React.useState(null)
+  const onEdit = (budget) => {
     setViewOpen(false)
+    setEditBudget(budget)
     setEditOpen(true)
   }
   const onSubmit = (budget) => {
@@ -36,11 +38,11 @@ export default function BudgetListItem({ item }) {
       <BudgetViewDialog
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        budget={item}
+        budgetId={item.id}
         onEdit={onEdit}
       />
       <BudgetForm
-        item={item}
+        item={editBudget}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         title={item.name}
