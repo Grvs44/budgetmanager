@@ -16,15 +16,15 @@ export default function BudgetList() {
   const list = query.data
 
   const onCreateSubmit = async (data) => {
-    createBudget(data);
+    createBudget(data)
     return null
   }
 
   return list.count ? (
     <Container>
-    <Button onClick={() => setCreateOpen(true)}>
-      <AddIcon /> New
-    </Button>
+      <Button onClick={() => setCreateOpen(true)}>
+        <AddIcon /> New
+      </Button>
       <Typography>
         Showing {list.results.length} of {list.count}
       </Typography>

@@ -45,8 +45,8 @@ export const apiSlice = createApi({
       invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
     updateBudget: builder.mutation({
-      query: (body) => ({
-        url: `budget/${body.id}/`,
+      query: ({id, ...body}) => ({
+        url: `budget/${id}/`,
         method: 'PATCH',
         body,
         headers,
