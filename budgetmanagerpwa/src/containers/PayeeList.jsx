@@ -1,25 +1,21 @@
 import React from 'react'
-import { Button, Container } from '@mui/material'
+import { Button, Container, List } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { createPayee, getPayees } from '../api/payee'
 import PayeeForm from '../components/PayeeForm'
-import List from '../components/List'
 import PayeeListItem from '../components/PayeeListItem'
-import { PayeeContext } from '../context/payee'
+import { useCreatePayeeMutation, useGetPayeesQuery } from '../redux/apiSlice'
 
-export default function PayeeList({ list }) {
-  const { resetItems, addItem } = React.useContext(PayeeContext)
-
+export default function PayeeList() {
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [page, setPage] = React.useState(0)
+  const query = useGetPayeesQuery(page)
+  const [createPayee] = useCreatePayeeMutation()
 
-  React.useEffect(() => {
-    resetItems(list)
-  }, [list])
+  if (query.isLoading) return <p>Loading...</p>
+  const list = query.data
 
-  const onCreateSubmit = async (data) => {
-    const payee = await createPayee(data)
-    console.log(payee)
-    addItem(payee)
+  const onCreateSubmit = (data) => {
+    createPayee(data)
     return null
   }
 
@@ -29,14 +25,17 @@ export default function PayeeList({ list }) {
         <AddIcon /> New
       </Button>
       {list.count ? (
-        <List
-          Context={PayeeContext}
-          onNextPage={getPayees}
-          ItemComponent={PayeeListItem}
-        />
+        <List>
+          {list.results.map((item) => (
+            <PayeeListItem item={item} key={item.id} />
+          ))}
+        </List>
       ) : (
         <p>No payees</p>
       )}
+      {list.next ? (
+        <Button onClick={() => setPage(page + 1)}>Load more</Button>
+      ) : null}
       <PayeeForm
         onClose={() => setCreateOpen(false)}
         onSubmit={onCreateSubmit}

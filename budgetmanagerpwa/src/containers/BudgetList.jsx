@@ -20,7 +20,7 @@ export default function BudgetList() {
     return null
   }
 
-  return list.count ? (
+  return (
     <Container>
       <Button onClick={() => setCreateOpen(true)}>
         <AddIcon /> New
@@ -28,11 +28,15 @@ export default function BudgetList() {
       <Typography>
         Showing {list.results.length} of {list.count}
       </Typography>
-      <List>
-        {list.results.map((item) => (
-          <BudgetListItem item={item} key={item.id} />
-        ))}
-      </List>
+      {list.count ? (
+        <List>
+          {list.results.map((item) => (
+            <BudgetListItem item={item} key={item.id} />
+          ))}
+        </List>
+      ) : (
+        <p>No budgets</p>
+      )}
       {list.next ? (
         <Button onClick={() => setPage(page + 1)}>Load more</Button>
       ) : null}
@@ -43,7 +47,5 @@ export default function BudgetList() {
         title="Add budget"
       />
     </Container>
-  ) : (
-    <p>No budgets</p>
   )
 }

@@ -9,10 +9,9 @@ import App from './App'
 import theme from './theme'
 import ErrorPage from './pages/ErrorPage'
 import JoinForm, { joinFormAction } from './pages/JoinForm'
-import { getCurrentUser } from './api/user'
 import Home, { homeLoader } from './pages/Home'
 import BudgetPage from './pages/BudgetPage'
-import PayeePage, { payeePageLoader } from './pages/PayeePage'
+import PayeePage from './pages/PayeePage'
 import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
 import { rootPath } from './settings'
 
@@ -34,7 +33,6 @@ const router = createBrowserRouter([
       {
         path: 'payee',
         element: <PayeePage />,
-        loader: payeePageLoader,
       },
       {
         path: 'payment',
@@ -44,7 +42,6 @@ const router = createBrowserRouter([
       {
         path: 'budget/:budgetId/payee',
         element: <PayeePage />,
-        loader: payeePageLoader,
       },
       {
         path: 'budget/:budgetId/payment',
