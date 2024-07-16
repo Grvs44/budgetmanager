@@ -7,7 +7,8 @@ import {
   Button,
 } from '@mui/material'
 import React from 'react'
-import { useGetBudgetQuery } from '../redux/apiSlice'
+import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
+import { showUserDetails } from '../redux/utils'
 
 export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
   return (
@@ -19,8 +20,13 @@ export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
 
 function ViewContent({ onClose, onEdit, budgetId }) {
   const { data, isLoading } = useGetBudgetQuery(budgetId)
+  const user = useGetUserQuery(data?.modified_by, {
+    skip: isLoading || data.modified_by == null,
+  })
+  console.log('user')
+  console.log(user)
   let title, content
-  if (isLoading) {
+  if (isLoading || user.isLoading) {
     title = 'Loading'
     content = null
   } else {
@@ -30,7 +36,7 @@ function ViewContent({ onClose, onEdit, budgetId }) {
         <Typography>{data.description}</Typography>
         <Typography>{data.active ? 'Active' : 'Inactive'}</Typography>
         <Typography>
-          Last modified on {data.last_modified} by {data.modified_by}
+          Last modified on {data.last_modified} by {showUserDetails(user.data)}
         </Typography>
       </DialogContent>
     )

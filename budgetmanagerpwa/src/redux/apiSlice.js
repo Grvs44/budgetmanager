@@ -11,6 +11,10 @@ export const apiSlice = createApi({
     getCurrentUser: builder.query({
       query: () => 'user/me/',
     }),
+    getUser: builder.query({
+      query: (id) => `user/${id}/`,
+      keepUnusedDataFor: 60000,
+    }),
 
     // Budgets
     getBudgets: builder.query({
@@ -280,6 +284,7 @@ export const apiSlice = createApi({
 
 export const {
   useGetCurrentUserQuery,
+  useGetUserQuery,
   useGetBudgetsQuery,
   useGetBudgetQuery,
   useCreateBudgetMutation,
