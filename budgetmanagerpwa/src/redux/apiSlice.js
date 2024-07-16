@@ -10,6 +10,17 @@ export const apiSlice = createApi({
     // User
     getCurrentUser: builder.query({
       query: () => 'user/me/',
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const query = await queryFulfilled
+          console.log(query)
+          dispatch(
+            apiSlice.util.upsertQueryData('getUser', query.data.id, query.data)
+          )
+        } catch {
+          console.log('getCurrentUser error')
+        }
+      },
     }),
     getUser: builder.query({
       query: (id) => `user/${id}/`,
