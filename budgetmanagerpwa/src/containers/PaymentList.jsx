@@ -1,25 +1,24 @@
 import React from 'react'
 import AddIcon from '@mui/icons-material/Add'
-import { Button, Container } from '@mui/material'
-import { createPayment, getPayments } from '../api/payment'
+import { Button, Container, List, Typography } from '@mui/material'
 import PaymentForm from '../components/PaymentForm'
-import List from '../components/List'
+import {
+  useCreatePaymentMutation,
+  useGetPaymentsQuery,
+} from '../redux/apiSlice'
 import PaymentListItem from '../components/PaymentListItem'
-import { PaymentContext } from '../context/payment'
 
-export default function PaymentList({list}) {
-  const { resetItems, addItem } = React.useContext(PaymentContext)
-
+export default function PaymentList() {
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [page, setPage] = React.useState(0)
+  const query = useGetPaymentsQuery(page)
+  const [createPayment] = useCreatePaymentMutation()
 
-  React.useEffect(() => {
-    resetItems(list)
-  }, [list])
+  if (query.isLoading) return <p>Loading...</p>
+  const list = query.data
 
-  const onCreateSubmit = async (data) => {
-    const payment = await createPayment(data)
-    console.log(payment)
-    addItem(payment)
+  const onCreateSubmit = (data) => {
+    createPayment(data)
     return null
   }
 
@@ -28,15 +27,21 @@ export default function PaymentList({list}) {
       <Button onClick={() => setCreateOpen(true)}>
         <AddIcon /> New
       </Button>
+      <Typography>
+        Showing {list.results.length} of {list.count}
+      </Typography>
       {list.count ? (
-        <List
-          Context={PaymentContext}
-          onNextPage={getPayments}
-          ItemComponent={PaymentListItem}
-        />
+        <List>
+          {list.results.map((item) => (
+            <PaymentListItem item={item} key={item.id} />
+          ))}
+        </List>
       ) : (
         <p>No payments</p>
       )}
+      {list.next ? (
+        <Button onClick={() => setPage(page + 1)}>Load more</Button>
+      ) : null}
       <PaymentForm
         onClose={() => setCreateOpen(false)}
         onSubmit={onCreateSubmit}

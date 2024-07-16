@@ -12,7 +12,7 @@ import JoinForm, { joinFormAction } from './pages/JoinForm'
 import Home, { homeLoader } from './pages/Home'
 import BudgetPage from './pages/BudgetPage'
 import PayeePage from './pages/PayeePage'
-import PaymentPage, { paymentPageLoader } from './pages/PaymentPage'
+import PaymentPage from './pages/PaymentPage'
 import { rootPath } from './settings'
 
 const router = createBrowserRouter([
@@ -37,7 +37,6 @@ const router = createBrowserRouter([
       {
         path: 'payment',
         element: <PaymentPage />,
-        loader: paymentPageLoader,
       },
       {
         path: 'budget/:budgetId/payee',
@@ -46,12 +45,10 @@ const router = createBrowserRouter([
       {
         path: 'budget/:budgetId/payment',
         element: <PaymentPage />,
-        loader: paymentPageLoader,
       },
       {
         path: 'payee/:payeeId/payment',
         element: <PaymentPage />,
-        loader: paymentPageLoader,
       },
       {
         path: 'join',
