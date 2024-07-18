@@ -8,13 +8,10 @@ import {
 } from '@mui/material'
 import FormDialog from './FormDialog'
 
-export default function BudgetForm({
-  budget = { active: true },
-  onClose,
-  onSubmit,
-  open,
-  title,
-}) {
+const empty = { name: '', description: '', active: true }
+
+export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
+  if (budget == null) budget = empty
   return (
     <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
       <List>

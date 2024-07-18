@@ -1,19 +1,26 @@
 import React from 'react'
 import { List, ListItem, TextField } from '@mui/material'
 import FormDialog from './FormDialog'
+import { useGetBudgetQuery } from '../redux/apiSlice'
 
-export default function PayeeForm({
-  payee = {},
-  onClose,
-  onSubmit,
-  open,
-  title,
-}) {
+const empty = { budget: null, name: '', description: '' }
+
+export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
+  if (payee == null) payee = empty
+  const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
+  console.log(budget.isLoading, budget.data?.name)
+  console.log(payee)
   return (
     <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
       <List>
         <ListItem>
-          <TextField defaultValue={payee.budget} label="Budget" name="budget" required />
+          <TextField
+            defaultValue={budget.data?.id}
+            label="Budget"
+            name="budget"
+            required
+            disabled={budget.isLoading}
+          />
         </ListItem>
         <ListItem>
           <TextField

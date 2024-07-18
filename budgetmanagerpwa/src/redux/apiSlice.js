@@ -117,14 +117,14 @@ export const apiSlice = createApi({
 
     // Payees
     getPayees: builder.query({
-      query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
+      query: (page = 0) => `payee/?offset=${page * 10}&limit=10`,
       providesTags: (data, error, arg) =>
         data
           ? [
-              ...data.results.map(({ id }) => ({ type: 'Budget', id })),
-              { type: 'Budget', id: PARTIAL },
+              ...data.results.map(({ id }) => ({ type: 'Payee', id })),
+              { type: 'Payee', id: PARTIAL },
             ]
-          : [{ type: 'Budget', id: PARTIAL }],
+          : [{ type: 'Payee', id: PARTIAL }],
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName
       },

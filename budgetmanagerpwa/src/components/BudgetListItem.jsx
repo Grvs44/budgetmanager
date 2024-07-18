@@ -9,7 +9,7 @@ export default function BudgetListItem({ item }) {
   const [viewOpen, setViewOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
   const [editBudget, setEditBudget] = React.useState(null)
-  const onEdit = (budget) => {
+  const onEdit = ({budget}) => {
     setViewOpen(false)
     setEditBudget(budget)
     setEditOpen(true)
@@ -42,7 +42,7 @@ export default function BudgetListItem({ item }) {
         onEdit={onEdit}
       />
       <BudgetForm
-        item={editBudget}
+        budget={editBudget}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         title={item.name}

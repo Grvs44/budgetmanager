@@ -23,8 +23,6 @@ function ViewContent({ onClose, onEdit, budgetId }) {
   const user = useGetUserQuery(data?.modified_by, {
     skip: isLoading || data.modified_by == null,
   })
-  console.log('user')
-  console.log(user)
   let title, content
   if (isLoading || user.isLoading) {
     title = 'Loading'
@@ -52,7 +50,7 @@ function ViewContent({ onClose, onEdit, budgetId }) {
         <Button
           type="button"
           variant="contained"
-          onClick={onEdit}
+          onClick={() => onEdit({ budget: data })}
           disabled={isLoading}
         >
           Edit

@@ -1,17 +1,50 @@
 import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
+import { useGetBudgetQuery, useUpdatePayeeMutation } from '../redux/apiSlice'
+import PayeeViewDialog from './PayeeViewDialog'
+import PayeeForm from './PayeeForm'
 
 export default function PayeeListItem({ item }) {
+  const [updatePayee] = useUpdatePayeeMutation()
+  const [viewOpen, setViewOpen] = React.useState(false)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [editData, setEditData] = React.useState(null)
+  const budget = useGetBudgetQuery(item.budget)
+  const budgetName = budget.isLoading ? 'loading...' : budget.data.name
+  const onEdit = (data) => {
+    setViewOpen(false)
+    setEditData(data)
+    setEditOpen(true)
+  }
+  const onSubmit = (payee) => {
+    payee.id = item.id
+    updatePayee(payee)
+    setEditOpen(false)
+    setViewOpen(true)
+  }
   return (
     <ListItem>
-      <Box>
+      <Box onClick={() => setViewOpen(true)}>
         <Typography>{item.name}</Typography>
-        <Typography>{item.budget}</Typography>
+        <Typography>Budget: {budgetName}</Typography>
         <Typography>{item.description}</Typography>
         <Typography>
           Last modified at {item.last_modified} by {item.modified_by}
         </Typography>
       </Box>
+      <PayeeViewDialog
+        open={viewOpen}
+        onClose={() => setViewOpen(false)}
+        payeeId={item.id}
+        onEdit={onEdit}
+      />
+      <PayeeForm
+        data={editData}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        title={item.name}
+        onSubmit={onSubmit}
+      />
     </ListItem>
   )
 }
