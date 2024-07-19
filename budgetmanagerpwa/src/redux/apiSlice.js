@@ -30,13 +30,6 @@ export const apiSlice = createApi({
     // Budgets
     getBudgets: builder.query({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
-      providesTags: (data, error, arg) =>
-        data
-          ? [
-              ...data.results.map(({ id }) => ({ type: 'Budget', id })),
-              { type: 'Budget', id: PARTIAL },
-            ]
-          : [{ type: 'Budget', id: PARTIAL }],
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName
       },
@@ -48,6 +41,9 @@ export const apiSlice = createApi({
         return currentArg !== previousArg
       },
       keepUnusedDataFor: 0,
+    }),
+    getBudgetsSearch: builder.query({
+      query: (name) => 'budget/?search=' + encodeURI(name),
     }),
     getBudget: builder.query({
       query: (id) => `budget/${id}/`,
@@ -297,6 +293,7 @@ export const {
   useGetCurrentUserQuery,
   useGetUserQuery,
   useGetBudgetsQuery,
+  useGetBudgetsSearchQuery,
   useGetBudgetQuery,
   useCreateBudgetMutation,
   useUpdateBudgetMutation,

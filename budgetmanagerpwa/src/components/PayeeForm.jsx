@@ -2,6 +2,7 @@ import React from 'react'
 import { List, ListItem, TextField } from '@mui/material'
 import FormDialog from './FormDialog'
 import { useGetBudgetQuery } from '../redux/apiSlice'
+import DropDown from './DropDown'
 
 const empty = { budget: null, name: '', description: '' }
 
@@ -12,8 +13,8 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
     <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
       <List>
         <ListItem>
-          <TextField
-            defaultValue={budget.data?.id}
+          <DropDown
+            defaultValue={budget.data}
             label="Budget"
             name="budget"
             required
