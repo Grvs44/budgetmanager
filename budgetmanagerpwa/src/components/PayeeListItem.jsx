@@ -30,7 +30,7 @@ export default function PayeeListItem({ item }) {
     setViewOpen(true)
   }
   const onDeleteSubmit = () => {
-    deletePayee(item.id)
+    deletePayee(item)
     setViewOpen(false)
   }
   return (
