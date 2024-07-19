@@ -1,14 +1,21 @@
 import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
-import { useGetBudgetQuery, useUpdatePayeeMutation } from '../redux/apiSlice'
+import {
+  useDeletePayeeMutation,
+  useGetBudgetQuery,
+  useUpdatePayeeMutation,
+} from '../redux/apiSlice'
 import PayeeViewDialog from './PayeeViewDialog'
 import PayeeForm from './PayeeForm'
+import DeleteConfirmation from './DeleteConfirmation'
 
 export default function PayeeListItem({ item }) {
   const [updatePayee] = useUpdatePayeeMutation()
   const [viewOpen, setViewOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [editData, setEditData] = React.useState(null)
+  const [deletePayee] = useDeletePayeeMutation()
   const budget = useGetBudgetQuery(item.budget)
   const budgetName = budget.isLoading ? 'loading...' : budget.data.name
   const onEdit = (data) => {
@@ -21,6 +28,10 @@ export default function PayeeListItem({ item }) {
     updatePayee(payee)
     setEditOpen(false)
     setViewOpen(true)
+  }
+  const onDeleteSubmit = () => {
+    deletePayee(item.id)
+    setViewOpen(false)
   }
   return (
     <ListItem>
@@ -37,6 +48,7 @@ export default function PayeeListItem({ item }) {
         onClose={() => setViewOpen(false)}
         payeeId={item.id}
         onEdit={onEdit}
+        onDelete={() => setDeleteOpen(true)}
       />
       <PayeeForm
         payee={editData}
@@ -44,6 +56,12 @@ export default function PayeeListItem({ item }) {
         onClose={() => setEditOpen(false)}
         title={item.name}
         onSubmit={onSubmit}
+      />
+      <DeleteConfirmation
+        onClose={() => setDeleteOpen(false)}
+        onSubmit={onDeleteSubmit}
+        open={deleteOpen}
+        title="Are you sure you want to delete this payee?"
       />
     </ListItem>
   )

@@ -14,15 +14,15 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
-export default function PayeeViewDialog({ open, onClose, onEdit, payeeId }) {
+export default function PayeeViewDialog({ open, onClose, onEdit, payeeId, onDelete }) {
   return (
     <Dialog open={open} onClose={onClose}>
-      <ViewContent onClose={onClose} onEdit={onEdit} payeeId={payeeId} />
+      <ViewContent onClose={onClose} onEdit={onEdit} payeeId={payeeId} onDelete={onDelete} />
     </Dialog>
   )
 }
 
-function ViewContent({ onClose, onEdit, payeeId }) {
+function ViewContent({ onClose, onEdit, payeeId, onDelete }) {
   const payee = useGetPayeeQuery(payeeId)
   const budget = useGetBudgetQuery(payee.data?.budget, { skip: payee.isLoading })
   const user = useGetUserQuery(payee.data?.modified_by, {
@@ -51,8 +51,13 @@ function ViewContent({ onClose, onEdit, payeeId }) {
       <DialogTitle>{title}</DialogTitle>
       {content}
       <DialogActions>
-        <Button type="button" onClick={onClose}>
-          Close
+        <Button
+          type="button"
+          variant="contained"
+          onClick={() => onDelete()}
+          disabled={isLoading}
+        >
+          Delete
         </Button>
         <Button
           type="button"
@@ -61,6 +66,9 @@ function ViewContent({ onClose, onEdit, payeeId }) {
           disabled={isLoading}
         >
           Edit
+        </Button>
+        <Button type="button" onClick={onClose}>
+          Close
         </Button>
       </DialogActions>
     </>

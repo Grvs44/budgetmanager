@@ -5,9 +5,9 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogTitle from '@mui/material/DialogTitle'
 
 export default function DeleteConfirmation({ onClose, onSubmit, open, title }) {
-  const onFormSubmit = async event => {
+  const onFormSubmit = event => {
     event.preventDefault()
-    await onSubmit()
+    onSubmit()
     onClose()
   }
   return (
