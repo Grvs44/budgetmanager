@@ -8,8 +8,6 @@ const empty = { budget: null, name: '', description: '' }
 export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
   if (payee == null) payee = empty
   const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
-  console.log(budget.isLoading, budget.data?.name)
-  console.log(payee)
   return (
     <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
       <List>
