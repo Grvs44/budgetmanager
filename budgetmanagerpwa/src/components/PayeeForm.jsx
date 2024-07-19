@@ -9,8 +9,14 @@ const empty = { budget: null, name: '', description: '' }
 export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
   if (payee == null) payee = empty
   const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
+  const [data, setData] = React.useState(budget.data)
   return (
-    <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      onSubmit={(formData) => onSubmit({ budget: data.id, ...formData })}
+      title={title}
+    >
       <List>
         <ListItem>
           <DropDown
@@ -19,6 +25,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
             name="budget"
             required
             disabled={budget.isLoading}
+            onChange={setData}
           />
         </ListItem>
         <ListItem>

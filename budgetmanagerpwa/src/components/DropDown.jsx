@@ -11,12 +11,11 @@ export default function DropDown({
   name,
   required,
   disabled,
+  onChange,
 }) {
   const [open, setOpen] = React.useState(false)
   const [input, setInput] = React.useState('')
-  const { data, isLoading } = useGetBudgetsSearchQuery(input, {
-    skip: !open || input == '',
-  })
+  const { data, isLoading } = useGetBudgetsSearchQuery(input, { skip: !open })
   const loading = open && isLoading
 
   return (
@@ -27,7 +26,6 @@ export default function DropDown({
       name={name}
       required={required}
       disabled={disabled}
-      id="asynchronous-demo"
       sx={{ width: 300 }}
       open={open}
       onOpen={() => {
@@ -37,22 +35,16 @@ export default function DropDown({
         setOpen(false)
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionKey={(option) => {
-        console.log('key', option, option.id)
-        return option.id
-      }}
-      getOptionLabel={(option) => {
-        console.log('label', option, option.name)
-        return option.name
-      }}
-      onChange={(event, value, reason) => console.log('value', value)}
+      getOptionKey={(option) => option.id}
+      getOptionLabel={(option) => option.name}
+      onChange={(event, value, reason) => onChange(value)}
       onInputChange={(event, value, reason) => setInput(value)}
       options={data ? data.results : []}
       loading={loading}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Asynchronous"
+          label="Budget"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

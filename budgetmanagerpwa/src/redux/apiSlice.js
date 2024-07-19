@@ -43,7 +43,7 @@ export const apiSlice = createApi({
       keepUnusedDataFor: 0,
     }),
     getBudgetsSearch: builder.query({
-      query: (name) => 'budget/?search=' + encodeURI(name),
+      query: (name) => 'budget/?limit=10&search=' + encodeURI(name),
     }),
     getBudget: builder.query({
       query: (id) => `budget/${id}/`,
