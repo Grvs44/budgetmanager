@@ -39,7 +39,7 @@ export default function PayeeListItem({ item }) {
         onEdit={onEdit}
       />
       <PayeeForm
-        data={editData}
+        payee={editData}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         title={item.name}
