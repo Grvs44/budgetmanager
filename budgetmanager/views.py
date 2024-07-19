@@ -45,7 +45,7 @@ class BudgetViewSet(PaymentRelatedMixin, ModelViewSet):
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('active',)
-    ordering_fields = ('name', 'id')
+    ordering_fields = ('name', 'id', 'last_used')
     search_fields = ('name',)
 
     def get_queryset(self):
@@ -100,7 +100,7 @@ class PayeeViewSet(PaymentRelatedMixin, ModelViewSet):
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('budget',)
-    ordering_fields = ('name', 'id')
+    ordering_fields = ('name', 'id', 'last_used')
     search_fields = ('name',)
 
     def get_queryset(self):

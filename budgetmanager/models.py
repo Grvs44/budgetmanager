@@ -54,6 +54,7 @@ class Budget(BaseModel):
         related_name='shared_budgets',
         blank=True,
     )
+    last_used = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.name)
@@ -80,6 +81,7 @@ class Budget(BaseModel):
             if len(record) >= 5:
                 payment.pending = record[4] != ''
             payment.save()
+        self.last_used = datetime.now()
 
     @property
     def total(self):
@@ -149,6 +151,7 @@ class Payee(BaseModel):
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
+    last_used = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.name} ({self.budget.name})'
@@ -159,6 +162,11 @@ class Payee(BaseModel):
         The total amount of the Payments of this Payee
         '''
         return _get_total_amount(self.payment_set)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.budget.save()
 
 
 class Payment(BaseModel):
@@ -189,6 +197,11 @@ class Payment(BaseModel):
         if self.amount.is_signed():
             return f'{self.payee.name}: {abs(self.amount):.2f} from {self.payee.budget.name}'
         return f'{self.payee.name}: {self.amount:.2f} to {self.payee.budget.name}'
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.payee.save()
 
 
 class ShareCode(models.Model):

@@ -19,7 +19,7 @@ class BudgetAdmin(BaseAdmin):
     search_fields = ('name',)
     search_help_text = 'Search by budget name'
     list_per_page = 20
-    readonly_fields = ('modified_by',)
+    readonly_fields = ('last_modified', 'modified_by', 'last_used')
 
 
 @admin.register(models.BudgetShare)
@@ -49,7 +49,7 @@ class PayeeAdmin(BaseAdmin):
     search_fields = ('name',)
     search_help_text = 'Search by payee name'
     list_per_page = 20
-    readonly_fields = ('modified_by',)
+    readonly_fields = ('last_modified', 'modified_by', 'last_used')
 
 
 @admin.register(models.Payment)
@@ -69,7 +69,7 @@ class PaymentAdmin(BaseAdmin):
     list_filter = ('payee__budget', 'payee', 'date')
     sortable_by = list_display
     list_per_page = 20
-    readonly_fields = ('modified_by',)
+    readonly_fields = ('last_modified', 'modified_by')
 
 
 @admin.register(models.ShareCode)
