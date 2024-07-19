@@ -69,28 +69,17 @@ export const apiSlice = createApi({
         try {
           console.log('starting')
           const query = await queryFulfilled
-          console.log(query.data)
           console.log('fulfilled')
-          dispatch(
-            apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
-              console.log('a1')
-              console.log(draft)
-              const i = draft.results.indexOf((e) => e.id == id)
-              console.log(draft.results.find((e) => e.id === id))
-              console.log(i)
-              draft.results[i] = query.data
-              console.log('a2')
-              console.log(draft.results)
-            })
-          )
+          dispatch(apiSlice.util.updateQueryData('getBudget', query.data.id, draft => query.data))
           console.log('dispatched 1/2')
           dispatch(
-            apiSlice.util.updateQueryData('getBudget', undefined, (draft) => {
-              console.log('b1')
-              console.log(draft)
-              draft[draft.indexOf((e) => e.id == id)] = query.data
-              console.log('b2')
-              console.log(draft)
+            apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
+              const old = draft.results.find((e) => e.id === id)
+              const upd = query.data
+              old.id = upd.id
+              old.name = upd.name
+              old.description = upd.description
+              old.active = upd.active
             })
           )
           console.log('dispatched 2/2')
