@@ -9,9 +9,6 @@ export default function PaymentListItem({ item }) {
         <Typography>{item.date}</Typography>
         <Typography>{item.payee}</Typography>
         <Typography>{item.budget}</Typography>
-        <Typography>
-          Last modified at {item.last_modified} by {item.modified_by}
-        </Typography>
       </Box>
     </ListItem>
   )

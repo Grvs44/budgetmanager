@@ -39,9 +39,6 @@ export default function PayeeListItem({ item }) {
         <Typography>{item.name}</Typography>
         <Typography>Budget: {budgetName}</Typography>
         <Typography>{item.description}</Typography>
-        <Typography>
-          Last modified at {item.last_modified} by {item.modified_by}
-        </Typography>
       </Box>
       <PayeeViewDialog
         open={viewOpen}
