@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { join } from '../api/join'
 import { useJoinBudgetMutation } from '../redux/apiSlice'
 
 export default function JoinForm() {
