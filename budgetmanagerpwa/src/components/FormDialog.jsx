@@ -14,20 +14,15 @@ export default function FormDialog({
   open,
   title,
 }) {
-  const onFormSubmit = async (event) => {
-    console.log('submit')
+  const onFormSubmit = (event) => {
     event.preventDefault()
-    const formData = new FormData(event.target)
-    await onSubmit(Object.fromEntries(formData.entries()))
-    onClose()
+    onSubmit(Object.fromEntries(new FormData(event.target).entries()))
   }
   return (
     <Dialog open={open} onClose={onClose}>
       <form onSubmit={onFormSubmit}>
         <DialogTitle>{title}</DialogTitle>
-        <DialogContent>
-          {children}
-        </DialogContent>
+        <DialogContent>{children}</DialogContent>
         <DialogActions>
           <Button type="button" onClick={onClose}>
             Cancel
