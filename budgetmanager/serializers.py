@@ -3,7 +3,6 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     CurrentUserDefault,
-    CharField,
 )
 
 from . import models
@@ -87,8 +86,6 @@ class PayeeSerializer(BaseSerializer):
 
 
 class PayeeListSerializer(BaseSerializer):
-    budget = CharField(source='budget.name')
-
     class Meta:
         model = models.Payee
         fields = (
@@ -115,14 +112,10 @@ class PaymentSerializer(BaseSerializer):
 
 
 class PaymentListSerializer(BaseSerializer):
-    budget = CharField(source='payee.budget.name')
-    payee = CharField(source='payee.name')
-
     class Meta:
         model = models.Payment
         fields = (
             'id',
-            'budget',
             'payee',
             'amount',
             'date',
