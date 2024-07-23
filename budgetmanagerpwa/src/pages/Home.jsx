@@ -1,13 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import { useLoaderData } from 'react-router-dom'
-import { getTotal } from '../api/user'
 import { setTitle } from '../redux/titleSlice'
 import { useDispatch } from 'react-redux'
-import { useGetCurrentUserQuery } from '../redux/apiSlice'
+import { useGetCurrentUserQuery, useGetTotalQuery } from '../redux/apiSlice'
 
 export default function Home() {
-  const { total } = useLoaderData()
+  const total = useGetTotalQuery()
   const { data: user, isLoading } = useGetCurrentUserQuery(null)
   const dispatch = useDispatch()
 
@@ -22,14 +20,9 @@ export default function Home() {
           ? 'Welcome'
           : 'Welcome, ' + (user.first_name ? user.first_name : user.username)}
       </Typography>
-      <Typography variant="h5" component="h2">
-        Total: {total}
+      <Typography variant="h5" component="h2" hidden={total.isLoading}>
+        Total: {total.data}
       </Typography>
     </Box>
   )
-}
-
-export async function homeLoader() {
-  const total = await getTotal()
-  return { total }
 }

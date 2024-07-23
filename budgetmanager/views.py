@@ -214,7 +214,7 @@ class JoinBudgetView(APIView):
             return Response(None, status.HTTP_204_NO_CONTENT)
         except django.core.exceptions.ValidationError as exc:
             raise rest_framework.exceptions.ValidationError(
-                detail={'detail': exc})
+                detail={'detail': '\n'.join(exc)})
 
 
 def index_view(request):

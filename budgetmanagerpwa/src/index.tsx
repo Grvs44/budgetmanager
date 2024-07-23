@@ -8,8 +8,8 @@ import store from './redux/store'
 import App from './App'
 import theme from './theme'
 import ErrorPage from './pages/ErrorPage'
-import JoinForm, { joinFormAction } from './pages/JoinForm'
-import Home, { homeLoader } from './pages/Home'
+import JoinForm from './pages/JoinForm'
+import Home from './pages/Home'
 import BudgetPage from './pages/BudgetPage'
 import PayeePage from './pages/PayeePage'
 import PaymentPage from './pages/PaymentPage'
@@ -24,7 +24,6 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Home />,
-        loader: homeLoader,
       },
       {
         path: 'budget',
@@ -53,12 +52,10 @@ const router = createBrowserRouter([
       {
         path: 'join',
         element: <JoinForm />,
-        action: joinFormAction,
       },
       {
         path: 'join/:id',
         element: <JoinForm />,
-        action: joinFormAction,
       },
     ],
   },

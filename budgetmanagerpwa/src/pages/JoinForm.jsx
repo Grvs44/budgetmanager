@@ -1,11 +1,26 @@
 import React from 'react'
-import { Form, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { join } from '../api/join'
+import { useJoinBudgetMutation } from '../redux/apiSlice'
 
 export default function JoinForm() {
   const params = useParams()
+  const [joinBudget] = useJoinBudgetMutation()
+
+  const onSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      await joinBudget(
+        Object.fromEntries(new FormData(event.target).entries())
+      ).unwrap()
+      alert('Joined budget')
+    } catch (error) {
+      alert('Error joining budget: ' + error?.data?.detail)
+    }
+  }
+
   return (
-    <Form method="post">
+    <form onSubmit={onSubmit}>
       <label>
         Join code
         <br />
@@ -18,14 +33,6 @@ export default function JoinForm() {
         <br />
         <input type="submit" />
       </label>
-    </Form>
+    </form>
   )
-}
-
-export async function joinFormAction({ request, params }) {
-  const fd = await request.formData()
-  const data = Object.fromEntries(fd)
-  console.log(data)
-  await join(data)
-  return new Response(<p>Joined</p>)
 }

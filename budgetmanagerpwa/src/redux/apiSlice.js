@@ -26,6 +26,17 @@ export const apiSlice = createApi({
       query: (id) => `user/${id}/`,
       keepUnusedDataFor: 60000,
     }),
+    getTotal: builder.query({
+      query: () => 'total/',
+    }),
+    joinBudget: builder.mutation({
+      query: (body) => ({
+        url: 'join/',
+        method: 'POST',
+        body,
+        headers,
+      }),
+    }),
 
     // Budgets
     getBudgets: builder.query({
@@ -43,7 +54,8 @@ export const apiSlice = createApi({
       keepUnusedDataFor: 0,
     }),
     getBudgetsSearch: builder.query({
-      query: (name) => 'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
+      query: (name) =>
+        'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
     }),
     getBudget: builder.query({
       query: (id) => `budget/${id}/`,
@@ -70,7 +82,13 @@ export const apiSlice = createApi({
           console.log('starting')
           const query = await queryFulfilled
           console.log('fulfilled')
-          dispatch(apiSlice.util.updateQueryData('getBudget', query.data.id, draft => query.data))
+          dispatch(
+            apiSlice.util.updateQueryData(
+              'getBudget',
+              query.data.id,
+              (draft) => query.data
+            )
+          )
           console.log('dispatched 1/2')
           dispatch(
             apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
@@ -281,6 +299,8 @@ export const apiSlice = createApi({
 export const {
   useGetCurrentUserQuery,
   useGetUserQuery,
+  useGetTotalQuery,
+  useJoinBudgetMutation,
   useGetBudgetsQuery,
   useGetBudgetsSearchQuery,
   useGetBudgetQuery,
