@@ -10,11 +10,22 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
   if (payee == null) payee = empty
   const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
   const [data, setData] = React.useState(budget.data)
+
+  React.useEffect(() => setData(budget.data), [budget.isLoading])
+
+  const onFormSubmit = (formData) => {
+    if (data == null) alert('Missing budget')
+    else {
+      onSubmit({ budget: data.id, ...formData })
+      onClose()
+    }
+  }
+
   return (
     <FormDialog
       open={open}
       onClose={onClose}
-      onSubmit={(formData) => onSubmit({ budget: data.id, ...formData })}
+      onSubmit={onFormSubmit}
       title={title}
     >
       <List>
