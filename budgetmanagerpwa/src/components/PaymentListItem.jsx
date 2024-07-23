@@ -5,9 +5,10 @@ export default function PaymentListItem({ item }) {
   return (
     <ListItem>
       <Box>
-        <Typography>{item.amount}</Typography>
+        <Typography>
+          {Math.abs(item.amount)} {item.amount > 0 ? 'from' : 'to'} {item.payee}
+        </Typography>
         <Typography>{item.date}</Typography>
-        <Typography>{item.payee}</Typography>
         <Typography>{item.budget}</Typography>
       </Box>
     </ListItem>
