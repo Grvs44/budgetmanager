@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     CurrentUserDefault,
+    CharField,
 )
 
 from . import models
@@ -44,6 +45,17 @@ class BudgetSerializer(BaseSerializer):
         )
 
 
+class BudgetListSerializer(BaseSerializer):
+    class Meta:
+        model = models.Budget
+        fields = (
+            'id',
+            'name',
+            'active',
+            'user',
+        )
+
+
 class BudgetShareSerializer(ModelSerializer):
     user = PrimaryKeyRelatedField(read_only=True)
     budget = PrimaryKeyRelatedField(read_only=True)
@@ -74,6 +86,18 @@ class PayeeSerializer(BaseSerializer):
         )
 
 
+class PayeeListSerializer(BaseSerializer):
+    budget = CharField(source='budget.name')
+
+    class Meta:
+        model = models.Payee
+        fields = (
+            'id',
+            'name',
+            'budget',
+        )
+
+
 class PaymentSerializer(BaseSerializer):
     class Meta:
         model = models.Payment
@@ -87,6 +111,21 @@ class PaymentSerializer(BaseSerializer):
             'last_modified',
             'modified_by',
             'modified_by_hidden',
+        )
+
+
+class PaymentListSerializer(BaseSerializer):
+    budget = CharField(source='payee.budget.name')
+    payee = CharField(source='payee.name')
+
+    class Meta:
+        model = models.Payment
+        fields = (
+            'id',
+            'budget',
+            'payee',
+            'amount',
+            'date',
         )
 
 
