@@ -1,19 +1,31 @@
 import React from 'react'
-import { Checkbox, FormControlLabel, List, ListItem, TextField } from '@mui/material'
+import {
+  Checkbox,
+  FormControlLabel,
+  List,
+  ListItem,
+  TextField,
+} from '@mui/material'
 import FormDialog from './FormDialog'
 
 export default function PaymentForm({
-  payment = {},
+  payment,
   onClose,
   onSubmit,
   open,
   title,
 }) {
+  if (payment == null) payment = {}
   return (
     <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
       <List>
         <ListItem>
-          <TextField defaultValue={payment.payee} label="Payee" name="payee" required />
+          <TextField
+            defaultValue={payment.payee}
+            label="Payee"
+            name="payee"
+            required
+          />
         </ListItem>
         <ListItem>
           <TextField
@@ -25,7 +37,12 @@ export default function PaymentForm({
           />
         </ListItem>
         <ListItem>
-          <TextField name="date" defaultValue={payment.date} label="Date" required />
+          <TextField
+            name="date"
+            defaultValue={payment.date}
+            label="Date"
+            required
+          />
         </ListItem>
         <ListItem>
           <TextField
@@ -37,7 +54,9 @@ export default function PaymentForm({
         </ListItem>
         <ListItem>
           <FormControlLabel
-            control={<Checkbox name="pending" defaultChecked={payment.pending} />}
+            control={
+              <Checkbox name="pending" defaultChecked={payment.pending} />
+            }
             label="Exclude from total"
           />
         </ListItem>
