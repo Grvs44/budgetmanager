@@ -4,6 +4,10 @@ export type User = {
   username: string
 }
 
+export type Settings = {
+  currency: string
+}
+
 export type Budget = {
   id: number
   name: string
