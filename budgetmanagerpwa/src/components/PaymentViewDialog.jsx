@@ -67,7 +67,7 @@ export default function PaymentViewDialog({
         <Button
           type="button"
           variant="contained"
-          onClick={() => onEdit(payee.data)}
+          onClick={() => onEdit(payment.data)}
           disabled={skip}
         >
           Edit
