@@ -47,8 +47,10 @@ export default function PaymentViewDialog({
         <Typography>
           Payee: {payee?.data ? payee.data.name : 'loading'}
         </Typography>
-        <Typography>Amount: {skip ? 'loading' : payee.data.amount}</Typography>
-        <Typography>Date: {skip ? 'loading' : payee.data.date}</Typography>
+        <Typography>
+          Amount: {skip ? 'loading' : payment.data.amount}
+        </Typography>
+        <Typography>Date: {skip ? 'loading' : payment.data.date}</Typography>
         {payment?.data?.pending ? <Typography>Pending</Typography> : null}
         <Typography>
           Last modified on {payment?.data?.last_modified} by{' '}
