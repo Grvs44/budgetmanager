@@ -232,10 +232,12 @@ class ShareCode(models.Model):
 
     @transaction.atomic
     def add_user(self, user):
-        BudgetShare.objects.create(
+        share = BudgetShare(
             budget=self.budget,
             user=user,
             can_edit=self.can_edit,
             added_by=self.added_by,
         )
+        share.clean()
+        share.save()
         self.delete()

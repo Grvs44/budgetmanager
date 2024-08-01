@@ -1,11 +1,12 @@
 # pylint: disable=no-member,unused-argument
-import django.core.exceptions
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import Q
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
-import rest_framework.exceptions
+from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -212,9 +213,12 @@ class JoinBudgetView(APIView):
                 pk=request.data.get('id')
             ).add_user(request.user)
             return Response(None, status.HTTP_204_NO_CONTENT)
-        except django.core.exceptions.ValidationError as exc:
-            raise rest_framework.exceptions.ValidationError(
-                detail={'detail': '\n'.join(exc)})
+        except DjangoValidationError as e:
+            raise RestValidationError(
+                detail={'detail': '\n'.join(e)}) from e
+        except IntegrityError as e:
+            raise RestValidationError(
+                {'detail': 'You have already joined this budget'}) from e
 
 
 def index_view(request):
