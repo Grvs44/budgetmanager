@@ -9,6 +9,6 @@ mkdir -p budgetmanager/static/budgetmanager/img
 mv budgetmanagerpwa/build/*.ico budgetmanager/static/budgetmanager/img/
 mv budgetmanagerpwa/build/*.png budgetmanager/static/budgetmanager/img/
 
-# Move manifest
-#mkdir -p budgetmanager/templates/budgetmanager
-#mv budgetmanagerpwa/build/manifest.json budgetmanager/templates/budgetmanager/manifest.json
+# Move service worker
+mkdir -p budgetmanager/templates/budgetmanager
+mv budgetmanagerpwa/build/service-worker.js budgetmanager/templates/budgetmanager/
