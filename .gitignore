@@ -2,8 +2,9 @@ __pycache__
 *.egg-info
 build
 dist
-*/static/budgetmanager
-*/templates/budgetmanager
+budgetmanager/static
+budgetmanager/templates/budgetmanager/*.html
+budgetmanager/templates/budgetmanager/*.js
 *.sqlite3
 *.csv
 

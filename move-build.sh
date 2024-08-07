@@ -1,7 +1,14 @@
-if [ ! -d budgetmanager/static ]; then
-  mkdir budgetmanager/static
-elif [ -d budgetmanager/static/budgetmanager ]; then
-  rm -r budgetmanager/static/budgetmanager
-fi
+# Delete existing files
+rm -f -r budgetmanager/static/budgetmanager
+
+# Move js files
 mv budgetmanagerpwa/build/static budgetmanager/static/budgetmanager
-mv budgetmanagerpwa/build/manifest.json budgetmanager/templates/budgetmanager/manifest.json
+
+# Move img files
+mkdir -p budgetmanager/static/budgetmanager/img
+mv budgetmanagerpwa/build/*.ico budgetmanager/static/budgetmanager/img/
+mv budgetmanagerpwa/build/*.png budgetmanager/static/budgetmanager/img/
+
+# Move manifest
+#mkdir -p budgetmanager/templates/budgetmanager
+#mv budgetmanagerpwa/build/manifest.json budgetmanager/templates/budgetmanager/manifest.json
