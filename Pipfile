@@ -11,6 +11,7 @@ django-filter = "*"
 [dev-packages]
 build = "*"
 django-rest-knox = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.10"
