@@ -13,11 +13,22 @@ import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import { rootPath } from '../settings'
 
+// From https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/window-controls-overlay
+const titleStyles = {
+  position: 'fixed',
+  left: 'env(titlebar-area-x, 0)',
+  top: 'env(titlebar-area-y, 0)',
+  height: 'env(titlebar-area-height, 50px)',
+  width: 'env(titlebar-area-width, 100%)',
+  '-webkit-app-region': 'drag',
+}
+
 export default function TopBar({ user, title }) {
   const [open, setOpen] = React.useState(false)
 
   return (
     <>
+      <div style={titleStyles} />
       <AppBar position="sticky">
         <Toolbar>
           <IconButton
