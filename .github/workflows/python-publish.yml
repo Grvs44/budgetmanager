@@ -8,7 +8,9 @@
 
 name: Upload Python Package
 
-on: [push]
+on:
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -26,10 +28,11 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.x'
-    - name: React clean install
-      run: cd budgetmanagerpwa && npm ci
-    - name: React build
-      run: cd budgetmanagerpwa && npm run build && ls build
+    - name: React clean install and build
+      run: |
+        cd budgetmanagerpwa
+        npm ci
+        npm run build
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
