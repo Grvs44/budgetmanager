@@ -27,5 +27,5 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/Grvs44/budgetmanager"
 
-[tool.setuptools]
-packages = ["budgetmanager", "budgetmanager.migrations"]
+[tool.setuptools.packages.find]
+include = ["budgetmanager.*"]
