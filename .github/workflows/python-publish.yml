@@ -23,6 +23,8 @@ jobs:
       with:
         node-version: 20
     - run: cd budgetmanagerpwa
+    - run: pwa
+    - run: ls
     - run: npm ci
     - run: npm run build
 
