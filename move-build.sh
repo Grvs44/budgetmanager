@@ -1,7 +1,8 @@
 # Delete existing files
-rm -f -r budgetmanager/static/budgetmanager
+rm -f -r budgetmanager/static
 
 # Move js files
+mkdir -p budgetmanager/static
 mv budgetmanagerpwa/build/static budgetmanager/static/budgetmanager
 
 # Move img files
