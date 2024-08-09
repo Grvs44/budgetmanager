@@ -8,9 +8,15 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
   },
-  base: '',
+  base: '/budgetmanager/',
   server: {
     open: '/budgetmanager/',
     port: 3000,
+    proxy: {
+      '/budgetmanager/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
   },
 })
