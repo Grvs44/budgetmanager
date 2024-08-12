@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'budgetmanager',
     'rest_framework',
     'django_filters',
-    'knox',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
