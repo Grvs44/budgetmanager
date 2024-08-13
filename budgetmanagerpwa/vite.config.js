@@ -14,10 +14,6 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'service-worker.js',
       manifest: false,
-      devOptions: {
-        enabled: true,
-        type: 'module',
-      },
     }),
     createHtmlPlugin({ minify: true }),
   ],
