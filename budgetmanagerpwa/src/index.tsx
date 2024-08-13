@@ -4,7 +4,6 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { registerServiceWorker } from './serviceWorkerRegistration'
 import store from './redux/store'
 import App from './App'
 import theme from './theme'
@@ -70,4 +69,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ThemeProvider>
   </Provider>
 )
-registerServiceWorker()

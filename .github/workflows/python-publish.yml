@@ -39,6 +39,8 @@ jobs:
         pip install build
     - name: Move React build
       run: ./move-build.sh
+    - name: Update resource paths in index.html
+      run: python update_index.py
     - name: Build package
       run: python -m build
     - name: Publish package
