@@ -18,7 +18,7 @@ export default function TitleBar() {
   return (
     <div
       style={{
-        height: area.height,
+        height: area.height * 0.4,
         width: area.width,
         WebkitAppRegion: 'drag',
       }}
