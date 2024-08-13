@@ -5,32 +5,21 @@ import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import MenuIcon from '@mui/icons-material/Menu'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import { rootPath } from '../settings'
-
-// From https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/window-controls-overlay
-const titleStyles = {
-  position: 'fixed',
-  left: 'env(titlebar-area-x, 0)',
-  top: 'env(titlebar-area-y, 0)',
-  height: 'env(titlebar-area-height, 50px)',
-  width: 'env(titlebar-area-width, 100%)',
-  WebkitAppRegion: 'drag',
-  zIndex: '8',
-}
+import TitleBar from './TitleBar'
 
 export default function TopBar({ user, title }) {
   const [open, setOpen] = React.useState(false)
 
   return (
     <>
-      <div style={titleStyles} />
       <AppBar position="sticky">
+      <TitleBar/>
         <Toolbar>
           <IconButton
             aria-label="Open menu"
@@ -38,7 +27,6 @@ export default function TopBar({ user, title }) {
             size="large"
             edge="start"
             color="inherit"
-            style={{ zIndex: '9' }}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
