@@ -20,7 +20,8 @@ const titleStyles = {
   top: 'env(titlebar-area-y, 0)',
   height: 'env(titlebar-area-height, 50px)',
   width: 'env(titlebar-area-width, 100%)',
-  '-webkit-app-region': 'drag',
+  WebkitAppRegion: 'drag',
+  zIndex: '8',
 }
 
 export default function TopBar({ user, title }) {
@@ -37,6 +38,7 @@ export default function TopBar({ user, title }) {
             size="large"
             edge="start"
             color="inherit"
+            style={{ zIndex: '9' }}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
