@@ -2,8 +2,8 @@
 rm -f -r budgetmanager/static
 
 # Move js files
-mkdir -p budgetmanager/static
-mv budgetmanagerpwa/build/static budgetmanager/static/budgetmanager
+mkdir -p budgetmanager/static/budgetmanager/js
+mv budgetmanagerpwa/build/static/*.js budgetmanager/static/budgetmanager/js
 
 # Move img files
 mkdir -p budgetmanager/static/budgetmanager/img
