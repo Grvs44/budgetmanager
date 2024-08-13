@@ -31,9 +31,6 @@ export default function BudgetListItem({ item }) {
           <Typography>inactive</Typography>
         )}
         <Typography>{item.description}</Typography>
-        <Typography>
-          Last modified at {item.last_modified} by {item.modified_by}
-        </Typography>
       </Box>
       <BudgetViewDialog
         open={viewOpen}
