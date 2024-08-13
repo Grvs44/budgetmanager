@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/budgetmanager/dev-sw.js?dev-sw', { scope: '/budgetmanager/', type: 'module' })

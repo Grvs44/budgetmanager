@@ -1,9 +1,24 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import jsconfigPaths from 'vite-jsconfig-paths'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  plugins: [react(), jsconfigPaths()],
+  plugins: [
+    react(),
+    jsconfigPaths(),
+    VitePWA({
+      injectRegister:'inline',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.js',
+      manifest: false,
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
+    }),
+  ],
   test: {
     globals: true,
     environment: 'jsdom',
