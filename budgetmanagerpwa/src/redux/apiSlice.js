@@ -4,7 +4,9 @@ const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: '/budgetmanager/api/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
+  }),
   tagTypes: ['Budget', 'Payee', 'Payment'],
   endpoints: (builder) => ({
     // User
