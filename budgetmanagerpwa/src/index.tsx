@@ -13,11 +13,10 @@ import Home from './pages/Home'
 import BudgetPage from './pages/BudgetPage'
 import PayeePage from './pages/PayeePage'
 import PaymentPage from './pages/PaymentPage'
-import { rootPath } from './settings'
 
 const router = createBrowserRouter([
   {
-    path: rootPath,
+    path: import.meta.env.BASE_URL,
     element: <App />,
     errorElement: <ErrorPage />,
     children: [

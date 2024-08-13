@@ -1,13 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { Settings } from './types'
-import { storageKey } from '../settings'
 
 const defaultSettings: Settings = {
   currency: '',
 }
 
 const getInitialState: () => Settings = () => {
-  const settings = localStorage.getItem(storageKey)
+  const settings = localStorage.getItem(import.meta.env.VITE_STORAGE_KEY)
   return settings ? JSON.parse(settings) : defaultSettings
 }
 
@@ -16,7 +15,10 @@ export const settingsSlice = createSlice({
   initialState: getInitialState(),
   reducers: {
     saveSettings: (state, action) => {
-      localStorage.setItem(storageKey, JSON.stringify(action.payload))
+      localStorage.setItem(
+        import.meta.env.VITE_STORAGE_KEY,
+        JSON.stringify(action.payload)
+      )
       return action.payload
     },
   },
