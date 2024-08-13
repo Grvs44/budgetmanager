@@ -4,7 +4,6 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { registerServiceWorker } from './serviceWorkerRegistration'
 import store from './redux/store'
 import App from './App'
 import theme from './theme'
@@ -15,6 +14,7 @@ import BudgetPage from './pages/BudgetPage'
 import PayeePage from './pages/PayeePage'
 import PaymentPage from './pages/PaymentPage'
 import { rootPath } from './settings'
+import { register } from 'register-service-worker'
 
 const router = createBrowserRouter([
   {
@@ -70,4 +70,28 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ThemeProvider>
   </Provider>
 )
-registerServiceWorker()
+
+register('./service-worker.js', {
+  registrationOptions: { scope: './' },
+  ready(registration) {
+    console.log('Service worker is active.')
+  },
+  registered(registration) {
+    console.log('Service worker has been registered.')
+  },
+  cached(registration) {
+    console.log('Content has been cached for offline use.')
+  },
+  updatefound(registration) {
+    console.log('New content is downloading.')
+  },
+  updated(registration) {
+    console.log('New content is available; please refresh.')
+  },
+  offline() {
+    console.log('No internet connection found. App is running in offline mode.')
+  },
+  error(error) {
+    console.error('Error during service worker registration:', error)
+  },
+})
