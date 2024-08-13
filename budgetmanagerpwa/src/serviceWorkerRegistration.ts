@@ -10,9 +10,12 @@ const isLocalhost = Boolean(
 )
 
 export const registerServiceWorker = (config: any = null) => {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if (
+    import.meta.env.NODE_ENV === 'production' &&
+    'serviceWorker' in navigator
+  ) {
     // The URL constructor is available in all browsers that support SW.
-    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href)
+    const publicUrl = new URL(import.meta.env.PUBLIC_URL, window.location.href)
     if (publicUrl.origin !== window.location.origin) {
       // Our service worker won't work if PUBLIC_URL is on a different origin
       // from what our page is served on. This might happen if a CDN is used to
@@ -21,7 +24,7 @@ export const registerServiceWorker = (config: any = null) => {
     }
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`
+      const swUrl = `${import.meta.env.PUBLIC_URL}/service-worker.js`
       console.log('hi!')
 
       if (isLocalhost) {
@@ -32,8 +35,7 @@ export const registerServiceWorker = (config: any = null) => {
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
           console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://cra.link/PWA'
+            'This web app is being served cache-first by a service worker'
           )
         })
       } else {
@@ -41,7 +43,12 @@ export const registerServiceWorker = (config: any = null) => {
         registerValidServiceWorker(swUrl, config)
       }
     })
-  } else console.log('No sw: ' + Boolean(process.env.NODE_ENV === 'production') + Boolean('serviceWorker' in navigator))
+  } else
+    console.log(
+      'No sw: ' +
+        Boolean(import.meta.env.NODE_ENV === 'production') +
+        Boolean('serviceWorker' in navigator)
+    )
 }
 
 const registerValidServiceWorker = (swUrl: string, config: any) => {

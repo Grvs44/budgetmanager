@@ -21,7 +21,7 @@ registerRoute(
     !url.pathname.startsWith('/_') &&
     !url.pathname.match(fileExtensionRegexp) &&
     !url.pathname.includes('/api'),
-  createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
+  createHandlerBoundToURL(import.meta.env.PUBLIC_URL + '/index.html')
 )
 
 // Images: serve cached version, or from network if not in cache
