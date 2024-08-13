@@ -226,7 +226,7 @@ def index_view(request):
 
 
 def manifest_view(request):
-    return render(request, 'budgetmanager/manifest.txt', content_type='application/json')
+    return render(request, 'budgetmanager/manifest.txt', content_type='application/manifest+json')
 
 def service_worker_view(request):
     return render(request, 'budgetmanager/service-worker.js', content_type='text/javascript')
