@@ -11,7 +11,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import { rootPath } from '../settings'
-import TitleBar from './TitleBar'
+import TitleBar from '../components/TitleBar'
 
 export default function TopBar({ user, title }) {
   const [open, setOpen] = React.useState(false)

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@mui/material'
 import { Outlet } from 'react-router-dom'
-import TopBar from './components/TopBar'
+import TopBar from './containers/TopBar'
 import { useSelector } from 'react-redux'
 import { useGetCurrentUserQuery } from './redux/apiSlice'
 
