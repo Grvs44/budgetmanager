@@ -142,6 +142,12 @@ export const apiSlice = createApi({
       },
       keepUnusedDataFor: 0,
     }),
+    getPayeesSearch: builder.query({
+      query: ({ name, budget }) =>
+        `payee/?limit=10&ordering=-last_used&budget=${
+          budget.id
+        }&search=${encodeURI(name)}`,
+    }),
     getPayee: builder.query({
       query: (id) => `payee/${id}/`,
       providesTags: ({ id }, error, arg) => [{ type: 'Payee', id }],
@@ -310,6 +316,7 @@ export const {
   useUpdateBudgetMutation,
   useDeleteBudgetMutation,
   useGetPayeesQuery,
+  useGetPayeesSearchQuery,
   useGetPayeeQuery,
   useCreatePayeeMutation,
   useUpdatePayeeMutation,

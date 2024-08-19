@@ -1,7 +1,7 @@
 import React from 'react'
 import { List, ListItem, TextField } from '@mui/material'
 import FormDialog from './FormDialog'
-import { useGetBudgetQuery } from '../redux/apiSlice'
+import { useGetBudgetQuery, useGetBudgetsSearchQuery } from '../redux/apiSlice'
 import DropDown from './DropDown'
 
 const empty = { budget: null, name: '', description: '' }
@@ -37,6 +37,9 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
             required
             disabled={budget.isLoading}
             onChange={setData}
+            hook={(input, open) =>
+              useGetBudgetsSearchQuery(input, { skip: !open })
+            }
           />
         </ListItem>
         <ListItem>
