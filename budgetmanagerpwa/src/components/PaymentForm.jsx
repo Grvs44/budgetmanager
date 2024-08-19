@@ -7,6 +7,13 @@ import {
   TextField,
 } from '@mui/material'
 import FormDialog from './FormDialog'
+import DropDown from './DropDown'
+import {
+  useGetBudgetQuery,
+  useGetBudgetsSearchQuery,
+  useGetPayeeQuery,
+  useGetPayeesSearchQuery,
+} from '../redux/apiSlice'
 
 export default function PaymentForm({
   payment,
@@ -16,15 +23,57 @@ export default function PaymentForm({
   title,
 }) {
   if (payment == null) payment = {}
+  const payeeQuery = useGetPayeeQuery(payment.payee, {
+    skip: payment.payee == null,
+  })
+  const budgetQuery = useGetBudgetQuery(payeeQuery.data?.budget, {
+    skip: payeeQuery.data == null,
+  })
+  const [payee, setPayee] = React.useState(payeeQuery.data)
+  const [budget, setBudget] = React.useState(budgetQuery.data)
+  React.useEffect(() => setPayee(payeeQuery.data), [payeeQuery.isLoading])
+  React.useEffect(() => setBudget(budgetQuery.data), [budgetQuery.data != null])
+  const onFormSubmit = (formData) => {
+    if (payee == null) alert('Missing payee')
+    else {
+      onSubmit({ payee: payee.id, ...formData })
+      onClose()
+    }
+  }
   return (
-    <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      onSubmit={onFormSubmit}
+      title={title}
+    >
       <List>
         <ListItem>
-          <TextField
-            defaultValue={payment.payee}
+          <DropDown
+            defaultValue={budget}
+            label="Budget"
+            name="budget"
+            required
+            onChange={setBudget}
+            hook={(input, open) =>
+              useGetBudgetsSearchQuery(input, { skip: !open })
+            }
+          />
+        </ListItem>
+        <ListItem>
+          <DropDown
+            defaultValue={React.useMemo(() => payee, [payee])}
             label="Payee"
             name="payee"
             required
+            onChange={setPayee}
+            disabled={budget == null}
+            hook={(input, open) =>
+              useGetPayeesSearchQuery(
+                { name: input, budget },
+                { skip: !open || budget == null }
+              )
+            }
           />
         </ListItem>
         <ListItem>

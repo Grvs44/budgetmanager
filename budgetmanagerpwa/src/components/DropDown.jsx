@@ -3,7 +3,6 @@ import React from 'react'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useGetBudgetsSearchQuery } from '../redux/apiSlice'
 
 export default function DropDown({
   defaultValue,
@@ -12,10 +11,11 @@ export default function DropDown({
   required,
   disabled,
   onChange,
+  hook,
 }) {
   const [open, setOpen] = React.useState(false)
   const [input, setInput] = React.useState('')
-  const { data, isLoading } = useGetBudgetsSearchQuery(input, { skip: !open })
+  const { data, isLoading } = hook(input, open)
   const loading = open && isLoading
 
   return (
@@ -44,7 +44,7 @@ export default function DropDown({
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Budget"
+          label={label}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
