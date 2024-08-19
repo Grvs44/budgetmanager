@@ -50,7 +50,7 @@ export default function PaymentForm({
       <List>
         <ListItem>
           <DropDown
-            defaultValue={budget}
+            defaultValue={budgetQuery.data}
             label="Budget"
             name="budget"
             required
@@ -62,7 +62,7 @@ export default function PaymentForm({
         </ListItem>
         <ListItem>
           <DropDown
-            defaultValue={React.useMemo(() => payee, [payee])}
+            defaultValue={payeeQuery.data}
             label="Payee"
             name="payee"
             required
