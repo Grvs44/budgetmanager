@@ -12,8 +12,17 @@ const empty = { name: '', description: '', active: true }
 
 export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
   if (budget == null) budget = empty
+  const onFormSubmit = (formData) => {
+    onSubmit(formData)
+    onClose()
+  }
   return (
-    <FormDialog open={open} onClose={onClose} onSubmit={onSubmit} title={title}>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      onSubmit={onFormSubmit}
+      title={title}
+    >
       <List>
         <ListItem>
           <TextField
