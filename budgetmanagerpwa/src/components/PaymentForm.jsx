@@ -29,7 +29,9 @@ export default function PaymentForm({
   const budgetQuery = useGetBudgetQuery(payeeQuery.data?.budget, {
     skip: payeeQuery.data == null,
   })
-  const [payee, setPayee] = React.useState(payeeQuery.data)
+  const [payee, setPayee] = React.useState(
+    payment.payee ? payment.payee : payeeQuery.data
+  )
   const [budget, setBudget] = React.useState(budgetQuery.data)
   React.useEffect(() => setPayee(payeeQuery.data), [payeeQuery.isLoading])
   React.useEffect(() => setBudget(budgetQuery.data), [budgetQuery.data != null])
