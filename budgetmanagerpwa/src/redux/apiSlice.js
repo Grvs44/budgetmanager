@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
@@ -15,12 +16,15 @@ export const apiSlice = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const query = await queryFulfilled
-          console.log(query)
           dispatch(
             apiSlice.util.upsertQueryData('getUser', query.data.id, query.data)
           )
-        } catch {
-          console.log('getCurrentUser error')
+        } catch (e) {
+          if (e.error.status === 403)
+            location.replace(
+              import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname)
+            )
+          else console.error(e)
         }
       },
     }),
@@ -216,7 +220,8 @@ export const apiSlice = createApi({
 
     // Payments
     getPayments: builder.query({
-      query: (page = 0) => `payment/?offset=${page * 10}&limit=10&ordering=-date`,
+      query: (page = 0) =>
+        `payment/?offset=${page * 10}&limit=10&ordering=-date`,
       providesTags: (data, error, arg) =>
         data
           ? [
