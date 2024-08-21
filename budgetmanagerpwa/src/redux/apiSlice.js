@@ -216,7 +216,7 @@ export const apiSlice = createApi({
 
     // Payments
     getPayments: builder.query({
-      query: (page = 0) => `payment/?offset=${page * 10}&limit=10`,
+      query: (page = 0) => `payment/?offset=${page * 10}&limit=10&ordering=-date`,
       providesTags: (data, error, arg) =>
         data
           ? [
