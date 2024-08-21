@@ -1,11 +1,11 @@
 import React from 'react'
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from '@mui/material'
+import Dialog from './Dialog'
 
 export default function FormDialog({
   children,

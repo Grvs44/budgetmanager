@@ -1,6 +1,5 @@
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -14,6 +13,7 @@ import {
   useGetUserQuery,
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
+import Dialog from './Dialog'
 
 export default function PaymentViewDialog({
   open,

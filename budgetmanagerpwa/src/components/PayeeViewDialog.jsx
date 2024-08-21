@@ -1,5 +1,4 @@
 import {
-  Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
@@ -13,6 +12,7 @@ import {
   useGetUserQuery,
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
+import Dialog from './Dialog'
 
 export default function PayeeViewDialog({ open, onClose, onEdit, payeeId, onDelete }) {
   return (

@@ -1,5 +1,4 @@
 import {
-  Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
@@ -9,6 +8,7 @@ import {
 import React from 'react'
 import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
+import Dialog from './Dialog'
 
 export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
   return (
