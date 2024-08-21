@@ -10,7 +10,6 @@ django-filter = "*"
 
 [dev-packages]
 build = "*"
-django-rest-knox = "*"
 setuptools = "*"
 
 [requires]
