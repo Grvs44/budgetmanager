@@ -9,7 +9,9 @@ const empty = { budget: null, name: '', description: '' }
 export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
   if (payee == null) payee = empty
   const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
-  const [data, setData] = React.useState(budget.data)
+  const [data, setData] = React.useState(
+    payee.budget ? payee.budget : budget.data
+  )
 
   React.useEffect(() => setData(budget.data), [budget.isLoading])
 
