@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import { Outlet } from 'react-router-dom'
 import TopBar from './containers/TopBar'
 import { useSelector } from 'react-redux'
@@ -9,8 +9,12 @@ export default function App() {
   const user = useGetCurrentUserQuery(null)
   const { title } = useSelector((state: { title: any }) => state.title)
 
-  if (user.isLoading) {
-    return <p>Loading...</p>
+  if (user.isLoading || user.data == null) {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    )
   } else {
     return (
       <div>
