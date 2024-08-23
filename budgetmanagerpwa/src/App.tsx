@@ -11,7 +11,7 @@ export default function App() {
 
   if (user.isLoading || user.data == null) {
     return (
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex',justifyContent:'center',alignItems:'center' }}>
         <CircularProgress />
       </Box>
     )
