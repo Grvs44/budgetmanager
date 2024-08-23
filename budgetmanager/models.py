@@ -241,3 +241,31 @@ class ShareCode(models.Model):
         share.clean()
         share.save()
         self.delete()
+
+
+def export_data(user):
+    budgets = Budget.objects.filter(user=user).all()
+    export = []
+    for budget in budgets:
+        payee_export = []
+        for payee in budget.payee_set.all():
+            payment_export = []
+            for payment in payee.payment_set.all():
+                payment_export.append({
+                    'amount': str(payment.amount),
+                    'date': str(payment.date),
+                    'pending': payment.pending,
+                    'notes': payment.notes,
+                })
+            payee_export.append({
+                'name': payee.name,
+                'description': payee.description,
+                'payments': payment_export,
+            })
+        export.append({
+            'name': budget.name,
+            'description': budget.description,
+            'active': budget.active,
+            'payees': payee_export,
+        })
+    return export
