@@ -3,6 +3,7 @@ import React from 'react'
 import { setTitle } from '../redux/titleSlice'
 import { useDispatch } from 'react-redux'
 import { useGetCurrentUserQuery, useGetTotalQuery } from '../redux/apiSlice'
+import InstallPwaListItem from '../components/InstallPwaListItem'
 
 export default function Home() {
   const total = useGetTotalQuery()
@@ -23,6 +24,7 @@ export default function Home() {
       <Typography variant="h5" component="h2" hidden={total.isLoading}>
         Total: {total.data}
       </Typography>
+      <InstallPwaListItem/>
     </Box>
   )
 }
