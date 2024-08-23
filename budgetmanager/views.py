@@ -31,6 +31,13 @@ class TotalView(APIView):
         )
 
 
+class ExportView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        return Response(models.export_data(request.user))
+
+
 class PaymentRelatedMixin:
     @action(methods=('GET',), detail=True)
     def total(self, request, pk):
@@ -227,6 +234,7 @@ def index_view(request):
 
 def manifest_view(request):
     return render(request, 'budgetmanager/manifest.txt', content_type='application/manifest+json')
+
 
 def service_worker_view(request):
     return render(request, 'budgetmanager/service-worker.js', content_type='text/javascript')

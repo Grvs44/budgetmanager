@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/total/', views.TotalView.as_view()),
     path('api/join/', views.JoinBudgetView.as_view()),
+    path('api/export/', views.ExportView.as_view()),
     path('manifest.webmanifest', views.manifest_view),
     path('service-worker.js', views.service_worker_view),
     path('', views.index_view),
