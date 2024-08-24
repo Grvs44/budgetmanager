@@ -14,7 +14,6 @@ export default function App() {
 
   window.addEventListener('beforeinstallprompt', (event: Event) => {
     event.preventDefault()
-    console.log('install event')
     dispatch(setShow(true))
     dispatch(setDeferredPrompt(event))
   })
