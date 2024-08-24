@@ -5,6 +5,9 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import { Link } from 'react-router-dom'
+import { ListItemIcon } from '@mui/material'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import InstallPwaListItem from './InstallPwaListItem'
 
 export default function MenuDrawer({ open, onClose, user }) {
   const linkTo = (...paths) => import.meta.env.BASE_URL.concat(...paths)
@@ -40,8 +43,13 @@ export default function MenuDrawer({ open, onClose, user }) {
             </ListItemButton>
           </ListItem>
         </Link>
+        <InstallPwaListItem/>
         <ListItem>
-          <ListItemText>{user.username}</ListItemText>
+          <ListItemButton>
+          <ListItemIcon>
+            <AccountCircleIcon/>
+          </ListItemIcon>
+          <ListItemText>{user.username}</ListItemText></ListItemButton>
         </ListItem>
       </List>
     </Drawer>
