@@ -10,20 +10,16 @@ import { InstallState } from '../redux/types'
 import { setDeferredPrompt, setShow } from '../redux/installSlice'
 
 const InstallPwaListItem = () => {
-  console.log('render install')
   const dispatch = useDispatch()
   const { show, deferredPrompt } = useSelector(
     (state: { install: InstallState }) => state.install
   )
 
   const onClick = async () => {
-    console.log('onclick')
     if (deferredPrompt !== null) {
-      console.log('prompting')
       deferredPrompt.prompt()
       const { outcome } = await deferredPrompt.userChoice
       if (outcome === 'accepted') {
-        console.log('accepted')
         dispatch(setDeferredPrompt(null))
         dispatch(setShow(false))
       }
