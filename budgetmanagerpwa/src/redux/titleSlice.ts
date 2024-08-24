@@ -1,10 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { Title } from './types'
+
+const initialState: Title = {
+  title: 'Budget Manager',
+}
 
 export const titleSlice = createSlice({
   name: 'title',
-  initialState: {
-    title: 'Budget Manager'
-  },
+  initialState,
   reducers: {
     setTitle: (state, action) => {
       state.title = action.payload

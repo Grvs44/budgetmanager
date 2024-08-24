@@ -8,6 +8,21 @@ export type Settings = {
   currency: string
 }
 
+export type Title = {
+  title: string
+}
+
+export type InstallState = {
+  show: boolean
+  deferredPrompt: any
+}
+
+export type State = {
+  install: InstallState
+  settings: Settings
+  title: Title
+}
+
 export type Budget = {
   id: number
   name: string

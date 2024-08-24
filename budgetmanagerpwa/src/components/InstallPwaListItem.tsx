@@ -5,11 +5,16 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import InstallDesktopIcon from '@mui/icons-material/InstallDesktop'
+import { useDispatch, useSelector } from 'react-redux'
+import { InstallState } from '../redux/types'
+import { setDeferredPrompt, setShow } from '../redux/installSlice'
 
 const InstallPwaListItem = () => {
   console.log('render install')
-  const [show, setShow] = React.useState(false)
-  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
+  const dispatch = useDispatch()
+  const { show, deferredPrompt } = useSelector(
+    (state: { install: InstallState }) => state.install
+  )
 
   const onClick = async () => {
     console.log('onclick')
@@ -19,18 +24,11 @@ const InstallPwaListItem = () => {
       const { outcome } = await deferredPrompt.userChoice
       if (outcome === 'accepted') {
         console.log('accepted')
-        setDeferredPrompt(null)
-        setShow(false)
+        dispatch(setDeferredPrompt(null))
+        dispatch(setShow(false))
       }
     }
   }
-
-  window.addEventListener('beforeinstallprompt', (event: Event) => {
-    console.log('install event')
-    event.preventDefault()
-    setShow(true)
-    setDeferredPrompt(event)
-  })
 
   return (
     <ListItem sx={{ display: show ? 'inherit' : 'none' }}>
