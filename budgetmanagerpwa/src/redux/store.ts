@@ -12,5 +12,10 @@ export default configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['install/setDeferredPrompt'],
+        ignoredPaths: ['install.deferredPrompt'],
+      },
+    }).concat(apiSlice.middleware),
 })
