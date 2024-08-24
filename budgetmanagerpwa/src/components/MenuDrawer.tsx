@@ -6,23 +6,23 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemButtonLink from './ListItemButtonLink'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import SwipeableDrawer from '@mui/material/SwipeableDrawer'
+import SwipeableDrawer, {
+  SwipeableDrawerProps,
+} from '@mui/material/SwipeableDrawer'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import HomeIcon from '@mui/icons-material/Home'
 import SavingsIcon from '@mui/icons-material/Savings'
 import StoreIcon from '@mui/icons-material/Store'
 import PaymentsIcon from '@mui/icons-material/Payments'
 import InstallPwaListItem from './InstallPwaListItem'
+import { User } from '../redux/types'
 
-export default function MenuDrawer({ open, onClose, onOpen, user }) {
+export type MenuDrawerProps = SwipeableDrawerProps & { user: User }
+
+export default function MenuDrawer(props: MenuDrawerProps) {
   return (
-    <SwipeableDrawer
-      anchor="left"
-      open={open}
-      onClose={onClose}
-      onOpen={onOpen}
-    >
-      <List onClick={onClose}>
+    <SwipeableDrawer anchor="left" {...props}>
+      <List onClick={props.onClose}>
         <ListItem>
           <ListItemButtonLink to="">
             <ListItemIcon>
@@ -62,7 +62,7 @@ export default function MenuDrawer({ open, onClose, onOpen, user }) {
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText>{user.username}</ListItemText>
+            <ListItemText>{props.user.username}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
