@@ -26,8 +26,8 @@ const InstallPwaListItem = () => {
     }
   }
 
-  return (
-    <ListItem sx={{ display: show ? 'inherit' : 'none' }}>
+  return show ? (
+    <ListItem>
       <ListItemButton onClick={onClick}>
         <ListItemIcon>
           <InstallDesktopIcon />
@@ -35,6 +35,8 @@ const InstallPwaListItem = () => {
         <ListItemText>Install</ListItemText>
       </ListItemButton>
     </ListItem>
+  ) : (
+    <></>
   )
 }
 
