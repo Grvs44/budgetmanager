@@ -30,7 +30,12 @@ export default function TopBar({ user, title }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <MenuDrawer open={open} onClose={() => setOpen(false)} user={user} />
+      <MenuDrawer
+        open={open}
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+        user={user}
+      />
     </>
   )
 }
