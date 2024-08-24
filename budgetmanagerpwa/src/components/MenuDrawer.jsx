@@ -1,11 +1,12 @@
 import React from 'react'
+import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemButtonLink from './ListItemButtonLink'
-import { ListItemIcon } from '@mui/material'
+import ListItemIcon from '@mui/material/ListItemIcon'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import HomeIcon from '@mui/icons-material/Home'
 import SavingsIcon from '@mui/icons-material/Savings'
@@ -49,6 +50,7 @@ export default function MenuDrawer({ open, onClose, user }) {
             <ListItemText>Payments</ListItemText>
           </ListItemButtonLink>
         </ListItem>
+        <Divider component="li" />
         <InstallPwaListItem />
         <ListItem>
           <ListItemButton>
