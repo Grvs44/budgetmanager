@@ -47,6 +47,11 @@ export default function BudgetList() {
     setViewOpen(true)
   }
 
+  const onItemClick = (id) => {
+    setViewBudget(id)
+    setViewOpen(true)
+  }
+
   return (
     <Container>
       <Button onClick={() => setCreateOpen(true)}>
@@ -58,7 +63,7 @@ export default function BudgetList() {
       {list.count ? (
         <List>
           {list.results.map((item) => (
-            <BudgetListItem item={item} key={item.id} />
+            <BudgetListItem item={item} key={item.id} onClick={onItemClick} />
           ))}
         </List>
       ) : (

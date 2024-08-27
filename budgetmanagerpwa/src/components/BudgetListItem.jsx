@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
 
-export default function BudgetListItem({ item, setViewOpen }) {
+export default function BudgetListItem({ item, onClick }) {
   return (
     <ListItem>
-      <Box onClick={() => setViewOpen(item.id)}>
+      <Box onClick={() => onClick(item.id)}>
         <Typography>{item.name}</Typography>
         {item.active ? (
           <Typography>active</Typography>
