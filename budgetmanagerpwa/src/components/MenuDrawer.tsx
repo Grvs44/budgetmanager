@@ -16,6 +16,7 @@ import StoreIcon from '@mui/icons-material/Store'
 import PaymentsIcon from '@mui/icons-material/Payments'
 import InstallPwaListItem from './InstallPwaListItem'
 import { User } from '../redux/types'
+import { Link } from 'react-router-dom'
 
 export type MenuDrawerProps = SwipeableDrawerProps & { user: User }
 
@@ -58,7 +59,12 @@ export default function MenuDrawer(props: MenuDrawerProps) {
         <Divider component="li" />
         <InstallPwaListItem />
         <ListItem>
-          <ListItemButton>
+          <ListItemButton
+            component={Link}
+            to={import.meta.env.VITE_PROFILE_URL}
+            target="_blank"
+            rel="noopener"
+          >
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
