@@ -82,7 +82,10 @@ export default function PayeeList() {
       />
       <PayeeViewDialog
         open={viewOpen}
-        onClose={() => setViewOpen(false)}
+        onClose={() => {
+          setViewOpen(false)
+          setViewPayee(null)
+        }}
         payeeId={viewPayee}
         onEdit={onEdit}
         onDelete={() => setDeleteOpen(true)}

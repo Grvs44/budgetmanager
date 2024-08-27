@@ -41,8 +41,6 @@ export default function BudgetList() {
 
   const onCreateSubmit = async (oldData, data) => {
     const budget = await createBudget(data)
-    console.log(budget.data)
-    console.log(budget.data.id)
     setViewBudget(budget.data.id)
     setViewOpen(true)
   }
@@ -80,7 +78,10 @@ export default function BudgetList() {
       />
       <BudgetViewDialog
         open={viewOpen}
-        onClose={() => setViewOpen(false)}
+        onClose={() => {
+          setViewOpen(false)
+          setViewBudget(null)
+        }}
         budgetId={viewBudget}
         onEdit={onEdit}
       />
