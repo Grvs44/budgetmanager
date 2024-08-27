@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
+import { DatePicker } from '@mui/x-date-pickers'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import FormDialog from './FormDialog'
 import DropDown from './DropDown'
@@ -18,6 +18,7 @@ import {
   useGetPayeesSearchQuery,
 } from '../redux/apiSlice'
 import dayjs from 'dayjs'
+import 'dayjs/locale/en-gb'
 
 export default function PaymentForm({
   payment,
@@ -94,8 +95,11 @@ export default function PaymentForm({
           />
         </ListItem>
         <ListItem>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateCalendar
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            adapterLocale="en-gb"
+          >
+            <DatePicker
               name="date"
               defaultValue={dayjs(payment.date)}
               label="Date"
