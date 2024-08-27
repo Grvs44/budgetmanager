@@ -83,6 +83,8 @@ export default function PaymentForm({
             name="amount"
             defaultValue={payment.amount}
             label="Amount"
+            type="number"
+            inputProps={{ step: '0.01' }}
             required
             autoComplete="false"
           />
