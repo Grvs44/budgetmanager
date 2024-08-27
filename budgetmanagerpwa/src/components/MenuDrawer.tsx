@@ -62,6 +62,8 @@ export default function MenuDrawer(props: MenuDrawerProps) {
           <ListItemButton
             component={Link}
             to={import.meta.env.VITE_PROFILE_URL}
+            target="_blank"
+            rel="noopener"
           >
             <ListItemIcon>
               <AccountCircleIcon />
