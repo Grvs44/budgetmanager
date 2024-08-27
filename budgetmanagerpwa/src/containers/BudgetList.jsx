@@ -3,21 +3,48 @@ import { Button, Container, List, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import BudgetForm from '../components/BudgetForm'
 import BudgetListItem from '../components/BudgetListItem'
-import { useCreateBudgetMutation, useGetBudgetsQuery } from '../redux/apiSlice'
+import {
+  useCreateBudgetMutation,
+  useGetBudgetsQuery,
+  useUpdateBudgetMutation,
+} from '../redux/apiSlice'
+import BudgetViewDialog from '../components/BudgetViewDialog'
 
 export default function BudgetList() {
-  const [createOpen, setCreateOpen] = React.useState(false)
   const [page, setPage] = React.useState(0)
+  const [createOpen, setCreateOpen] = React.useState(false)
+  const [viewOpen, setViewOpen] = React.useState(false)
+  const [viewBudget, setViewBudget] = React.useState(null)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [editBudget, setEditBudget] = React.useState(null)
+  const [updateBudget] = useUpdateBudgetMutation()
   const query = useGetBudgetsQuery(page)
   const [createBudget] = useCreateBudgetMutation()
-  console.log(page)
 
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
-  const onCreateSubmit = async (data) => {
-    createBudget(data)
-    return null
+  const onEdit = ({ budget }) => {
+    setViewOpen(false)
+    setEditBudget(budget)
+    setEditOpen(true)
+  }
+
+  const onSubmit = async (oldBudget, budget) => {
+    budget.id = oldBudget.id
+    budget.active = budget.active === 'on'
+    await updateBudget(budget)
+    setEditOpen(false)
+    setViewBudget(budget.id)
+    setViewOpen(true)
+  }
+
+  const onCreateSubmit = async (oldData, data) => {
+    const budget = await createBudget(data)
+    console.log(budget.data)
+    console.log(budget.data.id)
+    setViewBudget(budget.data.id)
+    setViewOpen(true)
   }
 
   return (
@@ -45,6 +72,18 @@ export default function BudgetList() {
         onSubmit={onCreateSubmit}
         open={createOpen}
         title="Add budget"
+      />
+      <BudgetViewDialog
+        open={viewOpen}
+        onClose={() => setViewOpen(false)}
+        budgetId={viewBudget}
+        onEdit={onEdit}
+      />
+      <BudgetForm
+        budget={editBudget}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        onSubmit={onSubmit}
       />
     </Container>
   )
