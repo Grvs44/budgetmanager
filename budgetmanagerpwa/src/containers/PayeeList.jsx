@@ -41,8 +41,9 @@ export default function PayeeList() {
     setViewOpen(true)
   }
   const onDeleteSubmit = async () => {
-    await deletePayee(viewOpen)
+    await deletePayee({ id: viewPayee })
     setViewOpen(false)
+    setViewPayee(null)
   }
 
   const onCreateSubmit = async (oldData, data) => {
@@ -51,7 +52,7 @@ export default function PayeeList() {
     setViewOpen(true)
   }
 
-  const onItemClick = (id)=>{
+  const onItemClick = (id) => {
     setViewPayee(id)
     setViewOpen(true)
   }
