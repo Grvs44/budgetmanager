@@ -101,6 +101,7 @@ export default function PaymentList() {
         payment={editData}
         onClose={() => setEditOpen(false)}
         onSubmit={onSubmit}
+        title="Edit payment"
       />
       <DeleteConfirmation
         onClose={() => setDeleteOpen(false)}

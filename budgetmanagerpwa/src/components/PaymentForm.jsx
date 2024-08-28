@@ -20,7 +20,6 @@ import {
 import dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
-import { getPaymentTitle } from '../redux/utils'
 
 dayjs.extend(customParseFormat)
 
@@ -57,7 +56,7 @@ export default function PaymentForm({
       open={open}
       onClose={onClose}
       onSubmit={onFormSubmit}
-      title={title ? title : payee ? getPaymentTitle(payment, payee) : 'title'}
+      title={title}
     >
       <List>
         <ListItem>
