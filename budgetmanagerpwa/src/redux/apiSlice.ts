@@ -59,6 +59,7 @@ export const apiSlice = createApi({
         return currentArg !== previousArg
       },
       keepUnusedDataFor: 0,
+      providesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
     getBudgetsSearch: builder.query({
       query: (name) =>
@@ -84,7 +85,8 @@ export const apiSlice = createApi({
         body,
         headers,
       }),
-      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+      invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
+      async onQueryStarted({ id }: Entity, { dispatch, queryFulfilled }) {
         try {
           console.log('starting')
           const query = await queryFulfilled
