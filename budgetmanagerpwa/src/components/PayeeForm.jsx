@@ -18,7 +18,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
   const onFormSubmit = (formData) => {
     if (data == null) alert('Missing budget')
     else {
-      onSubmit({ budget: data.id, ...formData })
+      onSubmit(payee, { budget: data.id, ...formData })
       onClose()
     }
   }
@@ -28,7 +28,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
       open={open}
       onClose={onClose}
       onSubmit={onFormSubmit}
-      title={title}
+      title={title ? title : payee.name}
     >
       <List>
         <ListItem>

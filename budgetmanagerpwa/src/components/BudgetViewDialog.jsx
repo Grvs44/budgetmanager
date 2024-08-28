@@ -19,7 +19,9 @@ export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
 }
 
 function ViewContent({ onClose, onEdit, budgetId }) {
-  const { data, isLoading } = useGetBudgetQuery(budgetId)
+  const { data, isLoading } = useGetBudgetQuery(budgetId, {
+    skip: budgetId == null,
+  })
   const user = useGetUserQuery(data?.modified_by, {
     skip: isLoading || data.modified_by == null,
   })

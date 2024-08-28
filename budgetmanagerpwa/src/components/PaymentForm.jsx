@@ -19,6 +19,9 @@ import {
 } from '../redux/apiSlice'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(customParseFormat)
 
 export default function PaymentForm({
   payment,
@@ -43,7 +46,8 @@ export default function PaymentForm({
   const onFormSubmit = (formData) => {
     if (payee == null) alert('Missing payee')
     else {
-      onSubmit({ payee: payee.id, ...formData })
+      formData.date = dayjs(formData.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
+      onSubmit(payment, { payee: payee.id, ...formData })
       onClose()
     }
   }

@@ -4,22 +4,60 @@ import { Button, Container, List, Typography } from '@mui/material'
 import PaymentForm from '../components/PaymentForm'
 import {
   useCreatePaymentMutation,
+  useDeletePaymentMutation,
   useGetPaymentsQuery,
+  useUpdatePaymentMutation,
 } from '../redux/apiSlice'
 import PaymentListItem from '../components/PaymentListItem'
+import DeleteConfirmation from '../components/DeleteConfirmation'
+import PaymentViewDialog from '../components/PaymentViewDialog'
 
 export default function PaymentList() {
   const [createOpen, setCreateOpen] = React.useState(false)
   const [page, setPage] = React.useState(0)
   const query = useGetPaymentsQuery(page)
   const [createPayment] = useCreatePaymentMutation()
+  const [viewOpen, setViewOpen] = React.useState(false)
+  const [viewData, setViewData] = React.useState(null)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [editData, setEditData] = React.useState(null)
+
+  const [updatePayment] = useUpdatePaymentMutation()
+  const [deletePayment] = useDeletePaymentMutation()
 
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
-  const onCreateSubmit = (data) => {
-    createPayment(data)
-    return null
+  const onCreateSubmit = async (oldData, data) => {
+    const paymentData = await createPayment(data)
+    setViewData(paymentData.data.id)
+    setViewOpen(true)
+  }
+
+  const onEdit = (data) => {
+    setEditData(data)
+    setViewOpen(false)
+    setEditOpen(true)
+  }
+
+  const onSubmit = async (oldPayment, payment) => {
+    payment.id = oldPayment.id
+    await updatePayment(payment)
+    setEditOpen(false)
+    setViewOpen(true)
+  }
+
+  const onDeleteSubmit = async () => {
+    await deletePayment({ id: viewData })
+    setDeleteOpen(false)
+    setViewOpen(false)
+    setViewData(null)
+  }
+
+  const onItemClick = (id) => {
+    setViewData(id)
+    setViewOpen(true)
   }
 
   return (
@@ -33,7 +71,7 @@ export default function PaymentList() {
       {list.count ? (
         <List>
           {list.results.map((item) => (
-            <PaymentListItem item={item} key={item.id} />
+            <PaymentListItem item={item} key={item.id} onClick={onItemClick} />
           ))}
         </List>
       ) : (
@@ -47,6 +85,29 @@ export default function PaymentList() {
         onSubmit={onCreateSubmit}
         open={createOpen}
         title="Add payment"
+      />
+      <PaymentViewDialog
+        open={viewOpen}
+        onClose={() => {
+          setViewOpen(false)
+          setViewData(null)
+        }}
+        paymentId={viewData}
+        onEdit={onEdit}
+        onDelete={() => setDeleteOpen(true)}
+      />
+      <PaymentForm
+        open={editOpen}
+        payment={editData}
+        onClose={() => setEditOpen(false)}
+        onSubmit={onSubmit}
+        title="Edit payment"
+      />
+      <DeleteConfirmation
+        onClose={() => setDeleteOpen(false)}
+        onSubmit={onDeleteSubmit}
+        open={deleteOpen}
+        title="Are you sure you want to delete this payment?"
       />
     </Container>
   )

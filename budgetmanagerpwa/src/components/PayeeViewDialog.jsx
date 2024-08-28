@@ -14,17 +14,30 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
-export default function PayeeViewDialog({ open, onClose, onEdit, payeeId, onDelete }) {
+export default function PayeeViewDialog({
+  open,
+  onClose,
+  onEdit,
+  payeeId,
+  onDelete,
+}) {
   return (
     <Dialog open={open} onClose={onClose}>
-      <ViewContent onClose={onClose} onEdit={onEdit} payeeId={payeeId} onDelete={onDelete} />
+      <ViewContent
+        onClose={onClose}
+        onEdit={onEdit}
+        payeeId={payeeId}
+        onDelete={onDelete}
+      />
     </Dialog>
   )
 }
 
 function ViewContent({ onClose, onEdit, payeeId, onDelete }) {
-  const payee = useGetPayeeQuery(payeeId)
-  const budget = useGetBudgetQuery(payee.data?.budget, { skip: payee.isLoading })
+  const payee = useGetPayeeQuery(payeeId, { skip: payeeId == null })
+  const budget = useGetBudgetQuery(payee.data?.budget, {
+    skip: payee.isLoading,
+  })
   const user = useGetUserQuery(payee.data?.modified_by, {
     skip: payee.isLoading || payee.data.modified_by == null,
   })

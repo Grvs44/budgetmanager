@@ -13,7 +13,7 @@ const empty = { name: '', description: '', active: true }
 export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
   if (budget == null) budget = empty
   const onFormSubmit = (formData) => {
-    onSubmit(formData)
+    onSubmit(budget, formData)
     onClose()
   }
   return (
@@ -21,7 +21,7 @@ export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
       open={open}
       onClose={onClose}
       onSubmit={onFormSubmit}
-      title={title}
+      title={title ? title : budget.name}
     >
       <List>
         <ListItem>
