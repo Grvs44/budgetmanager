@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="initial-scale=1,width=device-width"/>
+<title>Login</title>
+</head>
+<body>
+<form method="post" action="{% url 'login' %}">
+{% csrf_token %} {{ form.as_p }}
+<input type="submit" value="Login" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+</body>
+</html>
