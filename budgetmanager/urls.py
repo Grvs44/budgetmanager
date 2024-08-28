@@ -21,6 +21,6 @@ urlpatterns = [
     path('api/export/', views.ExportView.as_view()),
     path('manifest.webmanifest', views.manifest_view),
     path('service-worker.js', views.service_worker_view),
-    path('', views.index_view),
+    path('', views.index_view, name='index'),
     re_path(r'^.*/$', views.index_view),
 ]
