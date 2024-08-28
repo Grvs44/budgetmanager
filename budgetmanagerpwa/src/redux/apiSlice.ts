@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Entity } from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
@@ -19,7 +20,7 @@ export const apiSlice = createApi({
           dispatch(
             apiSlice.util.upsertQueryData('getUser', query.data.id, query.data)
           )
-        } catch (e) {
+        } catch (e: any) {
           if (e.error.status === 403)
             location.replace(
               import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname)
@@ -98,7 +99,7 @@ export const apiSlice = createApi({
           console.log('dispatched 1/2')
           dispatch(
             apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
-              const old = draft.results.find((e) => e.id === id)
+              const old = draft.results.find((e: Entity) => e.id === id)
               const upd = query.data
               old.id = upd.id
               old.name = upd.name
@@ -130,7 +131,7 @@ export const apiSlice = createApi({
       providesTags: (data, error, arg) =>
         data
           ? [
-              ...data.results.map(({ id }) => ({ type: 'Payee', id })),
+              ...data.results.map(({ id }: Entity) => ({ type: 'Payee', id })),
               { type: 'Payee', id: PARTIAL },
             ]
           : [{ type: 'Payee', id: PARTIAL }],
@@ -182,8 +183,8 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayees', undefined, (draft) => {
               console.log('a1')
               console.log(draft)
-              const i = draft.results.indexOf((e) => e.id == id)
-              console.log(draft.results.find((e) => e.id === id))
+              const i = draft.results.indexOf((e: Entity) => e.id == id)
+              console.log(draft.results.find((e: Entity) => e.id === id))
               console.log(i)
               draft.results[i] = query.data
               console.log('a2')
@@ -195,7 +196,7 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayee', undefined, (draft) => {
               console.log('b1')
               console.log(draft)
-              draft[draft.indexOf((e) => e.id == id)] = query.data
+              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
               console.log('b2')
               console.log(draft)
             })
@@ -225,7 +226,10 @@ export const apiSlice = createApi({
       providesTags: (data, error, arg) =>
         data
           ? [
-              ...data.results.map(({ id }) => ({ type: 'Payment', id })),
+              ...data.results.map(({ id }: Entity) => ({
+                type: 'Payment',
+                id,
+              })),
               { type: 'Payment', id: PARTIAL },
             ]
           : [{ type: 'Payment', id: PARTIAL }],
@@ -271,8 +275,8 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayments', undefined, (draft) => {
               console.log('a1')
               console.log(draft)
-              const i = draft.results.indexOf((e) => e.id == id)
-              console.log(draft.results.find((e) => e.id === id))
+              const i = draft.results.indexOf((e: Entity) => e.id == id)
+              console.log(draft.results.find((e: Entity) => e.id === id))
               console.log(i)
               draft.results[i] = query.data
               console.log('a2')
@@ -284,7 +288,7 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayment', undefined, (draft) => {
               console.log('b1')
               console.log(draft)
-              draft[draft.indexOf((e) => e.id == id)] = query.data
+              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
               console.log('b2')
               console.log(draft)
             })
