@@ -40,6 +40,7 @@ export default function BudgetList() {
   }
 
   const onCreateSubmit = async (oldData, data) => {
+    setPage(0)
     const budget = await createBudget(data)
     setViewBudget(budget.data.id)
     setViewOpen(true)
