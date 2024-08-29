@@ -10,10 +10,7 @@ const nullNumber = (value: string | null) => (value ? Number(value) : Infinity)
 const getOffset = ({ next }: PageState<any>) =>
   next ? nullNumber(new URLSearchParams(next).get('offset')) : Infinity
 
-const mergeCache = <T>(
-  currentCache: PageState<T>,
-  responseData: PageState<T>
-) => {
+const merge = <T>(currentCache: PageState<T>, responseData: PageState<T>) => {
   if (getOffset(currentCache) < getOffset(responseData)) {
     currentCache.results.push(...responseData.results)
   } else {
@@ -22,6 +19,18 @@ const mergeCache = <T>(
   currentCache.next = responseData.next
   currentCache.count = responseData.count
 }
+
+const serializeQueryArgs = ({ endpointName }: { endpointName: string }) => {
+  return endpointName
+}
+
+const forceRefetch = <T>({
+  currentArg,
+  previousArg,
+}: {
+  currentArg: T
+  previousArg: T
+}) => currentArg !== previousArg
 
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
@@ -67,13 +76,9 @@ export const apiSlice = createApi({
     // Budgets
     getBudgets: builder.query<PageState<Budget>, number | undefined>({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: mergeCache,
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
       providesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
@@ -154,16 +159,9 @@ export const apiSlice = createApi({
               { type: 'Payee', id: PARTIAL },
             ]
           : [{ type: 'Payee', id: PARTIAL }],
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
     }),
     getPayeesSearch: builder.query({
@@ -252,16 +250,9 @@ export const apiSlice = createApi({
               { type: 'Payment', id: PARTIAL },
             ]
           : [{ type: 'Payment', id: PARTIAL }],
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
     }),
     getPayment: builder.query({
