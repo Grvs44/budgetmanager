@@ -1,8 +1,37 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Budget, PageState, Entity } from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
+
+const nullNumber = (value: string | null) => (value ? Number(value) : Infinity)
+
+const getOffset = ({ next }: PageState<any>) =>
+  next ? nullNumber(new URLSearchParams(next).get('offset')) : Infinity
+
+const merge = <T>(currentCache: PageState<T>, responseData: PageState<T>) => {
+  if (getOffset(currentCache) < getOffset(responseData)) {
+    currentCache.results.push(...responseData.results)
+  } else {
+    currentCache.results = responseData.results
+  }
+  currentCache.next = responseData.next
+  currentCache.count = responseData.count
+}
+
+const serializeQueryArgs = ({ endpointName }: { endpointName: string }) => {
+  return endpointName
+}
+
+const forceRefetch = <T>({
+  currentArg,
+  previousArg,
+}: {
+  currentArg: T
+  previousArg: T
+}) => currentArg !== previousArg
+
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
@@ -19,7 +48,7 @@ export const apiSlice = createApi({
           dispatch(
             apiSlice.util.upsertQueryData('getUser', query.data.id, query.data)
           )
-        } catch (e) {
+        } catch (e: any) {
           if (e.error.status === 403)
             location.replace(
               import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname)
@@ -45,19 +74,13 @@ export const apiSlice = createApi({
     }),
 
     // Budgets
-    getBudgets: builder.query({
+    getBudgets: builder.query<PageState<Budget>, number | undefined>({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
+      providesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
     getBudgetsSearch: builder.query({
       query: (name) =>
@@ -83,7 +106,7 @@ export const apiSlice = createApi({
         body,
         headers,
       }),
-      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ id }: Entity, { dispatch, queryFulfilled }) {
         try {
           console.log('starting')
           const query = await queryFulfilled
@@ -98,12 +121,14 @@ export const apiSlice = createApi({
           console.log('dispatched 1/2')
           dispatch(
             apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
-              const old = draft.results.find((e) => e.id === id)
+              const old = draft.results.find((e: Entity) => e.id === id)
               const upd = query.data
-              old.id = upd.id
-              old.name = upd.name
-              old.description = upd.description
-              old.active = upd.active
+              if (old) {
+                old.id = upd.id
+                old.name = upd.name
+                old.description = upd.description
+                old.active = upd.active
+              }
             })
           )
           console.log('dispatched 2/2')
@@ -130,20 +155,13 @@ export const apiSlice = createApi({
       providesTags: (data, error, arg) =>
         data
           ? [
-              ...data.results.map(({ id }) => ({ type: 'Payee', id })),
+              ...data.results.map(({ id }: Entity) => ({ type: 'Payee', id })),
               { type: 'Payee', id: PARTIAL },
             ]
           : [{ type: 'Payee', id: PARTIAL }],
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
     }),
     getPayeesSearch: builder.query({
@@ -182,8 +200,8 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayees', undefined, (draft) => {
               console.log('a1')
               console.log(draft)
-              const i = draft.results.indexOf((e) => e.id == id)
-              console.log(draft.results.find((e) => e.id === id))
+              const i = draft.results.indexOf((e: Entity) => e.id == id)
+              console.log(draft.results.find((e: Entity) => e.id === id))
               console.log(i)
               draft.results[i] = query.data
               console.log('a2')
@@ -195,7 +213,7 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayee', undefined, (draft) => {
               console.log('b1')
               console.log(draft)
-              draft[draft.indexOf((e) => e.id == id)] = query.data
+              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
               console.log('b2')
               console.log(draft)
             })
@@ -225,20 +243,16 @@ export const apiSlice = createApi({
       providesTags: (data, error, arg) =>
         data
           ? [
-              ...data.results.map(({ id }) => ({ type: 'Payment', id })),
+              ...data.results.map(({ id }: Entity) => ({
+                type: 'Payment',
+                id,
+              })),
               { type: 'Payment', id: PARTIAL },
             ]
           : [{ type: 'Payment', id: PARTIAL }],
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg
-      },
+      serializeQueryArgs,
+      merge,
+      forceRefetch,
       keepUnusedDataFor: 0,
     }),
     getPayment: builder.query({
@@ -271,8 +285,8 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayments', undefined, (draft) => {
               console.log('a1')
               console.log(draft)
-              const i = draft.results.indexOf((e) => e.id == id)
-              console.log(draft.results.find((e) => e.id === id))
+              const i = draft.results.indexOf((e: Entity) => e.id == id)
+              console.log(draft.results.find((e: Entity) => e.id === id))
               console.log(i)
               draft.results[i] = query.data
               console.log('a2')
@@ -284,7 +298,7 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayment', undefined, (draft) => {
               console.log('b1')
               console.log(draft)
-              draft[draft.indexOf((e) => e.id == id)] = query.data
+              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
               console.log('b2')
               console.log(draft)
             })

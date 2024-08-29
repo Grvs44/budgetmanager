@@ -23,6 +23,10 @@ export type State = {
   title: Title
 }
 
+export interface Entity {
+  id: number
+}
+
 export type Budget = {
   id: number
   name: string
@@ -33,6 +37,8 @@ export type Budget = {
   modified_by: number | null
 }
 
-export type BudgetState = {
-  budgets: Budget[]
+export interface PageState<T> {
+  results: T[]
+  count: number
+  next: string
 }

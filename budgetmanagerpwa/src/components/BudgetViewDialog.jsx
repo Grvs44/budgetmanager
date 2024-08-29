@@ -10,15 +10,26 @@ import React from 'react'
 import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
-export default function BudgetViewDialog({ open, onClose, onEdit, budgetId }) {
+export default function BudgetViewDialog({
+  open,
+  onClose,
+  onEdit,
+  budgetId,
+  onDelete,
+}) {
   return (
     <Dialog open={open} onClose={onClose}>
-      <ViewContent onClose={onClose} onEdit={onEdit} budgetId={budgetId} />
+      <ViewContent
+        onClose={onClose}
+        onEdit={onEdit}
+        budgetId={budgetId}
+        onDelete={onDelete}
+      />
     </Dialog>
   )
 }
 
-function ViewContent({ onClose, onEdit, budgetId }) {
+function ViewContent({ onClose, onEdit, budgetId, onDelete }) {
   const { data, isLoading } = useGetBudgetQuery(budgetId, {
     skip: budgetId == null,
   })
@@ -46,8 +57,13 @@ function ViewContent({ onClose, onEdit, budgetId }) {
       <DialogTitle>{title}</DialogTitle>
       {content}
       <DialogActions>
-        <Button type="button" onClick={onClose}>
-          Close
+        <Button
+          type="button"
+          variant="contained"
+          onClick={() => onDelete()}
+          disabled={isLoading}
+        >
+          Delete
         </Button>
         <Button
           type="button"
@@ -56,6 +72,9 @@ function ViewContent({ onClose, onEdit, budgetId }) {
           disabled={isLoading}
         >
           Edit
+        </Button>
+        <Button type="button" onClick={onClose}>
+          Close
         </Button>
       </DialogActions>
     </>

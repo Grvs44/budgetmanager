@@ -5,10 +5,12 @@ import BudgetForm from '../components/BudgetForm'
 import BudgetListItem from '../components/BudgetListItem'
 import {
   useCreateBudgetMutation,
+  useDeleteBudgetMutation,
   useGetBudgetsQuery,
   useUpdateBudgetMutation,
 } from '../redux/apiSlice'
 import BudgetViewDialog from '../components/BudgetViewDialog'
+import DeleteConfirmation from '../components/DeleteConfirmation'
 
 export default function BudgetList() {
   const [page, setPage] = React.useState(0)
@@ -17,9 +19,11 @@ export default function BudgetList() {
   const [viewBudget, setViewBudget] = React.useState(null)
   const [editOpen, setEditOpen] = React.useState(false)
   const [editBudget, setEditBudget] = React.useState(null)
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [updateBudget] = useUpdateBudgetMutation()
   const query = useGetBudgetsQuery(page)
   const [createBudget] = useCreateBudgetMutation()
+  const [deleteBudget] = useDeleteBudgetMutation()
 
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
@@ -39,7 +43,15 @@ export default function BudgetList() {
     setViewOpen(true)
   }
 
+  const onDeleteSubmit = async () => {
+    setPage(0)
+    await deleteBudget({ id: viewBudget }).unwrap()
+    setViewOpen(false)
+    setViewBudget(null)
+  }
+
   const onCreateSubmit = async (oldData, data) => {
+    setPage(0)
     const budget = await createBudget(data)
     setViewBudget(budget.data.id)
     setViewOpen(true)
@@ -84,12 +96,19 @@ export default function BudgetList() {
         }}
         budgetId={viewBudget}
         onEdit={onEdit}
+        onDelete={() => setDeleteOpen(true)}
       />
       <BudgetForm
         budget={editBudget}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         onSubmit={onSubmit}
+      />
+      <DeleteConfirmation
+        onClose={() => setDeleteOpen(false)}
+        onSubmit={onDeleteSubmit}
+        open={deleteOpen}
+        title="Are you sure you want to delete this budget?"
       />
     </Container>
   )
