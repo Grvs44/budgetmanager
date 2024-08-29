@@ -5,27 +5,17 @@ import { Budget, PageState, Entity } from './types'
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 
-const nullNumber = (value: string | null) => (value ? Number(value) : null)
+const nullNumber = (value: string | null) =>
+  value ? Number(value) : Infinity
 
 const getOffset = ({ next }: PageState<any>) =>
-  next ? nullNumber(new URLSearchParams(next).get('offset')) : null
-
-const compareOffsets = <T>(
-  currentCache: PageState<T>,
-  responseData: PageState<T>
-) => {
-  const currentOffset = getOffset(currentCache)
-  if (currentOffset == null) return false
-  const responseOffset = getOffset(responseData)
-  if (responseOffset == null) return false
-  else return currentOffset < responseOffset
-}
+  next ? nullNumber(new URLSearchParams(next).get('offset')) : Infinity
 
 const mergeCache = <T>(
   currentCache: PageState<T>,
   responseData: PageState<T>
 ) => {
-  if (compareOffsets(currentCache, responseData)) {
+  if (getOffset(currentCache) < getOffset(responseData)) {
     currentCache.results.push(...responseData.results)
   } else {
     currentCache.results = responseData.results
