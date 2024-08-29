@@ -5,7 +5,7 @@ import { Budget, PageState, Entity } from './types'
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 
-const getOffset = (next: string) =>
+const getOffset = ({next}: PageState<any>) =>
   Number(new URLSearchParams(next).get('offset'))
 
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
@@ -56,7 +56,7 @@ export const apiSlice = createApi({
         return endpointName
       },
       merge: (currentCache, newItems) =>
-        getOffset(currentCache.next) < getOffset(newItems.next)
+        getOffset(currentCache) < getOffset(newItems)
           ? {
               results: currentCache.results.concat(newItems.results),
               next: newItems.next,
