@@ -50,6 +50,7 @@ export default function PaymentList() {
   }
 
   const onDeleteSubmit = async () => {
+    setPage(0)
     await deletePayment({ id: viewData })
     setViewOpen(false)
     setViewData(null)

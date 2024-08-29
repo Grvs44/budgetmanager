@@ -42,6 +42,7 @@ export default function PayeeList() {
     setViewOpen(true)
   }
   const onDeleteSubmit = async () => {
+    setPage(0)
     await deletePayee({ id: viewPayee })
     setViewOpen(false)
     setViewPayee(null)
