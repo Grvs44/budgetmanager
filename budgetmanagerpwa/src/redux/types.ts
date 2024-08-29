@@ -39,5 +39,6 @@ export type Budget = {
 
 export interface PageState<T> {
   results: T[]
+  count: number
   next: string
 }
