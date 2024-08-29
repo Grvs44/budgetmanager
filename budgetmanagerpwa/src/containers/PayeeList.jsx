@@ -47,6 +47,7 @@ export default function PayeeList() {
   }
 
   const onCreateSubmit = async (oldData, data) => {
+    setPage(0)
     const payeeData = await createPayee(data)
     setViewPayee(payeeData.data.id)
     setViewOpen(true)

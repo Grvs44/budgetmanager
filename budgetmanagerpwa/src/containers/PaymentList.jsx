@@ -30,6 +30,7 @@ export default function PaymentList() {
   const list = query.data
 
   const onCreateSubmit = async (oldData, data) => {
+    setPage(0)
     const paymentData = await createPayment(data)
     setViewData(paymentData.data.id)
     setViewOpen(true)
@@ -50,7 +51,6 @@ export default function PaymentList() {
 
   const onDeleteSubmit = async () => {
     await deletePayment({ id: viewData })
-    setDeleteOpen(false)
     setViewOpen(false)
     setViewData(null)
   }
