@@ -37,6 +37,7 @@ export type Budget = {
   modified_by: number | null
 }
 
-export type BudgetState = {
-  budgets: Budget[]
+export interface PageState<T> {
+  results: T[]
+  next: string
 }
