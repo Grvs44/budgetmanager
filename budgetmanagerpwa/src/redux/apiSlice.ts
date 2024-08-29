@@ -1,9 +1,13 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Entity } from './types'
+import { Budget, PageState, Entity } from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
+
+const getOffset = (next: string) =>
+  Number(new URLSearchParams(next).get('offset'))
+
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
@@ -46,15 +50,18 @@ export const apiSlice = createApi({
     }),
 
     // Budgets
-    getBudgets: builder.query({
+    getBudgets: builder.query<PageState<Budget>, number | undefined>({
       query: (page = 0) => `budget/?offset=${page * 10}&limit=10`,
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName
       },
-      merge: (currentCache, newItems) => {
-        currentCache.results.push(...newItems.results)
-        currentCache.next = newItems.next
-      },
+      merge: (currentCache, newItems) =>
+        getOffset(currentCache.next) < getOffset(newItems.next)
+          ? {
+              results: currentCache.results.concat(newItems.results),
+              next: newItems.next,
+            }
+          : newItems,
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg
       },
@@ -85,7 +92,6 @@ export const apiSlice = createApi({
         body,
         headers,
       }),
-      invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
       async onQueryStarted({ id }: Entity, { dispatch, queryFulfilled }) {
         try {
           console.log('starting')
@@ -103,10 +109,12 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getBudgets', undefined, (draft) => {
               const old = draft.results.find((e: Entity) => e.id === id)
               const upd = query.data
-              old.id = upd.id
-              old.name = upd.name
-              old.description = upd.description
-              old.active = upd.active
+              if (old) {
+                old.id = upd.id
+                old.name = upd.name
+                old.description = upd.description
+                old.active = upd.active
+              }
             })
           )
           console.log('dispatched 2/2')
