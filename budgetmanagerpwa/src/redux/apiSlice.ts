@@ -8,6 +8,14 @@ const PARTIAL = -1
 const getOffset = ({next}: PageState<any>) =>
   Number(new URLSearchParams(next).get('offset'))
 
+const mergeCache = <T>(currentCache:PageState<T>, responseData:PageState<T>) =>
+  getOffset(currentCache) < getOffset(responseData)
+    ? {
+        results: currentCache.results.concat(responseData.results),
+        next: responseData.next,
+      }
+    : responseData
+
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
@@ -55,13 +63,7 @@ export const apiSlice = createApi({
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName
       },
-      merge: (currentCache, newItems) =>
-        getOffset(currentCache) < getOffset(newItems)
-          ? {
-              results: currentCache.results.concat(newItems.results),
-              next: newItems.next,
-            }
-          : newItems,
+      merge: mergeCache,
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg
       },
