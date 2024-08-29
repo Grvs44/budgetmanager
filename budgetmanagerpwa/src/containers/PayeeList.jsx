@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Container, List } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
 import PayeeForm from '../components/PayeeForm'
 import PayeeListItem from '../components/PayeeListItem'
@@ -63,6 +64,9 @@ export default function PayeeList() {
       <Button onClick={() => setCreateOpen(true)}>
         <AddIcon /> New
       </Button>
+      <Typography>
+        Showing {list.results.length} of {list.count}
+      </Typography>
       {list.count ? (
         <List>
           {list.results.map((item) => (
