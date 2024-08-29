@@ -5,8 +5,7 @@ import { Budget, PageState, Entity } from './types'
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 
-const nullNumber = (value: string | null) =>
-  value ? Number(value) : Infinity
+const nullNumber = (value: string | null) => (value ? Number(value) : Infinity)
 
 const getOffset = ({ next }: PageState<any>) =>
   next ? nullNumber(new URLSearchParams(next).get('offset')) : Infinity
@@ -21,6 +20,7 @@ const mergeCache = <T>(
     currentCache.results = responseData.results
   }
   currentCache.next = responseData.next
+  currentCache.count = responseData.count
 }
 
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
