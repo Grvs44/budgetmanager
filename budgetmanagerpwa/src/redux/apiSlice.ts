@@ -5,16 +5,33 @@ import { Budget, PageState, Entity } from './types'
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 
-const getOffset = ({next}: PageState<any>) =>
-  Number(new URLSearchParams(next).get('offset'))
+const nullNumber = (value: string | null) => (value ? Number(value) : null)
 
-const mergeCache = <T>(currentCache:PageState<T>, responseData:PageState<T>) =>
-  getOffset(currentCache) < getOffset(responseData)
-    ? {
-        results: currentCache.results.concat(responseData.results),
-        next: responseData.next,
-      }
-    : responseData
+const getOffset = ({ next }: PageState<any>) =>
+  next ? nullNumber(new URLSearchParams(next).get('offset')) : null
+
+const compareOffsets = <T>(
+  currentCache: PageState<T>,
+  responseData: PageState<T>
+) => {
+  const currentOffset = getOffset(currentCache)
+  if (currentOffset == null) return false
+  const responseOffset = getOffset(responseData)
+  if (responseOffset == null) return false
+  else return currentOffset < responseOffset
+}
+
+const mergeCache = <T>(
+  currentCache: PageState<T>,
+  responseData: PageState<T>
+) => {
+  if (compareOffsets(currentCache, responseData)) {
+    currentCache.results.push(...responseData.results)
+  } else {
+    currentCache.results = responseData.results
+  }
+  currentCache.next = responseData.next
+}
 
 // From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
 export const apiSlice = createApi({
