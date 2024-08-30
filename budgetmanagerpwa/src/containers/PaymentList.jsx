@@ -31,8 +31,8 @@ export default function PaymentList() {
 
   const onCreateSubmit = async (oldData, data) => {
     setPage(0)
-    const paymentData = await createPayment(data)
-    setViewData(paymentData.data.id)
+    const paymentData = await createPayment(data).unwrap()
+    setViewData(paymentData.id)
     setViewOpen(true)
   }
 
@@ -44,14 +44,14 @@ export default function PaymentList() {
 
   const onSubmit = async (oldPayment, payment) => {
     payment.id = oldPayment.id
-    await updatePayment(payment)
+    await updatePayment(payment).unwrap()
     setEditOpen(false)
     setViewOpen(true)
   }
 
   const onDeleteSubmit = async () => {
     setPage(0)
-    await deletePayment({ id: viewData })
+    await deletePayment({ id: viewData }).unwrap()
     setViewOpen(false)
     setViewData(null)
   }

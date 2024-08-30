@@ -11,7 +11,10 @@ const getOffset = ({ next }: PageState<any>) =>
   next ? nullNumber(new URLSearchParams(next).get('offset')) : Infinity
 
 const merge = <T>(currentCache: PageState<T>, responseData: PageState<T>) => {
-  if (getOffset(currentCache) < getOffset(responseData)) {
+  if (
+    currentCache.count === responseData.count &&
+    getOffset(currentCache) < getOffset(responseData)
+  ) {
     currentCache.results.push(...responseData.results)
   } else {
     currentCache.results = responseData.results
@@ -144,7 +147,6 @@ export const apiSlice = createApi({
         headers,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: 'Budget', id },
         { type: 'Budget', id: PARTIAL },
       ],
     }),
@@ -152,13 +154,7 @@ export const apiSlice = createApi({
     // Payees
     getPayees: builder.query({
       query: (page = 0) => `payee/?offset=${page * 10}&limit=10`,
-      providesTags: (data, error, arg) =>
-        data
-          ? [
-              ...data.results.map(({ id }: Entity) => ({ type: 'Payee', id })),
-              { type: 'Payee', id: PARTIAL },
-            ]
-          : [{ type: 'Payee', id: PARTIAL }],
+      providesTags: [{ type: 'Payee', id: PARTIAL }],
       serializeQueryArgs,
       merge,
       forceRefetch,
@@ -231,7 +227,6 @@ export const apiSlice = createApi({
         headers,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: 'Payee', id },
         { type: 'Payee', id: PARTIAL },
       ],
     }),
@@ -240,16 +235,7 @@ export const apiSlice = createApi({
     getPayments: builder.query({
       query: (page = 0) =>
         `payment/?offset=${page * 10}&limit=10&ordering=-date`,
-      providesTags: (data, error, arg) =>
-        data
-          ? [
-              ...data.results.map(({ id }: Entity) => ({
-                type: 'Payment',
-                id,
-              })),
-              { type: 'Payment', id: PARTIAL },
-            ]
-          : [{ type: 'Payment', id: PARTIAL }],
+      providesTags: [{ type: 'Payment', id: PARTIAL }],
       serializeQueryArgs,
       merge,
       forceRefetch,
@@ -316,7 +302,6 @@ export const apiSlice = createApi({
         headers,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: 'Payment', id },
         { type: 'Payment', id: PARTIAL },
       ],
     }),
