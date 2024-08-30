@@ -27,6 +27,10 @@ export interface Entity {
   id: number
 }
 
+export interface Nameable extends Entity {
+  name: string
+}
+
 export type Budget = {
   id: number
   name: string
@@ -35,6 +39,22 @@ export type Budget = {
   user: number
   last_modified: string
   modified_by: number | null
+}
+
+export type Payee = {
+  id:number
+  budget:number
+  name: string
+  description: string
+  user:number
+  last_modified: string
+  modified_by: number | null
+}
+
+export type EditablePayee = {
+  budget:number|null
+  name: string
+  description: string
 }
 
 export interface PageState<T> {

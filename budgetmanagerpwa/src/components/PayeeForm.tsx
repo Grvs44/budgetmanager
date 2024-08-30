@@ -3,32 +3,43 @@ import { List, ListItem, TextField } from '@mui/material'
 import FormDialog from './FormDialog'
 import { useGetBudgetQuery, useGetBudgetsSearchQuery } from '../redux/apiSlice'
 import DropDown from './DropDown'
+import { EditablePayee } from '../redux/types'
 
-const empty = { budget: null, name: '', description: '' }
+const empty: EditablePayee = { budget: null, name: '', description: '' }
 
-export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
-  if (payee == null) payee = empty
-  const budget = useGetBudgetQuery(payee.budget, { skip: payee.budget == null })
+export type PayeeFormProps = {
+  payee: EditablePayee | null
+  onClose: () => void
+  onSubmit: (oldPayee: EditablePayee | null, newPayee: EditablePayee) => void
+  open: boolean
+  title: string
+}
+
+export default function PayeeForm(props: PayeeFormProps) {
+  if (props.payee == null) props.payee = empty
+  const budget = useGetBudgetQuery(props.payee.budget, {
+    skip: props.payee.budget == null,
+  })
   const [data, setData] = React.useState(
-    payee.budget ? payee.budget : budget.data
+    props.payee.budget ? props.payee.budget : budget.data
   )
 
   React.useEffect(() => setData(budget.data), [budget.isLoading])
 
-  const onFormSubmit = (formData) => {
+  const onFormSubmit = (formData: EditablePayee) => {
     if (data == null) alert('Missing budget')
     else {
-      onSubmit(payee, { budget: data.id, ...formData })
-      onClose()
+      props.onSubmit(props.payee, { ...formData, budget: data.id })
+      props.onClose()
     }
   }
 
   return (
     <FormDialog
       open={open}
-      onClose={onClose}
+      onClose={props.onClose}
       onSubmit={onFormSubmit}
-      title={title ? title : payee.name}
+      title={props.title ? props.title : props.payee.name}
     >
       <List>
         <ListItem>
@@ -39,7 +50,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
             required
             disabled={budget.isLoading}
             onChange={setData}
-            hook={(input, open) =>
+            hook={(input: string, open: boolean) =>
               useGetBudgetsSearchQuery(input, { skip: !open })
             }
           />
@@ -47,7 +58,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
         <ListItem>
           <TextField
             name="name"
-            defaultValue={payee.name}
+            defaultValue={props.payee.name}
             label="Name"
             required
             autoComplete="false"
@@ -56,7 +67,7 @@ export default function PayeeForm({ payee, onClose, onSubmit, open, title }) {
         <ListItem>
           <TextField
             name="description"
-            defaultValue={payee.description}
+            defaultValue={props.payee.description}
             label="Description"
             multiline
           />

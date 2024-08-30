@@ -9,29 +9,27 @@ import {
 import React from 'react'
 import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
+import { Budget } from '../redux/types'
 
-export default function BudgetViewDialog({
-  open,
-  onClose,
-  onEdit,
-  budgetId,
-  onDelete,
-}) {
+export type BudgetViewDialogProps = {
+  open: boolean
+  onClose: () => void
+  onEdit: ({ budget }: { budget: Budget }) => void
+  budgetId: number
+  onDelete: () => void
+}
+
+export default function BudgetViewDialog(props: BudgetViewDialogProps) {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <ViewContent
-        onClose={onClose}
-        onEdit={onEdit}
-        budgetId={budgetId}
-        onDelete={onDelete}
-      />
+    <Dialog open={props.open} onClose={props.onClose}>
+      <ViewContent {...props} />
     </Dialog>
   )
 }
 
-function ViewContent({ onClose, onEdit, budgetId, onDelete }) {
-  const { data, isLoading } = useGetBudgetQuery(budgetId, {
-    skip: budgetId == null,
+function ViewContent(props: BudgetViewDialogProps) {
+  const { data, isLoading } = useGetBudgetQuery(props.budgetId, {
+    skip: props.budgetId == null,
   })
   const user = useGetUserQuery(data?.modified_by, {
     skip: isLoading || data.modified_by == null,
@@ -60,7 +58,7 @@ function ViewContent({ onClose, onEdit, budgetId, onDelete }) {
         <Button
           type="button"
           variant="contained"
-          onClick={() => onDelete()}
+          onClick={() => props.onDelete()}
           disabled={isLoading}
         >
           Delete
@@ -68,12 +66,12 @@ function ViewContent({ onClose, onEdit, budgetId, onDelete }) {
         <Button
           type="button"
           variant="contained"
-          onClick={() => onEdit({ budget: data })}
+          onClick={() => props.onEdit({ budget: data })}
           disabled={isLoading}
         >
           Edit
         </Button>
-        <Button type="button" onClick={onClose}>
+        <Button type="button" onClick={props.onClose}>
           Close
         </Button>
       </DialogActions>

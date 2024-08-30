@@ -4,18 +4,25 @@ import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogTitle from '@mui/material/DialogTitle'
 
-export default function DeleteConfirmation({ onClose, onSubmit, open, title }) {
-  const onFormSubmit = event => {
+export type DeleteConfirmationProps = {
+  onClose: () => void
+  onSubmit: () => void
+  open: boolean
+  title: string
+}
+
+const DeleteConfirmation = (props: DeleteConfirmationProps) => {
+  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onSubmit()
-    onClose()
+    props.onSubmit()
+    props.onClose()
   }
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle>{props.title}</DialogTitle>
       <DialogActions>
         <form onSubmit={onFormSubmit}>
-          <Button onClick={onClose} type="button">
+          <Button onClick={props.onClose} type="button">
             Cancel
           </Button>
           <Button type="submit">Delete</Button>
@@ -24,3 +31,5 @@ export default function DeleteConfirmation({ onClose, onSubmit, open, title }) {
     </Dialog>
   )
 }
+
+export default DeleteConfirmation
