@@ -45,15 +45,10 @@ export default function BudgetList() {
 
   const onDeleteSubmit = async () => {
     try {
-      console.log('setpage')
       setPage(0)
-      console.log('delete')
       await deleteBudget({ id: viewBudget }).unwrap()
-      console.log('setopen')
       setViewOpen(false)
-      console.log('setdata')
       setViewBudget(null)
-      console.log('done')
     } catch (error) {
       console.error(error)
     }
