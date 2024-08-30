@@ -37,23 +37,32 @@ export default function BudgetList() {
   const onSubmit = async (oldBudget, budget) => {
     budget.id = oldBudget.id
     budget.active = budget.active === 'on'
-    await updateBudget(budget)
+    await updateBudget(budget).unwrap()
     setEditOpen(false)
     setViewBudget(budget.id)
     setViewOpen(true)
   }
 
   const onDeleteSubmit = async () => {
-    setPage(0)
-    await deleteBudget({ id: viewBudget }).unwrap()
-    setViewOpen(false)
-    setViewBudget(null)
+    try {
+      console.log('setpage')
+      setPage(0)
+      console.log('delete')
+      await deleteBudget({ id: viewBudget }).unwrap()
+      console.log('setopen')
+      setViewOpen(false)
+      console.log('setdata')
+      setViewBudget(null)
+      console.log('done')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const onCreateSubmit = async (oldData, data) => {
+    const budget = await createBudget(data).unwrap()
     setPage(0)
-    const budget = await createBudget(data)
-    setViewBudget(budget.data.id)
+    setViewBudget(budget.id)
     setViewOpen(true)
   }
 

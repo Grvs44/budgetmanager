@@ -36,22 +36,22 @@ export default function PayeeList() {
   }
   const onSubmit = async (oldPayee, payee) => {
     payee.id = oldPayee.id
-    await updatePayee(payee)
+    await updatePayee(payee).unwrap()
     setEditOpen(false)
     setViewPayee(payee.id)
     setViewOpen(true)
   }
   const onDeleteSubmit = async () => {
     setPage(0)
-    await deletePayee({ id: viewPayee })
+    await deletePayee({ id: viewPayee }).unwrap()
     setViewOpen(false)
     setViewPayee(null)
   }
 
   const onCreateSubmit = async (oldData, data) => {
     setPage(0)
-    const payeeData = await createPayee(data)
-    setViewPayee(payeeData.data.id)
+    const payeeData = await createPayee(data).unwrap()
+    setViewPayee(payeeData.id)
     setViewOpen(true)
   }
 
