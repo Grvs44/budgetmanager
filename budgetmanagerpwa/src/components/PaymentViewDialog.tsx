@@ -15,13 +15,21 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
+export type PaymmentViewDialogProps = {
+  open: boolean
+  onClose: () => void
+  onEdit: (data: any) => void
+  paymentId: number
+  onDelete: () => void
+}
+
 export default function PaymentViewDialog({
   open,
   onClose,
   onEdit,
   paymentId,
   onDelete,
-}) {
+}: PaymmentViewDialogProps) {
   const payment = useGetPaymentQuery(paymentId, { skip: !open })
   const skip = !open || payment.isLoading
   const payee = useGetPayeeQuery(payment?.data?.payee, { skip })
