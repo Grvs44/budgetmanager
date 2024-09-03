@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Container, List, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import BudgetForm from '../components/BudgetForm'
+import BudgetForm, { BudgetFormProps } from '../components/BudgetForm'
 import BudgetListItem from '../components/BudgetListItem'
 import {
   useCreateBudgetMutation,
@@ -34,10 +34,8 @@ export default function BudgetList() {
     setEditOpen(true)
   }
 
-  const onSubmit = async (oldBudget, budget) => {
-    budget.id = oldBudget.id
-    budget.active = budget.active === 'on'
-    await updateBudget(budget).unwrap()
+  const onSubmit: BudgetFormProps["onSubmit"] = async (oldBudget, budget) => {
+    await updateBudget({...budget, id:oldBudget?.id, active:(budget.active === 'on')}).unwrap()
     setEditOpen(false)
     setViewBudget(budget.id)
     setViewOpen(true)
@@ -61,7 +59,7 @@ export default function BudgetList() {
     setViewOpen(true)
   }
 
-  const onItemClick = (id) => {
+  const onItemClick = (id:number) => {
     setViewBudget(id)
     setViewOpen(true)
   }
@@ -72,9 +70,9 @@ export default function BudgetList() {
         <AddIcon /> New
       </Button>
       <Typography>
-        Showing {list.results.length} of {list.count}
+        Showing {list?.results.length} of {list?.count}
       </Typography>
-      {list.count ? (
+      {list?.count ? (
         <List>
           {list.results.map((item) => (
             <BudgetListItem item={item} key={item.id} onClick={onItemClick} />
@@ -83,7 +81,7 @@ export default function BudgetList() {
       ) : (
         <p>No budgets</p>
       )}
-      {list.next ? (
+      {list?.next ? (
         <Button onClick={() => setPage(page + 1)}>Load more</Button>
       ) : null}
       <BudgetForm
