@@ -12,7 +12,7 @@ import { EditableBudget } from '../redux/types'
 const empty = { name: '', description: '', active: true }
 
 export type BudgetFormProps = {
-  budget: EditableBudget
+  budget?: EditableBudget
   onClose: () => void
   onSubmit: (
     oldBudget: EditableBudget | null,
@@ -23,9 +23,9 @@ export type BudgetFormProps = {
 }
 
 export default function BudgetForm(props: BudgetFormProps) {
-  if (props.budget == null) props.budget = empty
+  const budget: EditableBudget = props.budget ? props.budget : empty
   const onFormSubmit = (formData: any) => {
-    props.onSubmit(props.budget, formData)
+    props.onSubmit(budget, formData)
     props.onClose()
   }
   return (
@@ -33,13 +33,13 @@ export default function BudgetForm(props: BudgetFormProps) {
       open={props.open}
       onClose={props.onClose}
       onSubmit={onFormSubmit}
-      title={props.title ? props.title : props.budget.name}
+      title={props.title ? props.title : budget.name}
     >
       <List>
         <ListItem>
           <TextField
             name="name"
-            defaultValue={props.budget.name}
+            defaultValue={budget.name}
             label="Name"
             required
             autoComplete="false"
@@ -48,16 +48,14 @@ export default function BudgetForm(props: BudgetFormProps) {
         <ListItem>
           <TextField
             name="description"
-            defaultValue={props.budget.description}
+            defaultValue={budget.description}
             label="Description"
             multiline
           />
         </ListItem>
         <ListItem>
           <FormControlLabel
-            control={
-              <Checkbox name="active" defaultChecked={props.budget.active} />
-            }
+            control={<Checkbox name="active" defaultChecked={budget.active} />}
             label="Active"
           />
         </ListItem>
