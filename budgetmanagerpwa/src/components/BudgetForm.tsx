@@ -7,27 +7,39 @@ import {
   TextField,
 } from '@mui/material'
 import FormDialog from './FormDialog'
+import { EditableBudget } from '../redux/types'
 
 const empty = { name: '', description: '', active: true }
 
-export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
-  if (budget == null) budget = empty
-  const onFormSubmit = (formData) => {
-    onSubmit(budget, formData)
-    onClose()
+export type BudgetFormProps = {
+  budget: EditableBudget
+  onClose: () => void
+  onSubmit: (
+    oldBudget: EditableBudget | null,
+    newBudget: EditableBudget
+  ) => void
+  open: boolean
+  title: string
+}
+
+export default function BudgetForm(props: BudgetFormProps) {
+  if (props.budget == null) props.budget = empty
+  const onFormSubmit = (formData: any) => {
+    props.onSubmit(props.budget, formData)
+    props.onClose()
   }
   return (
     <FormDialog
-      open={open}
-      onClose={onClose}
+      open={props.open}
+      onClose={props.onClose}
       onSubmit={onFormSubmit}
-      title={title ? title : budget.name}
+      title={props.title ? props.title : props.budget.name}
     >
       <List>
         <ListItem>
           <TextField
             name="name"
-            defaultValue={budget.name}
+            defaultValue={props.budget.name}
             label="Name"
             required
             autoComplete="false"
@@ -36,14 +48,16 @@ export default function BudgetForm({ budget, onClose, onSubmit, open, title }) {
         <ListItem>
           <TextField
             name="description"
-            defaultValue={budget.description}
+            defaultValue={props.budget.description}
             label="Description"
             multiline
           />
         </ListItem>
         <ListItem>
           <FormControlLabel
-            control={<Checkbox name="active" defaultChecked={budget.active} />}
+            control={
+              <Checkbox name="active" defaultChecked={props.budget.active} />
+            }
             label="Active"
           />
         </ListItem>

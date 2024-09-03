@@ -20,8 +20,20 @@ import {
 import dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { EditablePayment } from '../redux/types'
 
 dayjs.extend(customParseFormat)
+
+export type PaymentFormProps = {
+  payment: EditablePayment | null
+  onClose: () => void
+  onSubmit: (
+    oldPayment: EditablePayment | null,
+    newPayment: EditablePayment
+  ) => void
+  open: boolean
+  title: string
+}
 
 export default function PaymentForm({
   payment,
@@ -29,8 +41,9 @@ export default function PaymentForm({
   onSubmit,
   open,
   title,
-}) {
-  if (payment == null) payment = {}
+}: PaymentFormProps) {
+  if (payment == null)
+    payment = { payee: null, amount: null, date: '', pending: false, notes: '' }
   const payeeQuery = useGetPayeeQuery(payment.payee, {
     skip: payment.payee == null,
   })
@@ -43,11 +56,11 @@ export default function PaymentForm({
   const [budget, setBudget] = React.useState(budgetQuery.data)
   React.useEffect(() => setPayee(payeeQuery.data), [payeeQuery.isLoading])
   React.useEffect(() => setBudget(budgetQuery.data), [budgetQuery.data != null])
-  const onFormSubmit = (formData) => {
+  const onFormSubmit = (formData: EditablePayment) => {
     if (payee == null) alert('Missing payee')
     else {
       formData.date = dayjs(formData.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
-      onSubmit(payment, { payee: payee.id, ...formData })
+      onSubmit(payment, { ...formData, payee: payee.id })
       onClose()
     }
   }
@@ -65,6 +78,7 @@ export default function PaymentForm({
             label="Budget"
             name="budget"
             required
+            disabled={false}
             onChange={setBudget}
             hook={(input, open) =>
               useGetBudgetsSearchQuery(input, { skip: !open })
@@ -107,7 +121,6 @@ export default function PaymentForm({
               name="date"
               defaultValue={dayjs(payment.date)}
               label="Date"
-              required
             />
           </LocalizationProvider>
         </ListItem>

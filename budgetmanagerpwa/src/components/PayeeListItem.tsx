@@ -1,8 +1,14 @@
 import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
 import { useGetBudgetQuery } from '../redux/apiSlice'
+import { PayeeItem } from '../redux/types'
 
-export default function PayeeListItem({ item, onClick }) {
+export type PayeeListItemProps = {
+  item: PayeeItem
+  onClick: (id: number) => void
+}
+
+export default function PayeeListItem({ item, onClick }: PayeeListItemProps) {
   const budget = useGetBudgetQuery(item.budget)
   const budgetName = budget.isLoading ? 'loading...' : budget.data.name
   return (
@@ -10,7 +16,6 @@ export default function PayeeListItem({ item, onClick }) {
       <Box onClick={() => onClick(item.id)}>
         <Typography>{item.name}</Typography>
         <Typography>Budget: {budgetName}</Typography>
-        <Typography>{item.description}</Typography>
       </Box>
     </ListItem>
   )

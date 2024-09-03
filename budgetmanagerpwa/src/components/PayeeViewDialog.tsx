@@ -14,13 +14,24 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
+type ViewContentProps = {
+  onClose: () => void
+  onEdit: (data: any) => void
+  payeeId: number
+  onDelete: () => void
+}
+
+export type PayeeViewDialogProps = ViewContentProps & {
+  open: boolean
+}
+
 export default function PayeeViewDialog({
   open,
   onClose,
   onEdit,
   payeeId,
   onDelete,
-}) {
+}: PayeeViewDialogProps) {
   return (
     <Dialog open={open} onClose={onClose}>
       <ViewContent
@@ -33,7 +44,7 @@ export default function PayeeViewDialog({
   )
 }
 
-function ViewContent({ onClose, onEdit, payeeId, onDelete }) {
+function ViewContent({ onClose, onEdit, payeeId, onDelete }: ViewContentProps) {
   const payee = useGetPayeeQuery(payeeId, { skip: payeeId == null })
   const budget = useGetBudgetQuery(payee.data?.budget, {
     skip: payee.isLoading,

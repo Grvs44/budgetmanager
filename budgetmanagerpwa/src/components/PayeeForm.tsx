@@ -36,7 +36,7 @@ export default function PayeeForm(props: PayeeFormProps) {
 
   return (
     <FormDialog
-      open={open}
+      open={props.open}
       onClose={props.onClose}
       onSubmit={onFormSubmit}
       title={props.title ? props.title : props.payee.name}

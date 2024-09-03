@@ -7,14 +7,22 @@ import {
   DialogTitle,
 } from '@mui/material'
 
+export type FormDialogProps = {
+  children: React.JSX.Element
+  onClose: () => void
+  onSubmit: (data: any) => void
+  open: boolean
+  title: string
+}
+
 export default function FormDialog({
   children,
   onClose,
   onSubmit,
   open,
   title,
-}) {
-  const onFormSubmit = (event) => {
+}: FormDialogProps) {
+  const onFormSubmit = (event: any) => {
     event.preventDefault()
     onSubmit(Object.fromEntries(new FormData(event.target).entries()))
   }

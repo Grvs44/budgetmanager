@@ -2,8 +2,17 @@ import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
 import { useGetBudgetQuery, useGetPayeeQuery } from '../redux/apiSlice'
 import { getPaymentTitle } from '../redux/utils'
+import { PaymentItem } from '../redux/types'
 
-export default function PaymentListItem({ item, onClick }) {
+export type PaymentListItemProps = {
+  item: PaymentItem
+  onClick: (id: number) => void
+}
+
+export default function PaymentListItem({
+  item,
+  onClick,
+}: PaymentListItemProps) {
   const payee = useGetPayeeQuery(item.payee)
   const budget = useGetBudgetQuery(payee?.data?.budget, {
     skip: payee.isLoading,

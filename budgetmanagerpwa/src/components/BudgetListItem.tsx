@@ -1,7 +1,13 @@
 import React from 'react'
 import { Box, ListItem, Typography } from '@mui/material'
+import { BudgetItem } from '../redux/types'
 
-export default function BudgetListItem({ item, onClick }) {
+export type BudgetListItemProps = {
+  item: BudgetItem
+  onClick: (id: number) => void
+}
+
+export default function BudgetListItem({ item, onClick }: BudgetListItemProps) {
   return (
     <ListItem>
       <Box onClick={() => onClick(item.id)}>
@@ -11,7 +17,6 @@ export default function BudgetListItem({ item, onClick }) {
         ) : (
           <Typography>inactive</Typography>
         )}
-        <Typography>{item.description}</Typography>
       </Box>
     </ListItem>
   )

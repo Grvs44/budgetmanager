@@ -31,30 +31,65 @@ export interface Nameable extends Entity {
   name: string
 }
 
-export type Budget = {
+export type BudgetItem = {
   id: number
   name: string
-  description: string
   active: boolean
+}
+
+export type Budget = BudgetItem & {
+  description: string
   user: number
   last_modified: string
   modified_by: number | null
 }
 
-export type Payee = {
-  id:number
-  budget:number
+export type EditableBudget = {
   name: string
   description: string
-  user:number
+  active: boolean
+}
+
+export type PayeeItem = {
+  id: number
+  budget: number
+  name: string
+}
+
+export type Payee = PayeeItem & {
+  description: string
+  user: number
   last_modified: string
   modified_by: number | null
 }
 
 export type EditablePayee = {
-  budget:number|null
+  budget: number | null
   name: string
   description: string
+}
+
+export type PaymentItem = {
+  id: number
+  payee: number
+  amount: number
+  date: string
+}
+
+export type Payment = PaymentItem & {
+  pending: boolean
+  notes: string
+  user: number
+  last_modified: string
+  modified_by: number | null
+}
+
+export type EditablePayment = {
+  payee: number | null
+  amount: number | null
+  date: string | null
+  pending: boolean
+  notes: string
 }
 
 export interface PageState<T> {
