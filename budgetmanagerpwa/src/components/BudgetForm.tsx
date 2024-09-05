@@ -12,14 +12,14 @@ import { EditableBudget } from '../redux/types'
 const empty = { name: '', description: '', active: true }
 
 export type BudgetFormProps = {
-  budget?: EditableBudget
+  budget?: EditableBudget | null
   onClose: () => void
   onSubmit: (
     oldBudget: EditableBudget | null,
-    newBudget: EditableBudget
+    newBudget: any
   ) => void
   open: boolean
-  title: string
+  title?: string
 }
 
 export default function BudgetForm(props: BudgetFormProps) {

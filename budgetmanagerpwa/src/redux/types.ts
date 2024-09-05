@@ -45,6 +45,7 @@ export type Budget = BudgetItem & {
 }
 
 export type EditableBudget = {
+  id?: number
   name: string
   description: string
   active: boolean

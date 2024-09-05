@@ -15,7 +15,7 @@ export type BudgetViewDialogProps = {
   open: boolean
   onClose: () => void
   onEdit: ({ budget }: { budget: Budget }) => void
-  budgetId: number
+  budgetId?: number | null
   onDelete: () => void
 }
 

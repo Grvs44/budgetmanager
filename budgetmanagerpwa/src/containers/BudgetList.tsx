@@ -11,14 +11,15 @@ import {
 } from '../redux/apiSlice'
 import BudgetViewDialog from '../components/BudgetViewDialog'
 import DeleteConfirmation from '../components/DeleteConfirmation'
+import { Budget } from '../redux/types'
 
 export default function BudgetList() {
   const [page, setPage] = React.useState(0)
   const [createOpen, setCreateOpen] = React.useState(false)
   const [viewOpen, setViewOpen] = React.useState(false)
-  const [viewBudget, setViewBudget] = React.useState(null)
+  const [viewBudget, setViewBudget] = React.useState<number | null>(null)
   const [editOpen, setEditOpen] = React.useState(false)
-  const [editBudget, setEditBudget] = React.useState(null)
+  const [editBudget, setEditBudget] = React.useState<Budget | null>(null)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [updateBudget] = useUpdateBudgetMutation()
   const query = useGetBudgetsQuery(page)
@@ -28,16 +29,21 @@ export default function BudgetList() {
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
-  const onEdit = ({ budget }) => {
+  const onEdit = ({ budget }: { budget: Budget }) => {
     setViewOpen(false)
     setEditBudget(budget)
     setEditOpen(true)
   }
 
-  const onSubmit: BudgetFormProps["onSubmit"] = async (oldBudget, budget) => {
-    await updateBudget({...budget, id:oldBudget?.id, active:(budget.active === 'on')}).unwrap()
+  const onSubmit: BudgetFormProps['onSubmit'] = async (oldBudget, budget) => {
+    const newBudget: Budget = {
+      ...budget,
+      id: oldBudget?.id,
+      active: budget.active === 'on',
+    }
+    await updateBudget(newBudget).unwrap()
     setEditOpen(false)
-    setViewBudget(budget.id)
+    setViewBudget(newBudget.id)
     setViewOpen(true)
   }
 
@@ -59,7 +65,7 @@ export default function BudgetList() {
     setViewOpen(true)
   }
 
-  const onItemClick = (id:number) => {
+  const onItemClick = (id: number) => {
     setViewBudget(id)
     setViewOpen(true)
   }
