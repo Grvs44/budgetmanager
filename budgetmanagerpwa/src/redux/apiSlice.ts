@@ -204,12 +204,9 @@ export const apiSlice = createApi({
           console.log('fulfilled')
           dispatch(
             apiSlice.util.updateQueryData('getPayees', undefined, (draft) => {
-              console.log('a1')
-              console.log(draft)
-              const i = draft.results.indexOf((e: Entity) => e.id == id)
-              console.log(draft.results.find((e: Entity) => e.id === id))
-              console.log(i)
-              draft.results[i] = query.data
+              draft.results = draft.results.map((e: Payee) =>
+                e.id == id ? query.data : e
+              )
               console.log('a2')
               console.log(draft.results)
             })
