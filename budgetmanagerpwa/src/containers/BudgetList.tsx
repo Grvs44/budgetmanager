@@ -11,7 +11,7 @@ import {
 } from '../redux/apiSlice'
 import BudgetViewDialog from '../components/BudgetViewDialog'
 import DeleteConfirmation from '../components/DeleteConfirmation'
-import { Budget } from '../redux/types'
+import { Budget, SubmitBudget } from '../redux/types'
 
 export default function BudgetList() {
   const [page, setPage] = React.useState(0)
@@ -49,6 +49,7 @@ export default function BudgetList() {
 
   const onDeleteSubmit = async () => {
     try {
+      if(viewBudget==null)return
       setPage(0)
       await deleteBudget({ id: viewBudget }).unwrap()
       setViewOpen(false)
@@ -58,7 +59,7 @@ export default function BudgetList() {
     }
   }
 
-  const onCreateSubmit = async (oldData, data) => {
+  const onCreateSubmit = async (_:any, data:SubmitBudget) => {
     const budget = await createBudget(data).unwrap()
     setPage(0)
     setViewBudget(budget.id)

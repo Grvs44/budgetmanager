@@ -51,6 +51,14 @@ export type EditableBudget = {
   active: boolean
 }
 
+export type SubmitBudget = {
+  name?: string
+  description?: string
+  active?: boolean
+}
+
+export type UpdateBudget = Entity & SubmitBudget
+
 export type PayeeItem = {
   id: number
   budget: number
@@ -64,11 +72,24 @@ export type Payee = PayeeItem & {
   modified_by: number | null
 }
 
+export type PayeeSearch = {
+  name: string
+  budget: Entity
+}
+
 export type EditablePayee = {
   budget: number | null
   name: string
   description: string
 }
+
+export type SubmitPayee = {
+  budget?: number
+  name?: string
+  description?: string
+}
+
+export type UpdatePayee = Entity & SubmitPayee
 
 export type PaymentItem = {
   id: number

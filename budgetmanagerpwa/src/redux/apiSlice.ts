@@ -1,6 +1,16 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Budget, PageState, Entity } from './types'
+import {
+  Budget,
+  PageState,
+  Entity,
+  SubmitBudget,
+  UpdateBudget,
+  Payee,
+  PayeeSearch,
+  SubmitPayee,
+  UpdatePayee,
+} from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
@@ -85,15 +95,15 @@ export const apiSlice = createApi({
       keepUnusedDataFor: 0,
       providesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
-    getBudgetsSearch: builder.query({
+    getBudgetsSearch: builder.query<string, string>({
       query: (name) =>
         'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
     }),
-    getBudget: builder.query({
+    getBudget: builder.query<Budget, number>({
       query: (id) => `budget/${id}/`,
-      providesTags: ({ id }, error, arg) => [{ type: 'Budget', id }],
+      providesTags: (data, error, arg) => [{ type: 'Budget', id: data?.id }],
     }),
-    createBudget: builder.mutation({
+    createBudget: builder.mutation<Budget, SubmitBudget>({
       query: (body) => ({
         url: 'budget/',
         method: 'POST',
@@ -102,7 +112,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
-    updateBudget: builder.mutation({
+    updateBudget: builder.mutation<Budget, UpdateBudget>({
       query: ({ id, ...body }) => ({
         url: `budget/${id}/`,
         method: 'PATCH',
@@ -140,7 +150,7 @@ export const apiSlice = createApi({
         }
       },
     }),
-    deleteBudget: builder.mutation({
+    deleteBudget: builder.mutation<any, Entity>({
       query: ({ id }) => ({
         url: `budget/${id}/`,
         method: 'DELETE',
@@ -152,7 +162,7 @@ export const apiSlice = createApi({
     }),
 
     // Payees
-    getPayees: builder.query({
+    getPayees: builder.query<PageState<Payee>, number | undefined>({
       query: (page = 0) => `payee/?offset=${page * 10}&limit=10`,
       providesTags: [{ type: 'Payee', id: PARTIAL }],
       serializeQueryArgs,
@@ -160,17 +170,17 @@ export const apiSlice = createApi({
       forceRefetch,
       keepUnusedDataFor: 0,
     }),
-    getPayeesSearch: builder.query({
+    getPayeesSearch: builder.query<string, PayeeSearch>({
       query: ({ name, budget }) =>
         `payee/?limit=10&ordering=-last_used&budget=${
           budget.id
         }&search=${encodeURI(name)}`,
     }),
-    getPayee: builder.query({
+    getPayee: builder.query<Payee, number>({
       query: (id) => `payee/${id}/`,
-      providesTags: ({ id }, error, arg) => [{ type: 'Payee', id }],
+      providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
     }),
-    createPayee: builder.mutation({
+    createPayee: builder.mutation<Payee, SubmitPayee>({
       query: (body) => ({
         url: 'payee/',
         method: 'POST',
@@ -179,7 +189,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Payee', id: PARTIAL }],
     }),
-    updatePayee: builder.mutation({
+    updatePayee: builder.mutation<Payee, UpdatePayee>({
       query: ({ id, ...body }) => ({
         url: `payee/${id}/`,
         method: 'PATCH',
@@ -206,13 +216,7 @@ export const apiSlice = createApi({
           )
           console.log('dispatched 1/2')
           dispatch(
-            apiSlice.util.updateQueryData('getPayee', undefined, (draft) => {
-              console.log('b1')
-              console.log(draft)
-              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
-              console.log('b2')
-              console.log(draft)
-            })
+            apiSlice.util.updateQueryData('getPayee', id, () => query.data)
           )
           console.log('dispatched 2/2')
         } catch {
@@ -220,7 +224,7 @@ export const apiSlice = createApi({
         }
       },
     }),
-    deletePayee: builder.mutation({
+    deletePayee: builder.mutation<any, Entity>({
       query: ({ id }) => ({
         url: `payee/${id}/`,
         method: 'DELETE',
