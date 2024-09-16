@@ -99,7 +99,7 @@ export const apiSlice = createApi({
       query: (name) =>
         'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
     }),
-    getBudget: builder.query<Budget, number>({
+    getBudget: builder.query<Budget, number|null|undefined>({
       query: (id) => `budget/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Budget', id: data?.id }],
     }),
@@ -176,7 +176,7 @@ export const apiSlice = createApi({
           budget.id
         }&search=${encodeURI(name)}`,
     }),
-    getPayee: builder.query<Payee, number>({
+    getPayee: builder.query<Payee, number|null>({
       query: (id) => `payee/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
     }),

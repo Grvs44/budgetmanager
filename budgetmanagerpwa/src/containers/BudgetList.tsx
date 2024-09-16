@@ -14,13 +14,13 @@ import DeleteConfirmation from '../components/DeleteConfirmation'
 import { Budget, SubmitBudget } from '../redux/types'
 
 export default function BudgetList() {
-  const [page, setPage] = React.useState(0)
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [viewOpen, setViewOpen] = React.useState(false)
+  const [page, setPage] = React.useState<number>(0)
+  const [createOpen, setCreateOpen] = React.useState<boolean>(false)
+  const [viewOpen, setViewOpen] = React.useState<boolean>(false)
   const [viewBudget, setViewBudget] = React.useState<number | null>(null)
-  const [editOpen, setEditOpen] = React.useState(false)
+  const [editOpen, setEditOpen] = React.useState<boolean>(false)
   const [editBudget, setEditBudget] = React.useState<Budget | null>(null)
-  const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false)
   const [updateBudget] = useUpdateBudgetMutation()
   const query = useGetBudgetsQuery(page)
   const [createBudget] = useCreateBudgetMutation()
@@ -49,7 +49,7 @@ export default function BudgetList() {
 
   const onDeleteSubmit = async () => {
     try {
-      if(viewBudget==null)return
+      if (viewBudget == null) return
       setPage(0)
       await deleteBudget({ id: viewBudget }).unwrap()
       setViewOpen(false)
@@ -59,7 +59,7 @@ export default function BudgetList() {
     }
   }
 
-  const onCreateSubmit = async (_:any, data:SubmitBudget) => {
+  const onCreateSubmit = async (_: any, data: SubmitBudget) => {
     const budget = await createBudget(data).unwrap()
     setPage(0)
     setViewBudget(budget.id)

@@ -6,11 +6,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { Nameable } from '../redux/types'
 
 export type DropDownProps = {
-  defaultValue: Nameable
+  defaultValue?: Nameable | null
   label: string
   name: string
-  required: boolean
-  disabled: boolean
+  required?: boolean
+  disabled?: boolean
   onChange: (value: Nameable | null) => void
   hook: (
     input: string,
