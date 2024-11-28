@@ -35,7 +35,7 @@ const forceRefetch = <T>({
   previousArg: T
 }) => currentArg !== previousArg
 
-// From https://codesandbox.io/s/react-rtk-query-inifinite-scroll-8kj9bh
+// Adapted from https://stackoverflow.com/a/74844699
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
