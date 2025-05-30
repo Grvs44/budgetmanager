@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 import jsconfigPaths from 'vite-jsconfig-paths'
-import { VitePWA } from 'vite-plugin-pwa'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   plugins: [
@@ -17,10 +17,6 @@ export default defineConfig({
     }),
     createHtmlPlugin({ minify: true }),
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
   base: '/budgetmanager/',
   server: {
     open: '/budgetmanager/',
