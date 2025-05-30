@@ -1,9 +1,9 @@
 // From https://mui.com/material-ui/react-autocomplete
 import React from 'react'
-import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import CircularProgress from '@mui/material/CircularProgress'
-import { Nameable } from '../redux/types'
+import TextField from '@mui/material/TextField'
+import type { Nameable } from '../redux/types'
 
 export type DropDownProps = {
   defaultValue?: Nameable | null
@@ -12,10 +12,7 @@ export type DropDownProps = {
   required?: boolean
   disabled?: boolean
   onChange: (value: Nameable | null) => void
-  hook: (
-    input: string,
-    open: boolean
-  ) => any
+  hook: (input: string, open: boolean) => any
 }
 
 export default function DropDown(props: DropDownProps) {

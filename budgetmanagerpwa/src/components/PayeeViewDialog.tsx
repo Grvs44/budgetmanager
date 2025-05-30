@@ -1,12 +1,11 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogActions,
-  DialogTitle,
-  Typography,
-  Button,
-} from '@mui/material'
 import React from 'react'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import {
   useGetBudgetQuery,
   useGetPayeeQuery,
@@ -50,30 +49,23 @@ function ViewContent({ onClose, onEdit, payeeId, onDelete }: ViewContentProps) {
     skip: payee.isLoading,
   })
   const user = useGetUserQuery(payee.data?.modified_by, {
-    skip: payee.isLoading || payee.data.modified_by == null,
+    skip: payee.isLoading || payee.data?.modified_by == null,
   })
-  let title, content
   const isLoading = payee.isLoading || budget.isLoading || user.isLoading
-  if (isLoading) {
-    title = 'Loading'
-    content = null
-  } else {
-    title = payee.data.name
-    content = (
-      <DialogContent>
-        <Typography>Budget: {budget.data.name}</Typography>
-        <Typography>{payee.data.description}</Typography>
-        <Typography>
-          Last modified on {payee.data.last_modified} by{' '}
-          {showUserDetails(user.data)}
-        </Typography>
-      </DialogContent>
-    )
-  }
+
   return (
     <>
-      <DialogTitle>{title}</DialogTitle>
-      {content}
+      <DialogTitle>{payee.data ? payee.data.name : <Skeleton />}</DialogTitle>
+      {isLoading ? null : (
+        <DialogContent>
+          <Typography>Budget: {budget.data?.name}</Typography>
+          <Typography>{payee.data?.description}</Typography>
+          <Typography>
+            Last modified on {payee.data?.last_modified} by{' '}
+            {user.data ? showUserDetails(user.data) : <Skeleton />}
+          </Typography>
+        </DialogContent>
+      )}
       <DialogActions>
         <Button
           type="button"

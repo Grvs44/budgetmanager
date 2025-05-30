@@ -1,9 +1,11 @@
 import React from 'react'
-import { List, ListItem, TextField } from '@mui/material'
-import FormDialog from './FormDialog'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import TextField from '@mui/material/TextField'
 import { useGetBudgetQuery, useGetBudgetsSearchQuery } from '../redux/apiSlice'
+import type { EditablePayee, Nameable } from '../redux/types'
 import DropDown from './DropDown'
-import { EditablePayee, Nameable } from '../redux/types'
+import FormDialog from './FormDialog'
 
 const empty: EditablePayee = { budget: null, name: '', description: '' }
 
@@ -21,7 +23,7 @@ export default function PayeeForm(props: PayeeFormProps) {
     skip: props.payee.budget == null,
   })
   const [data, setData] = React.useState<Nameable | null | undefined>(
-    props.payee.budget ? budget.data : null
+    props.payee.budget ? budget.data : null,
   )
 
   React.useEffect(() => setData(budget.data), [budget.isLoading])

@@ -1,6 +1,8 @@
 import React from 'react'
-import { Box, ListItem, Typography } from '@mui/material'
-import { BudgetItem } from '../redux/types'
+import Box from '@mui/material/Box'
+import ListItem from '@mui/material/ListItem'
+import Typography from '@mui/material/Typography'
+import type { BudgetItem } from '../redux/types'
 
 export type BudgetListItemProps = {
   item: BudgetItem

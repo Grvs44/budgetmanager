@@ -1,23 +1,18 @@
 import React from 'react'
-import {
-  Checkbox,
-  FormControlLabel,
-  List,
-  ListItem,
-  TextField,
-} from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import TextField from '@mui/material/TextField'
+import type { EditableBudget } from '../redux/types'
 import FormDialog from './FormDialog'
-import { EditableBudget } from '../redux/types'
 
 const empty = { name: '', description: '', active: true }
 
 export type BudgetFormProps = {
   budget?: EditableBudget | null
   onClose: () => void
-  onSubmit: (
-    oldBudget: EditableBudget | null,
-    newBudget: any
-  ) => void
+  onSubmit: (oldBudget: EditableBudget | null, newBudget: any) => void
   open: boolean
   title?: string
 }

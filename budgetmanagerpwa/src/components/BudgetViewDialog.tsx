@@ -1,15 +1,14 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogActions,
-  DialogTitle,
-  Typography,
-  Button,
-} from '@mui/material'
 import React from 'react'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
+import type { Budget } from '../redux/types'
 import { showUserDetails } from '../redux/utils'
-import { Budget } from '../redux/types'
 
 export type BudgetViewDialogProps = {
   open: boolean
@@ -32,28 +31,22 @@ function ViewContent(props: BudgetViewDialogProps) {
     skip: props.budgetId == null,
   })
   const user = useGetUserQuery(data?.modified_by, {
-    skip: isLoading || data.modified_by == null,
+    skip: isLoading || data?.modified_by == null,
   })
-  let title, content
-  if (isLoading || user.isLoading) {
-    title = 'Loading'
-    content = null
-  } else {
-    title = data.name
-    content = (
-      <DialogContent>
-        <Typography>{data.description}</Typography>
-        <Typography>{data.active ? 'Active' : 'Inactive'}</Typography>
-        <Typography>
-          Last modified on {data.last_modified} by {showUserDetails(user.data)}
-        </Typography>
-      </DialogContent>
-    )
-  }
+
   return (
     <>
-      <DialogTitle>{title}</DialogTitle>
-      {content}
+      <DialogTitle>{data ? data.name : <Skeleton />}</DialogTitle>
+      {isLoading || user.isLoading ? null : (
+        <DialogContent>
+          <Typography>{data?.description}</Typography>
+          <Typography>{data?.active ? 'Active' : 'Inactive'}</Typography>
+          <Typography>
+            Last modified on {data?.last_modified} by{' '}
+            {user.data ? showUserDetails(user.data) : <Skeleton />}
+          </Typography>
+        </DialogContent>
+      )}
       <DialogActions>
         <Button
           type="button"
@@ -66,7 +59,7 @@ function ViewContent(props: BudgetViewDialogProps) {
         <Button
           type="button"
           variant="contained"
-          onClick={() => props.onEdit({ budget: data })}
+          onClick={data ? () => props.onEdit({ budget: data }) : undefined}
           disabled={isLoading}
         >
           Edit

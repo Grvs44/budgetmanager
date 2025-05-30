@@ -1,8 +1,11 @@
 import React from 'react'
-import { Box, ListItem, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import ListItem from '@mui/material/ListItem'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import { useGetBudgetQuery, useGetPayeeQuery } from '../redux/apiSlice'
+import type { PaymentItem } from '../redux/types'
 import { getPaymentTitle } from '../redux/utils'
-import { PaymentItem } from '../redux/types'
 
 export type PaymentListItemProps = {
   item: PaymentItem
@@ -17,19 +20,17 @@ export default function PaymentListItem({
   const budget = useGetBudgetQuery(payee?.data?.budget, {
     skip: payee.isLoading,
   })
-  const budgetName =
-    payee.isLoading || budget.isLoading ? 'Loading...' : budget.data.name
-  const title = getPaymentTitle(
-    item,
-    payee.isLoading ? { name: '(loading)' } : payee.data
-  )
 
   return (
     <ListItem>
       <Box onClick={() => onClick(item.id)}>
-        <Typography>{title}</Typography>
+        <Typography>
+          {payee.data ? getPaymentTitle(item, payee.data) : <Skeleton />}
+        </Typography>
         <Typography>{item.date}</Typography>
-        <Typography>{budgetName}</Typography>
+        <Typography>
+          {budget.data && !payee.isFetching ? budget.data.name : <Skeleton />}
+        </Typography>
       </Box>
     </ListItem>
   )
