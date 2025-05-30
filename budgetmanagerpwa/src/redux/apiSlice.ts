@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {
+import type {
   Budget,
   PageState,
   Entity,
@@ -10,6 +10,7 @@ import {
   PayeeSearch,
   SubmitPayee,
   UpdatePayee,
+  User,
 } from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
@@ -53,7 +54,7 @@ export const apiSlice = createApi({
   tagTypes: ['Budget', 'Payee', 'Payment'],
   endpoints: (builder) => ({
     // User
-    getCurrentUser: builder.query({
+    getCurrentUser: builder.query<User, void>({
       query: () => 'user/me/',
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
@@ -70,11 +71,11 @@ export const apiSlice = createApi({
         }
       },
     }),
-    getUser: builder.query({
+    getUser: builder.query<User, any>({
       query: (id) => `user/${id}/`,
       keepUnusedDataFor: 60000,
     }),
-    getTotal: builder.query({
+    getTotal: builder.query<number, void>({
       query: () => 'total/',
     }),
     joinBudget: builder.mutation({
@@ -99,7 +100,7 @@ export const apiSlice = createApi({
       query: (name) =>
         'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
     }),
-    getBudget: builder.query<Budget, number|null|undefined>({
+    getBudget: builder.query<Budget, number | null | undefined>({
       query: (id) => `budget/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Budget', id: data?.id }],
     }),
@@ -176,7 +177,7 @@ export const apiSlice = createApi({
           budget.id
         }&search=${encodeURI(name)}`,
     }),
-    getPayee: builder.query<Payee, number|null>({
+    getPayee: builder.query<Payee, number | null>({
       query: (id) => `payee/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
     }),
