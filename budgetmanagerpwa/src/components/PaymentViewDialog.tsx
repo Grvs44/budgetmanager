@@ -1,12 +1,11 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from '@mui/material'
 import React from 'react'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import {
   useGetBudgetQuery,
   useGetPayeeQuery,
@@ -15,13 +14,21 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
+export type PaymmentViewDialogProps = {
+  open: boolean
+  onClose: () => void
+  onEdit: (data: any) => void
+  paymentId: number
+  onDelete: () => void
+}
+
 export default function PaymentViewDialog({
   open,
   onClose,
   onEdit,
   paymentId,
   onDelete,
-}) {
+}: PaymmentViewDialogProps) {
   const payment = useGetPaymentQuery(paymentId, { skip: !open })
   const skip = !open || payment.isLoading
   const payee = useGetPayeeQuery(payment?.data?.payee, { skip })
@@ -54,7 +61,7 @@ export default function PaymentViewDialog({
         {payment?.data?.pending ? <Typography>Pending</Typography> : null}
         <Typography>
           Last modified on {payment?.data?.last_modified} by{' '}
-          {showUserDetails(user.data)}
+          {user.data ? showUserDetails(user.data) : <Skeleton />}
         </Typography>
       </DialogContent>
       <DialogActions>

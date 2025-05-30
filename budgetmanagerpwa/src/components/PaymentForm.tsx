@@ -20,8 +20,20 @@ import {
 import dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { EditablePayment, Nameable } from '../redux/types'
 
 dayjs.extend(customParseFormat)
+
+export type PaymentFormProps = {
+  payment: EditablePayment | null
+  onClose: () => void
+  onSubmit: (
+    oldPayment: EditablePayment | null,
+    newPayment: EditablePayment
+  ) => void
+  open: boolean
+  title: string
+}
 
 export default function PaymentForm({
   payment,
@@ -29,25 +41,28 @@ export default function PaymentForm({
   onSubmit,
   open,
   title,
-}) {
-  if (payment == null) payment = {}
+}: PaymentFormProps) {
+  if (payment == null)
+    payment = { payee: null, amount: null, date: '', pending: false, notes: '' }
   const payeeQuery = useGetPayeeQuery(payment.payee, {
     skip: payment.payee == null,
   })
   const budgetQuery = useGetBudgetQuery(payeeQuery.data?.budget, {
     skip: payeeQuery.data == null,
   })
-  const [payee, setPayee] = React.useState(
-    payment.payee ? payment.payee : payeeQuery.data
+  const [payee, setPayee] = React.useState<Nameable | null | undefined>(
+    payment.payee ? payeeQuery.data : undefined
   )
-  const [budget, setBudget] = React.useState(budgetQuery.data)
+  const [budget, setBudget] = React.useState<Nameable | null | undefined>(
+    budgetQuery.data
+  )
   React.useEffect(() => setPayee(payeeQuery.data), [payeeQuery.isLoading])
   React.useEffect(() => setBudget(budgetQuery.data), [budgetQuery.data != null])
-  const onFormSubmit = (formData) => {
+  const onFormSubmit = (formData: EditablePayment) => {
     if (payee == null) alert('Missing payee')
     else {
       formData.date = dayjs(formData.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
-      onSubmit(payment, { payee: payee.id, ...formData })
+      onSubmit(payment, { ...formData, payee: payee.id })
       onClose()
     }
   }
@@ -65,6 +80,7 @@ export default function PaymentForm({
             label="Budget"
             name="budget"
             required
+            disabled={false}
             onChange={setBudget}
             hook={(input, open) =>
               useGetBudgetsSearchQuery(input, { skip: !open })
@@ -81,8 +97,8 @@ export default function PaymentForm({
             disabled={budget == null}
             hook={(input, open) =>
               useGetPayeesSearchQuery(
-                { name: input, budget },
-                { skip: !open || budget == null }
+                { name: input, budget: { id: budget ? budget.id : 0 } }, // TODO
+                { skip: !open || budget == undefined }
               )
             }
           />
@@ -107,7 +123,6 @@ export default function PaymentForm({
               name="date"
               defaultValue={dayjs(payment.date)}
               label="Date"
-              required
             />
           </LocalizationProvider>
         </ListItem>

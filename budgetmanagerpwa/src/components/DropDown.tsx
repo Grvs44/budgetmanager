@@ -1,31 +1,31 @@
 // From https://mui.com/material-ui/react-autocomplete
 import React from 'react'
-import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import CircularProgress from '@mui/material/CircularProgress'
+import TextField from '@mui/material/TextField'
+import type { Nameable } from '../redux/types'
 
-export default function DropDown({
-  defaultValue,
-  label,
-  name,
-  required,
-  disabled,
-  onChange,
-  hook,
-}) {
-  const [open, setOpen] = React.useState(false)
-  const [input, setInput] = React.useState('')
-  const { data, isLoading } = hook(input, open)
+export type DropDownProps = {
+  defaultValue?: Nameable | null
+  label: string
+  name: string
+  required?: boolean
+  disabled?: boolean
+  onChange: (value: Nameable | null) => void
+  hook: (input: string, open: boolean) => any
+}
+
+export default function DropDown(props: DropDownProps) {
+  const [open, setOpen] = React.useState<boolean>(false)
+  const [input, setInput] = React.useState<string>('')
+  const { data, isLoading } = props.hook(input, open)
   const loading = open && isLoading
 
   return (
     <Autocomplete
       filterOptions={(x) => x}
-      defaultValue={defaultValue}
-      label={label}
-      name={name}
-      required={required}
-      disabled={disabled}
+      defaultValue={props.defaultValue}
+      disabled={props.disabled}
       sx={{ width: 300 }}
       open={open}
       onOpen={() => {
@@ -37,14 +37,14 @@ export default function DropDown({
       isOptionEqualToValue={(option, value) => option.id === value.id}
       getOptionKey={(option) => option.id}
       getOptionLabel={(option) => option.name}
-      onChange={(event, value, reason) => onChange(value)}
+      onChange={(event, value, reason) => props.onChange(value)}
       onInputChange={(event, value, reason) => setInput(value)}
       options={data ? data.results : []}
       loading={loading}
       renderInput={(params) => (
         <TextField
           {...params}
-          label={label}
+          label={props.label}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

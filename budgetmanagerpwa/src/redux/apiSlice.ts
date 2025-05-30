@@ -1,6 +1,17 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Budget, PageState, Entity } from './types'
+import type {
+  Budget,
+  PageState,
+  Entity,
+  SubmitBudget,
+  UpdateBudget,
+  Payee,
+  PayeeSearch,
+  SubmitPayee,
+  UpdatePayee,
+  User,
+} from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
@@ -43,7 +54,7 @@ export const apiSlice = createApi({
   tagTypes: ['Budget', 'Payee', 'Payment'],
   endpoints: (builder) => ({
     // User
-    getCurrentUser: builder.query({
+    getCurrentUser: builder.query<User, void>({
       query: () => 'user/me/',
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
@@ -60,11 +71,11 @@ export const apiSlice = createApi({
         }
       },
     }),
-    getUser: builder.query({
+    getUser: builder.query<User, any>({
       query: (id) => `user/${id}/`,
       keepUnusedDataFor: 60000,
     }),
-    getTotal: builder.query({
+    getTotal: builder.query<number, void>({
       query: () => 'total/',
     }),
     joinBudget: builder.mutation({
@@ -85,15 +96,15 @@ export const apiSlice = createApi({
       keepUnusedDataFor: 0,
       providesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
-    getBudgetsSearch: builder.query({
+    getBudgetsSearch: builder.query<string, string>({
       query: (name) =>
         'budget/?limit=10&ordering=-last_used&search=' + encodeURI(name),
     }),
-    getBudget: builder.query({
+    getBudget: builder.query<Budget, number | null | undefined>({
       query: (id) => `budget/${id}/`,
-      providesTags: ({ id }, error, arg) => [{ type: 'Budget', id }],
+      providesTags: (data, error, arg) => [{ type: 'Budget', id: data?.id }],
     }),
-    createBudget: builder.mutation({
+    createBudget: builder.mutation<Budget, SubmitBudget>({
       query: (body) => ({
         url: 'budget/',
         method: 'POST',
@@ -102,7 +113,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
-    updateBudget: builder.mutation({
+    updateBudget: builder.mutation<Budget, UpdateBudget>({
       query: ({ id, ...body }) => ({
         url: `budget/${id}/`,
         method: 'PATCH',
@@ -140,7 +151,7 @@ export const apiSlice = createApi({
         }
       },
     }),
-    deleteBudget: builder.mutation({
+    deleteBudget: builder.mutation<any, Entity>({
       query: ({ id }) => ({
         url: `budget/${id}/`,
         method: 'DELETE',
@@ -152,7 +163,7 @@ export const apiSlice = createApi({
     }),
 
     // Payees
-    getPayees: builder.query({
+    getPayees: builder.query<PageState<Payee>, number | undefined>({
       query: (page = 0) => `payee/?offset=${page * 10}&limit=10`,
       providesTags: [{ type: 'Payee', id: PARTIAL }],
       serializeQueryArgs,
@@ -160,17 +171,17 @@ export const apiSlice = createApi({
       forceRefetch,
       keepUnusedDataFor: 0,
     }),
-    getPayeesSearch: builder.query({
+    getPayeesSearch: builder.query<string, PayeeSearch>({
       query: ({ name, budget }) =>
         `payee/?limit=10&ordering=-last_used&budget=${
           budget.id
         }&search=${encodeURI(name)}`,
     }),
-    getPayee: builder.query({
+    getPayee: builder.query<Payee, number | null>({
       query: (id) => `payee/${id}/`,
-      providesTags: ({ id }, error, arg) => [{ type: 'Payee', id }],
+      providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
     }),
-    createPayee: builder.mutation({
+    createPayee: builder.mutation<Payee, SubmitPayee>({
       query: (body) => ({
         url: 'payee/',
         method: 'POST',
@@ -179,7 +190,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Payee', id: PARTIAL }],
     }),
-    updatePayee: builder.mutation({
+    updatePayee: builder.mutation<Payee, UpdatePayee>({
       query: ({ id, ...body }) => ({
         url: `payee/${id}/`,
         method: 'PATCH',
@@ -194,25 +205,16 @@ export const apiSlice = createApi({
           console.log('fulfilled')
           dispatch(
             apiSlice.util.updateQueryData('getPayees', undefined, (draft) => {
-              console.log('a1')
-              console.log(draft)
-              const i = draft.results.indexOf((e: Entity) => e.id == id)
-              console.log(draft.results.find((e: Entity) => e.id === id))
-              console.log(i)
-              draft.results[i] = query.data
+              draft.results = draft.results.map((e: Payee) =>
+                e.id == id ? query.data : e
+              )
               console.log('a2')
               console.log(draft.results)
             })
           )
           console.log('dispatched 1/2')
           dispatch(
-            apiSlice.util.updateQueryData('getPayee', undefined, (draft) => {
-              console.log('b1')
-              console.log(draft)
-              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
-              console.log('b2')
-              console.log(draft)
-            })
+            apiSlice.util.updateQueryData('getPayee', id, () => query.data)
           )
           console.log('dispatched 2/2')
         } catch {
@@ -220,7 +222,7 @@ export const apiSlice = createApi({
         }
       },
     }),
-    deletePayee: builder.mutation({
+    deletePayee: builder.mutation<any, Entity>({
       query: ({ id }) => ({
         url: `payee/${id}/`,
         method: 'DELETE',

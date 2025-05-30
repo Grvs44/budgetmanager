@@ -1,20 +1,20 @@
 import React from 'react'
+import HomeIcon from '@mui/icons-material/Home'
+import PaymentsIcon from '@mui/icons-material/Payments'
+import SavingsIcon from '@mui/icons-material/Savings'
+import StoreIcon from '@mui/icons-material/Store'
 import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemButtonLink from './ListItemButtonLink'
 import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
 import SwipeableDrawer, {
   SwipeableDrawerProps,
 } from '@mui/material/SwipeableDrawer'
-import HomeIcon from '@mui/icons-material/Home'
-import SavingsIcon from '@mui/icons-material/Savings'
-import StoreIcon from '@mui/icons-material/Store'
-import PaymentsIcon from '@mui/icons-material/Payments'
-import InstallPwaListItem from './InstallPwaListItem'
-import { User } from '../redux/types'
+import type { User } from '../redux/types'
 import AccountListItem from './AccountListItem'
+import InstallPwaListItem from './InstallPwaListItem'
+import ListItemButtonLink from './ListItemButtonLink'
 
 export type MenuDrawerProps = SwipeableDrawerProps & { user: User }
 

@@ -6,7 +6,7 @@ import { useGetCurrentUserQuery, useGetTotalQuery } from '../redux/apiSlice'
 
 export default function Home() {
   const total = useGetTotalQuery()
-  const { data: user, isLoading } = useGetCurrentUserQuery(null)
+  const { data: user, isLoading } = useGetCurrentUserQuery()
   const dispatch = useDispatch()
 
   React.useEffect(() => {
@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <Box>
       <Typography variant="h4" component="h1">
-        {isLoading
+        {isLoading || !user
           ? 'Welcome'
           : 'Welcome, ' + (user.first_name ? user.first_name : user.username)}
       </Typography>

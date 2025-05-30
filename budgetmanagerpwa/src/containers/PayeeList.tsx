@@ -12,18 +12,19 @@ import {
 } from '../redux/apiSlice'
 import PayeeViewDialog from '../components/PayeeViewDialog'
 import DeleteConfirmation from '../components/DeleteConfirmation'
+import { Payee } from '../redux/types'
 
 export default function PayeeList() {
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [page, setPage] = React.useState(0)
+  const [createOpen, setCreateOpen] = React.useState<boolean>(false)
+  const [page, setPage] = React.useState<number>(0)
   const query = useGetPayeesQuery(page)
   const [createPayee] = useCreatePayeeMutation()
   const [updatePayee] = useUpdatePayeeMutation()
-  const [viewOpen, setViewOpen] = React.useState(false)
-  const [viewPayee, setViewPayee] = React.useState(null)
-  const [editOpen, setEditOpen] = React.useState(false)
-  const [deleteOpen, setDeleteOpen] = React.useState(false)
-  const [editData, setEditData] = React.useState(null)
+  const [viewOpen, setViewOpen] = React.useState<boolean>(false)
+  const [viewPayee, setViewPayee] = React.useState<Payee | null>(null)
+  const [editOpen, setEditOpen] = React.useState<boolean>(false)
+  const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false)
+  const [editData, setEditData] = React.useState<Payee | null>(null)
   const [deletePayee] = useDeletePayeeMutation()
 
   if (query.isLoading) return <p>Loading...</p>

@@ -6,14 +6,14 @@ export default function JoinForm() {
   const params = useParams()
   const [joinBudget] = useJoinBudgetMutation()
 
-  const onSubmit = async (event) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault()
     try {
       await joinBudget(
-        Object.fromEntries(new FormData(event.target).entries())
+        Object.fromEntries(new FormData(event.currentTarget).entries())
       ).unwrap()
       alert('Joined budget')
-    } catch (error) {
+    } catch (error: any) {
       alert('Error joining budget: ' + error?.data?.detail)
     }
   }

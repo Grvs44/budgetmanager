@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Container, List, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import BudgetForm from '../components/BudgetForm'
+import BudgetForm, { BudgetFormProps } from '../components/BudgetForm'
 import BudgetListItem from '../components/BudgetListItem'
 import {
   useCreateBudgetMutation,
@@ -11,15 +11,16 @@ import {
 } from '../redux/apiSlice'
 import BudgetViewDialog from '../components/BudgetViewDialog'
 import DeleteConfirmation from '../components/DeleteConfirmation'
+import { Budget, SubmitBudget } from '../redux/types'
 
 export default function BudgetList() {
-  const [page, setPage] = React.useState(0)
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [viewOpen, setViewOpen] = React.useState(false)
-  const [viewBudget, setViewBudget] = React.useState(null)
-  const [editOpen, setEditOpen] = React.useState(false)
-  const [editBudget, setEditBudget] = React.useState(null)
-  const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [page, setPage] = React.useState<number>(0)
+  const [createOpen, setCreateOpen] = React.useState<boolean>(false)
+  const [viewOpen, setViewOpen] = React.useState<boolean>(false)
+  const [viewBudget, setViewBudget] = React.useState<number | null>(null)
+  const [editOpen, setEditOpen] = React.useState<boolean>(false)
+  const [editBudget, setEditBudget] = React.useState<Budget | null>(null)
+  const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false)
   const [updateBudget] = useUpdateBudgetMutation()
   const query = useGetBudgetsQuery(page)
   const [createBudget] = useCreateBudgetMutation()
@@ -28,23 +29,27 @@ export default function BudgetList() {
   if (query.isLoading) return <p>Loading...</p>
   const list = query.data
 
-  const onEdit = ({ budget }) => {
+  const onEdit = ({ budget }: { budget: Budget }) => {
     setViewOpen(false)
     setEditBudget(budget)
     setEditOpen(true)
   }
 
-  const onSubmit = async (oldBudget, budget) => {
-    budget.id = oldBudget.id
-    budget.active = budget.active === 'on'
-    await updateBudget(budget).unwrap()
+  const onSubmit: BudgetFormProps['onSubmit'] = async (oldBudget, budget) => {
+    const newBudget: Budget = {
+      ...budget,
+      id: oldBudget?.id,
+      active: budget.active === 'on',
+    }
+    await updateBudget(newBudget).unwrap()
     setEditOpen(false)
-    setViewBudget(budget.id)
+    setViewBudget(newBudget.id)
     setViewOpen(true)
   }
 
   const onDeleteSubmit = async () => {
     try {
+      if (viewBudget == null) return
       setPage(0)
       await deleteBudget({ id: viewBudget }).unwrap()
       setViewOpen(false)
@@ -54,14 +59,14 @@ export default function BudgetList() {
     }
   }
 
-  const onCreateSubmit = async (oldData, data) => {
+  const onCreateSubmit = async (_: any, data: SubmitBudget) => {
     const budget = await createBudget(data).unwrap()
     setPage(0)
     setViewBudget(budget.id)
     setViewOpen(true)
   }
 
-  const onItemClick = (id) => {
+  const onItemClick = (id: number) => {
     setViewBudget(id)
     setViewOpen(true)
   }
@@ -72,9 +77,9 @@ export default function BudgetList() {
         <AddIcon /> New
       </Button>
       <Typography>
-        Showing {list.results.length} of {list.count}
+        Showing {list?.results.length} of {list?.count}
       </Typography>
-      {list.count ? (
+      {list?.count ? (
         <List>
           {list.results.map((item) => (
             <BudgetListItem item={item} key={item.id} onClick={onItemClick} />
@@ -83,7 +88,7 @@ export default function BudgetList() {
       ) : (
         <p>No budgets</p>
       )}
-      {list.next ? (
+      {list?.next ? (
         <Button onClick={() => setPage(page + 1)}>Load more</Button>
       ) : null}
       <BudgetForm
