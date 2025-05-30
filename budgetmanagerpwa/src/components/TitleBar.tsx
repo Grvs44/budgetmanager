@@ -7,24 +7,28 @@ export default function TitleBar() {
     navigator.windowControlsOverlay?.getTitlebarAreaRect()
   )
 
-  if ('windowControlsOverlay' in navigator) {
-    navigator.windowControlsOverlay.addEventListener(
-      'geometrychange',
-      debounce((e) => {
-        setArea(navigator.windowControlsOverlay.getTitlebarAreaRect())
-      })
-    )
+  React.useEffect(() => {
+    if ('windowControlsOverlay' in navigator) {
+      navigator.windowControlsOverlay.addEventListener(
+        'geometrychange',
+        debounce(() => {
+          setArea(navigator.windowControlsOverlay.getTitlebarAreaRect())
+        })
+      )
+    }
+  }, [navigator])
 
-    return (
-      <div
-        style={{
+  return area ? (
+    <div
+      style={
+        {
           height: area.height * 0.4,
           width: area.width,
           WebkitAppRegion: 'drag',
-        }}
-      />
-    )
-  } else {
-    return <></>
-  }
+        } as any
+      }
+    />
+  ) : (
+    <></>
+  )
 }
