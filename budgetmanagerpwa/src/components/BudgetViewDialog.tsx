@@ -1,6 +1,5 @@
 import React from 'react'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -9,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
 import type { Budget } from '../redux/types'
 import { showUserDetails } from '../redux/utils'
+import Dialog from './Dialog'
 
 export type BudgetViewDialogProps = {
   open: boolean

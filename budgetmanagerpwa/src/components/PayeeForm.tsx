@@ -7,10 +7,8 @@ import type { EditablePayee, Nameable } from '../redux/types'
 import DropDown from './DropDown'
 import FormDialog from './FormDialog'
 
-const empty: EditablePayee = { budget: null, name: '', description: '' }
-
 export type PayeeFormProps = {
-  payee: EditablePayee | null
+  payee?: EditablePayee
   onClose: () => void
   onSubmit: (oldPayee: EditablePayee | null, newPayee: EditablePayee) => void
   open: boolean
@@ -18,12 +16,11 @@ export type PayeeFormProps = {
 }
 
 export default function PayeeForm(props: PayeeFormProps) {
-  if (props.payee == null) props.payee = empty
-  const budget = useGetBudgetQuery(props.payee.budget, {
-    skip: props.payee.budget == null,
+  const budget = useGetBudgetQuery(props.payee?.budget, {
+    skip: props.payee?.budget == undefined,
   })
   const [data, setData] = React.useState<Nameable | null | undefined>(
-    props.payee.budget ? budget.data : null,
+    props.payee?.budget ? budget.data : null,
   )
 
   React.useEffect(() => setData(budget.data), [budget.isLoading])
@@ -31,7 +28,7 @@ export default function PayeeForm(props: PayeeFormProps) {
   const onFormSubmit = (formData: EditablePayee) => {
     if (data == null) alert('Missing budget')
     else {
-      props.onSubmit(props.payee, { ...formData, budget: data.id })
+      props.onSubmit(props.payee || null, { ...formData, budget: data.id })
       props.onClose()
     }
   }
@@ -41,7 +38,7 @@ export default function PayeeForm(props: PayeeFormProps) {
       open={props.open}
       onClose={props.onClose}
       onSubmit={onFormSubmit}
-      title={props.title ? props.title : props.payee.name}
+      title={props.title ? props.title : props.payee?.name || 'New payee'}
     >
       <List>
         <ListItem>
@@ -60,7 +57,7 @@ export default function PayeeForm(props: PayeeFormProps) {
         <ListItem>
           <TextField
             name="name"
-            defaultValue={props.payee.name}
+            defaultValue={props.payee?.name}
             label="Name"
             required
             autoComplete="false"
@@ -69,7 +66,7 @@ export default function PayeeForm(props: PayeeFormProps) {
         <ListItem>
           <TextField
             name="description"
-            defaultValue={props.payee.description}
+            defaultValue={props.payee?.description}
             label="Description"
             multiline
           />

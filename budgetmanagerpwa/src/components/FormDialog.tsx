@@ -1,10 +1,9 @@
 import React from 'react'
-<<<<<<< HEAD:budgetmanagerpwa/src/components/FormDialog.tsx
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import Dialog from './Dialog'
 
 export type FormDialogProps = {
   children: React.JSX.Element
@@ -13,15 +12,6 @@ export type FormDialogProps = {
   open: boolean
   title: string
 }
-=======
-import {
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material'
-import Dialog from './Dialog'
->>>>>>> origin/Grvs44/issue39:budgetmanagerpwa/src/components/FormDialog.jsx
 
 export default function FormDialog({
   children,
