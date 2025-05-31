@@ -14,14 +14,6 @@ import {
 } from '../redux/apiSlice'
 import { showUserDetails } from '../redux/utils'
 
-export type PaymmentViewDialogProps = {
-  open: boolean
-  onClose: () => void
-  onEdit: (data: any) => void
-  paymentId: number
-  onDelete: () => void
-}
-
 export default function PaymentViewDialog({
   open,
   onClose,
