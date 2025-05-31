@@ -16,7 +16,7 @@ import Dialog from './Dialog'
 type ViewContentProps = {
   onClose: () => void
   onEdit: (data: any) => void
-  payeeId: number
+  payeeId: number | null
   onDelete: () => void
 }
 

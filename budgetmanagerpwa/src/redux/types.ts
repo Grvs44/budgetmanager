@@ -115,6 +115,12 @@ export type EditablePayment = {
   notes: string
 }
 
+export type SubmitPayment = {
+  payee?: number
+  amount?: number
+  date?: string
+}
+
 export interface PageState<T> {
   results: T[]
   count: number

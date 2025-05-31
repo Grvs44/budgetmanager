@@ -1,14 +1,16 @@
-import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import Cookies from 'js-cookie'
 import type {
   Budget,
-  PageState,
   Entity,
-  SubmitBudget,
-  UpdateBudget,
+  PageState,
   Payee,
   PayeeSearch,
+  Payment,
+  SubmitBudget,
   SubmitPayee,
+  SubmitPayment,
+  UpdateBudget,
   UpdatePayee,
   User,
 } from './types'
@@ -60,12 +62,12 @@ export const apiSlice = createApi({
         try {
           const query = await queryFulfilled
           dispatch(
-            apiSlice.util.upsertQueryData('getUser', query.data.id, query.data)
+            apiSlice.util.upsertQueryData('getUser', query.data.id, query.data),
           )
         } catch (e: any) {
           if (e.error.status === 403)
             location.replace(
-              import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname)
+              import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname),
             )
           else console.error(e)
         }
@@ -129,8 +131,8 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData(
               'getBudget',
               query.data.id,
-              (draft) => query.data
-            )
+              () => query.data,
+            ),
           )
           console.log('dispatched 1/2')
           dispatch(
@@ -143,7 +145,7 @@ export const apiSlice = createApi({
                 old.description = upd.description
                 old.active = upd.active
               }
-            })
+            }),
           )
           console.log('dispatched 2/2')
         } catch {
@@ -157,9 +159,7 @@ export const apiSlice = createApi({
         method: 'DELETE',
         headers,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'Budget', id: PARTIAL },
-      ],
+      invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
 
     // Payees
@@ -206,15 +206,15 @@ export const apiSlice = createApi({
           dispatch(
             apiSlice.util.updateQueryData('getPayees', undefined, (draft) => {
               draft.results = draft.results.map((e: Payee) =>
-                e.id == id ? query.data : e
+                e.id == id ? query.data : e,
               )
               console.log('a2')
               console.log(draft.results)
-            })
+            }),
           )
           console.log('dispatched 1/2')
           dispatch(
-            apiSlice.util.updateQueryData('getPayee', id, () => query.data)
+            apiSlice.util.updateQueryData('getPayee', id, () => query.data),
           )
           console.log('dispatched 2/2')
         } catch {
@@ -228,13 +228,11 @@ export const apiSlice = createApi({
         method: 'DELETE',
         headers,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'Payee', id: PARTIAL },
-      ],
+      invalidatesTags: [{ type: 'Payee', id: PARTIAL }],
     }),
 
     // Payments
-    getPayments: builder.query({
+    getPayments: builder.query<PageState<Payment>, number | undefined>({
       query: (page = 0) =>
         `payment/?offset=${page * 10}&limit=10&ordering=-date`,
       providesTags: [{ type: 'Payment', id: PARTIAL }],
@@ -243,11 +241,11 @@ export const apiSlice = createApi({
       forceRefetch,
       keepUnusedDataFor: 0,
     }),
-    getPayment: builder.query({
+    getPayment: builder.query<Payment, number | null>({
       query: (id) => `payment/${id}/`,
-      providesTags: ({ id }, error, arg) => [{ type: 'Payment', id }],
+      providesTags: (data, error, arg) => [{ type: 'Payment', id: data?.id }],
     }),
-    createPayment: builder.mutation({
+    createPayment: builder.mutation<Payment, SubmitPayment>({
       query: (body) => ({
         url: 'payment/',
         method: 'POST',
@@ -256,7 +254,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Payment', id: PARTIAL }],
     }),
-    updatePayment: builder.mutation({
+    updatePayment: builder.mutation<Payment, UpdatePayment>({
       query: ({ id, ...body }) => ({
         url: `payment/${id}/`,
         method: 'PATCH',
@@ -279,7 +277,7 @@ export const apiSlice = createApi({
               draft.results[i] = query.data
               console.log('a2')
               console.log(draft.results)
-            })
+            }),
           )
           console.log('dispatched 1/2')
           dispatch(
@@ -289,7 +287,7 @@ export const apiSlice = createApi({
               draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
               console.log('b2')
               console.log(draft)
-            })
+            }),
           )
           console.log('dispatched 2/2')
         } catch {
@@ -297,15 +295,13 @@ export const apiSlice = createApi({
         }
       },
     }),
-    deletePayment: builder.mutation({
+    deletePayment: builder.mutation<any, Entity>({
       query: ({ id }) => ({
         url: `payment/${id}/`,
         method: 'DELETE',
         headers,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'Payment', id: PARTIAL },
-      ],
+      invalidatesTags: [{ type: 'Payment', id: PARTIAL }],
     }),
   }),
 })

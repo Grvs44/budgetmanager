@@ -1,16 +1,16 @@
 import React from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { Button, Container, List, Typography } from '@mui/material'
+import DeleteConfirmation from '../components/DeleteConfirmation'
 import PaymentForm from '../components/PaymentForm'
+import PaymentListItem from '../components/PaymentListItem'
+import PaymentViewDialog from '../components/PaymentViewDialog'
 import {
   useCreatePaymentMutation,
   useDeletePaymentMutation,
   useGetPaymentsQuery,
   useUpdatePaymentMutation,
 } from '../redux/apiSlice'
-import PaymentListItem from '../components/PaymentListItem'
-import DeleteConfirmation from '../components/DeleteConfirmation'
-import PaymentViewDialog from '../components/PaymentViewDialog'
 
 export default function PaymentList() {
   const [createOpen, setCreateOpen] = React.useState(false)
@@ -26,10 +26,10 @@ export default function PaymentList() {
   const [updatePayment] = useUpdatePaymentMutation()
   const [deletePayment] = useDeletePaymentMutation()
 
-  if (query.isLoading) return <p>Loading...</p>
   const list = query.data
+  if (query.isFetching || !list) return <p>Loading...</p>
 
-  const onCreateSubmit = async (oldData, data) => {
+  const onCreateSubmit = async (_: any, data) => {
     setPage(0)
     const paymentData = await createPayment(data).unwrap()
     setViewData(paymentData.id)

@@ -8,7 +8,7 @@ import DropDown from './DropDown'
 import FormDialog from './FormDialog'
 
 export type PayeeFormProps = {
-  payee?: EditablePayee
+  payee?: EditablePayee | null
   onClose: () => void
   onSubmit: (oldPayee: EditablePayee | null, newPayee: EditablePayee) => void
   open: boolean

@@ -1,13 +1,19 @@
 import React from 'react'
+import MenuIcon from '@mui/icons-material/Menu'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import TitleBar from '../components/TitleBar'
 import MenuDrawer from '../components/MenuDrawer'
+import TitleBar from '../components/TitleBar'
+import type { User } from '../redux/types'
 
-export default function TopBar({ user, title }) {
+export type TopBarProps = {
+  user: User
+  title: string
+}
+
+export default function TopBar({ user, title }: TopBarProps) {
   const [open, setOpen] = React.useState(false)
 
   return (

@@ -1,18 +1,18 @@
 import React from 'react'
+import AddIcon from '@mui/icons-material/Add'
 import { Button, Container, List } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import AddIcon from '@mui/icons-material/Add'
+import DeleteConfirmation from '../components/DeleteConfirmation'
 import PayeeForm from '../components/PayeeForm'
 import PayeeListItem from '../components/PayeeListItem'
+import PayeeViewDialog from '../components/PayeeViewDialog'
 import {
   useCreatePayeeMutation,
-  useGetPayeesQuery,
   useDeletePayeeMutation,
+  useGetPayeesQuery,
   useUpdatePayeeMutation,
 } from '../redux/apiSlice'
-import PayeeViewDialog from '../components/PayeeViewDialog'
-import DeleteConfirmation from '../components/DeleteConfirmation'
-import { Payee } from '../redux/types'
+import type { EditablePayee, Payee } from '../redux/types'
 
 export default function PayeeList() {
   const [createOpen, setCreateOpen] = React.useState<boolean>(false)
@@ -21,21 +21,21 @@ export default function PayeeList() {
   const [createPayee] = useCreatePayeeMutation()
   const [updatePayee] = useUpdatePayeeMutation()
   const [viewOpen, setViewOpen] = React.useState<boolean>(false)
-  const [viewPayee, setViewPayee] = React.useState<Payee | null>(null)
+  const [viewPayee, setViewPayee] = React.useState<number | null>(null)
   const [editOpen, setEditOpen] = React.useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false)
   const [editData, setEditData] = React.useState<Payee | null>(null)
   const [deletePayee] = useDeletePayeeMutation()
 
-  if (query.isLoading) return <p>Loading...</p>
   const list = query.data
+  if (query.isFetching || !list) return <p>Loading...</p>
 
-  const onEdit = (data) => {
+  const onEdit = (data: Payee) => {
     setViewOpen(false)
     setEditData(data)
     setEditOpen(true)
   }
-  const onSubmit = async (oldPayee, payee) => {
+  const onSubmit = async (oldPayee: Payee, payee: Payee) => {
     payee.id = oldPayee.id
     await updatePayee(payee).unwrap()
     setEditOpen(false)
@@ -43,20 +43,21 @@ export default function PayeeList() {
     setViewOpen(true)
   }
   const onDeleteSubmit = async () => {
+    if (viewPayee == null) return
     setPage(0)
     await deletePayee({ id: viewPayee }).unwrap()
     setViewOpen(false)
     setViewPayee(null)
   }
 
-  const onCreateSubmit = async (oldData, data) => {
+  const onCreateSubmit = async (_: any, data: EditablePayee) => {
     setPage(0)
     const payeeData = await createPayee(data).unwrap()
     setViewPayee(payeeData.id)
     setViewOpen(true)
   }
 
-  const onItemClick = (id) => {
+  const onItemClick = (id: number) => {
     setViewPayee(id)
     setViewOpen(true)
   }
