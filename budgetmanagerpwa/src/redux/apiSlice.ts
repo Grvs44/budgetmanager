@@ -54,7 +54,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
   }),
-  tagTypes: ['Budget', 'Payee', 'Payment'],
+  tagTypes: ['Budget', 'BudgetTotal', 'Payee', 'PayeeTotal', 'Payment'],
   endpoints: (builder) => ({
     // User
     getCurrentUser: builder.query<User, void>({
@@ -106,6 +106,10 @@ export const apiSlice = createApi({
     getBudget: builder.query<Budget, number | null | undefined>({
       query: (id) => `budget/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Budget', id: data?.id }],
+    }),
+    getBudgetTotal: builder.query<string, number | null | undefined>({
+      query: (id) => `budget/${id}/total/`,
+      providesTags: (_r, _e, id) => [{ type: 'BudgetTotal', id: id || '' }],
     }),
     createBudget: builder.mutation<Budget, SubmitBudget>({
       query: (body) => ({
@@ -181,6 +185,10 @@ export const apiSlice = createApi({
     getPayee: builder.query<Payee, number | null | undefined>({
       query: (id) => `payee/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
+    }),
+    getPayeeTotal: builder.query<string, number | null | undefined>({
+      query: (id) => `payee/${id}/total/`,
+      providesTags: (_r, _e, id) => [{ type: 'PayeeTotal', id: id || '' }],
     }),
     createPayee: builder.mutation<Payee, SubmitPayee>({
       query: (body) => ({
@@ -314,12 +322,14 @@ export const {
   useGetBudgetsQuery,
   useGetBudgetsSearchQuery,
   useGetBudgetQuery,
+  useGetBudgetTotalQuery,
   useCreateBudgetMutation,
   useUpdateBudgetMutation,
   useDeleteBudgetMutation,
   useGetPayeesQuery,
   useGetPayeesSearchQuery,
   useGetPayeeQuery,
+  useGetPayeeTotalQuery,
   useCreatePayeeMutation,
   useUpdatePayeeMutation,
   useDeletePayeeMutation,
