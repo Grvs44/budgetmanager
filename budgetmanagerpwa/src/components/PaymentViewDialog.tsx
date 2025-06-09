@@ -18,7 +18,7 @@ export type PaymmentViewDialogProps = {
   open: boolean
   onClose: () => void
   onEdit: (data: any) => void
-  paymentId: number
+  paymentId: number | null
   onDelete: () => void
 }
 
@@ -30,18 +30,18 @@ export default function PaymentViewDialog({
   onDelete,
 }: PaymmentViewDialogProps) {
   const payment = useGetPaymentQuery(paymentId, { skip: !open })
-  const skip = !open || payment.isLoading
+  const skip = !open || payment.isFetching
   const payee = useGetPayeeQuery(payment?.data?.payee, { skip })
   const budget = useGetBudgetQuery(payee?.data?.budget, {
     skip: skip || payee.isLoading,
   })
   const user = useGetUserQuery(payment?.data?.modified_by, {
-    skip: skip || payment.data.modified_by == null,
+    skip: skip || payment.data?.modified_by == null,
   })
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open && paymentId != null} onClose={onClose}>
       <DialogTitle>
-        {skip
+        {!payment.data
           ? 'Loading'
           : `${Math.abs(payment?.data?.amount)} ${
               payment?.data?.amount > 0 ? 'from' : 'to'
@@ -55,9 +55,11 @@ export default function PaymentViewDialog({
           Payee: {payee?.data ? payee.data.name : 'loading'}
         </Typography>
         <Typography>
-          Amount: {skip ? 'loading' : payment.data.amount}
+          Amount: {payment.data ? payment.data.amount : 'loading'}
         </Typography>
-        <Typography>Date: {skip ? 'loading' : payment.data.date}</Typography>
+        <Typography>
+          Date: {payment.data ? payment.data.date : 'loading'}
+        </Typography>
         {payment?.data?.pending ? <Typography>Pending</Typography> : null}
         <Typography>
           Last modified on {payment?.data?.last_modified} by{' '}

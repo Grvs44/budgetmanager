@@ -11,17 +11,18 @@ import {
   useGetPaymentsQuery,
   useUpdatePaymentMutation,
 } from '../redux/apiSlice'
+import { Payment, type SubmitPayment } from '../redux/types'
 
 export default function PaymentList() {
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [page, setPage] = React.useState(0)
+  const [createOpen, setCreateOpen] = React.useState<boolean>(false)
+  const [page, setPage] = React.useState<number>(0)
   const query = useGetPaymentsQuery(page)
   const [createPayment] = useCreatePaymentMutation()
-  const [viewOpen, setViewOpen] = React.useState(false)
-  const [viewData, setViewData] = React.useState(null)
-  const [editOpen, setEditOpen] = React.useState(false)
-  const [deleteOpen, setDeleteOpen] = React.useState(false)
-  const [editData, setEditData] = React.useState(null)
+  const [viewOpen, setViewOpen] = React.useState<boolean>(false)
+  const [viewData, setViewData] = React.useState<number | null>(null)
+  const [editOpen, setEditOpen] = React.useState<boolean>(false)
+  const [deleteOpen, setDeleteOpen] = React.useState<boolean>(false)
+  const [editData, setEditData] = React.useState<Payment | null>(null)
 
   const [updatePayment] = useUpdatePaymentMutation()
   const [deletePayment] = useDeletePaymentMutation()
@@ -29,34 +30,41 @@ export default function PaymentList() {
   const list = query.data
   if (query.isFetching || !list) return <p>Loading...</p>
 
-  const onCreateSubmit = async (_: any, data) => {
+  const onCreateSubmit = async (_: any, data: SubmitPayment) => {
     setPage(0)
     const paymentData = await createPayment(data).unwrap()
     setViewData(paymentData.id)
     setViewOpen(true)
   }
 
-  const onEdit = (data) => {
+  const onEdit = (data: Payment) => {
     setEditData(data)
     setViewOpen(false)
     setEditOpen(true)
   }
 
-  const onSubmit = async (oldPayment, payment) => {
-    payment.id = oldPayment.id
-    await updatePayment(payment).unwrap()
+  const onSubmit = async (
+    oldPayment: SubmitPayment | null,
+    payment: SubmitPayment,
+  ) => {
+    if (oldPayment == null || !oldPayment.id) {
+      alert('Update payment error')
+      return
+    }
+    await updatePayment({ id: oldPayment.id, ...payment }).unwrap()
     setEditOpen(false)
     setViewOpen(true)
   }
 
   const onDeleteSubmit = async () => {
+    if (viewData == null) return
     setPage(0)
     await deletePayment({ id: viewData }).unwrap()
     setViewOpen(false)
     setViewData(null)
   }
 
-  const onItemClick = (id) => {
+  const onItemClick = (id: number) => {
     setViewData(id)
     setViewOpen(true)
   }

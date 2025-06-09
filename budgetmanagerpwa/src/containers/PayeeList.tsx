@@ -40,7 +40,6 @@ export default function PayeeList() {
       alert('Update payee error')
       return
     }
-    payee.id = oldPayee.id
     await updatePayee({ id: oldPayee.id, ...payee }).unwrap()
     setEditOpen(false)
     setViewPayee(oldPayee.id)

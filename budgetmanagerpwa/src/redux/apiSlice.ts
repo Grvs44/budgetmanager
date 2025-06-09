@@ -12,6 +12,7 @@ import type {
   SubmitPayment,
   UpdateBudget,
   UpdatePayee,
+  UpdatePayment,
   User,
 } from './types'
 
@@ -177,7 +178,7 @@ export const apiSlice = createApi({
           budget.id
         }&search=${encodeURI(name)}`,
     }),
-    getPayee: builder.query<Payee, number | null>({
+    getPayee: builder.query<Payee, number | null | undefined>({
       query: (id) => `payee/${id}/`,
       providesTags: (data, error, arg) => [{ type: 'Payee', id: data?.id }],
     }),
@@ -271,8 +272,9 @@ export const apiSlice = createApi({
             apiSlice.util.updateQueryData('getPayments', undefined, (draft) => {
               console.log('a1')
               console.log(draft)
-              const i = draft.results.indexOf((e: Entity) => e.id == id)
-              console.log(draft.results.find((e: Entity) => e.id === id))
+              const item = draft.results.find((e: Entity) => e.id === id)
+              if (item == undefined) return
+              const i = draft.results.indexOf(item)
               console.log(i)
               draft.results[i] = query.data
               console.log('a2')
@@ -281,13 +283,11 @@ export const apiSlice = createApi({
           )
           console.log('dispatched 1/2')
           dispatch(
-            apiSlice.util.updateQueryData('getPayment', undefined, (draft) => {
-              console.log('b1')
-              console.log(draft)
-              draft[draft.indexOf((e: Entity) => e.id == id)] = query.data
-              console.log('b2')
-              console.log(draft)
-            }),
+            apiSlice.util.updateQueryData(
+              'getPayment',
+              query.data.id,
+              () => query.data,
+            ),
           )
           console.log('dispatched 2/2')
         } catch {
