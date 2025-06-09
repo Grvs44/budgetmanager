@@ -12,7 +12,7 @@ import {
   useGetPayeesQuery,
   useUpdatePayeeMutation,
 } from '../redux/apiSlice'
-import type { EditablePayee, Payee } from '../redux/types'
+import type { Payee, SubmitPayee } from '../redux/types'
 
 export default function PayeeList() {
   const [createOpen, setCreateOpen] = React.useState<boolean>(false)
@@ -35,11 +35,15 @@ export default function PayeeList() {
     setEditData(data)
     setEditOpen(true)
   }
-  const onSubmit = async (oldPayee: Payee, payee: Payee) => {
+  const onSubmit = async (oldPayee: SubmitPayee | null, payee: SubmitPayee) => {
+    if (oldPayee == null || !oldPayee.id) {
+      alert('Update payee error')
+      return
+    }
     payee.id = oldPayee.id
-    await updatePayee(payee).unwrap()
+    await updatePayee({ id: oldPayee.id, ...payee }).unwrap()
     setEditOpen(false)
-    setViewPayee(payee.id)
+    setViewPayee(oldPayee.id)
     setViewOpen(true)
   }
   const onDeleteSubmit = async () => {
@@ -50,7 +54,7 @@ export default function PayeeList() {
     setViewPayee(null)
   }
 
-  const onCreateSubmit = async (_: any, data: EditablePayee) => {
+  const onCreateSubmit = async (_: any, data: SubmitPayee) => {
     setPage(0)
     const payeeData = await createPayee(data).unwrap()
     setViewPayee(payeeData.id)

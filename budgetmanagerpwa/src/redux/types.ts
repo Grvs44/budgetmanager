@@ -84,10 +84,8 @@ export type EditablePayee = {
   description: string
 }
 
-export type SubmitPayee = {
-  budget?: number
-  name?: string
-  description?: string
+export type SubmitPayee = Partial<EditablePayee> & {
+  id?: number
 }
 
 export type UpdatePayee = Entity & SubmitPayee

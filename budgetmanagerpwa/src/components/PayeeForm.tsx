@@ -3,16 +3,16 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import TextField from '@mui/material/TextField'
 import { useGetBudgetQuery, useGetBudgetsSearchQuery } from '../redux/apiSlice'
-import type { EditablePayee, Nameable } from '../redux/types'
+import type { EditablePayee, Nameable, SubmitPayee } from '../redux/types'
 import DropDown from './DropDown'
 import FormDialog from './FormDialog'
 
 export type PayeeFormProps = {
   payee?: EditablePayee | null
   onClose: () => void
-  onSubmit: (oldPayee: EditablePayee | null, newPayee: EditablePayee) => void
+  onSubmit: (oldPayee: SubmitPayee | null, newPayee: SubmitPayee) => void
   open: boolean
-  title: string
+  title?: string
 }
 
 export default function PayeeForm(props: PayeeFormProps) {
