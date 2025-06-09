@@ -5,10 +5,15 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
-import { useGetBudgetQuery, useGetUserQuery } from '../redux/apiSlice'
+import {
+  useGetBudgetQuery,
+  useGetBudgetTotalQuery,
+  useGetUserQuery,
+} from '../redux/apiSlice'
 import type { Budget } from '../redux/types'
 import { showUserDetails } from '../redux/utils'
 import Dialog from './Dialog'
+import TotalText from './TotalText'
 
 export type BudgetViewDialogProps = {
   open: boolean
@@ -27,11 +32,15 @@ export default function BudgetViewDialog(props: BudgetViewDialogProps) {
 }
 
 function ViewContent(props: BudgetViewDialogProps) {
+  const [showTotal, setShowTotal] = React.useState<boolean>(false)
   const { data, isLoading } = useGetBudgetQuery(props.budgetId, {
     skip: props.budgetId == null,
   })
   const user = useGetUserQuery(data?.modified_by, {
     skip: isLoading || data?.modified_by == null,
+  })
+  const total = useGetBudgetTotalQuery(props.budgetId, {
+    skip: !showTotal || props.budgetId == null,
   })
 
   return (
@@ -45,6 +54,12 @@ function ViewContent(props: BudgetViewDialogProps) {
             Last modified on {data?.last_modified} by{' '}
             {user.data ? showUserDetails(user.data) : <Skeleton />}
           </Typography>
+          <TotalText
+            data={total.data}
+            isFetching={total.isFetching}
+            show={showTotal}
+            onShow={() => setShowTotal(true)}
+          />
         </DialogContent>
       )}
       <DialogActions>
