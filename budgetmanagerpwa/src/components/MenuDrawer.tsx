@@ -21,7 +21,14 @@ export type MenuDrawerProps = SwipeableDrawerProps & { user: User }
 export default function MenuDrawer(props: MenuDrawerProps) {
   return (
     <SwipeableDrawer anchor="left" {...props}>
-      <List onClick={props.onClose}>
+      <List
+        onClick={props.onClose}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
         <ListItem>
           <ListItemButtonLink to="">
             <ListItemIcon>
@@ -54,9 +61,11 @@ export default function MenuDrawer(props: MenuDrawerProps) {
             <ListItemText>Payments</ListItemText>
           </ListItemButtonLink>
         </ListItem>
-        <Divider component="li" />
-        <InstallPwaListItem />
-        <AccountListItem user={props.user} />
+        <div style={{ marginTop: 'auto' }}>
+          <Divider component="li" />
+          <InstallPwaListItem />
+          <AccountListItem user={props.user} />
+        </div>
       </List>
     </SwipeableDrawer>
   )
