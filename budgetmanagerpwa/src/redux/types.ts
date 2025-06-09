@@ -58,7 +58,7 @@ export type SubmitBudget = {
   active?: boolean
 }
 
-export type UpdateBudget = Entity & SubmitBudget
+export type UpdateBudget = Entity & EditableBudget
 
 export type PayeeItem = {
   id: number
@@ -84,13 +84,9 @@ export type EditablePayee = {
   description: string
 }
 
-export type SubmitPayee = {
-  budget?: number
-  name?: string
-  description?: string
-}
+export type SubmitPayee = Partial<Entity> & EditablePayee
 
-export type UpdatePayee = Entity & SubmitPayee
+export type UpdatePayee = Entity & EditablePayee
 
 export type PaymentItem = {
   id: number
@@ -114,6 +110,10 @@ export type EditablePayment = {
   pending: boolean
   notes: string
 }
+
+export type SubmitPayment = Partial<Entity> & EditablePayment
+
+export type UpdatePayment = Entity & EditablePayment
 
 export interface PageState<T> {
   results: T[]

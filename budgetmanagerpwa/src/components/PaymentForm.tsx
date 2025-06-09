@@ -6,18 +6,18 @@ import {
   ListItem,
   TextField,
 } from '@mui/material'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import FormDialog from './FormDialog'
-import DropDown from './DropDown'
+import dayjs from 'dayjs'
 import {
   useGetBudgetQuery,
   useGetBudgetsSearchQuery,
   useGetPayeeQuery,
   useGetPayeesSearchQuery,
 } from '../redux/apiSlice'
-import dayjs from 'dayjs'
+import DropDown from './DropDown'
+import FormDialog from './FormDialog'
 import 'dayjs/locale/en-gb'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { EditablePayment, Nameable } from '../redux/types'
@@ -25,11 +25,11 @@ import { EditablePayment, Nameable } from '../redux/types'
 dayjs.extend(customParseFormat)
 
 export type PaymentFormProps = {
-  payment: EditablePayment | null
+  payment?: EditablePayment | null
   onClose: () => void
   onSubmit: (
     oldPayment: EditablePayment | null,
-    newPayment: EditablePayment
+    newPayment: EditablePayment,
   ) => void
   open: boolean
   title: string
@@ -51,10 +51,10 @@ export default function PaymentForm({
     skip: payeeQuery.data == null,
   })
   const [payee, setPayee] = React.useState<Nameable | null | undefined>(
-    payment.payee ? payeeQuery.data : undefined
+    payment.payee ? payeeQuery.data : undefined,
   )
   const [budget, setBudget] = React.useState<Nameable | null | undefined>(
-    budgetQuery.data
+    budgetQuery.data,
   )
   React.useEffect(() => setPayee(payeeQuery.data), [payeeQuery.isLoading])
   React.useEffect(() => setBudget(budgetQuery.data), [budgetQuery.data != null])
@@ -98,7 +98,7 @@ export default function PaymentForm({
             hook={(input, open) =>
               useGetPayeesSearchQuery(
                 { name: input, budget: { id: budget ? budget.id : 0 } }, // TODO
-                { skip: !open || budget == undefined }
+                { skip: !open || budget == undefined },
               )
             }
           />
