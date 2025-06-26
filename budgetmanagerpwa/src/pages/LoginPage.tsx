@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
+import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useLoginMutation } from '../redux/apiSlice'
@@ -28,17 +29,22 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <Container>
-      <Typography>Log in to Budget Manager</Typography>
-      <form onSubmit={onSubmit}>
+    <Container sx={{ margin: 'auto', textAlign: 'center' }}>
+      <Typography component="h1" variant="h4">
+        Log in to Budget Manager
+      </Typography>
+      <Stack
+        direction="column"
+        sx={{ margin: 'auto', maxWidth: '20em', textAlign: 'center' }}
+        component="form"
+        onSubmit={onSubmit}
+      >
         <TextField
           name="username"
           label="Username"
           autoFocus
           required
           variant="standard"
-          fullWidth
-          margin="dense"
         />
         <TextField
           name="password"
@@ -46,8 +52,6 @@ const LoginPage: React.FC = () => {
           type="password"
           required
           variant="standard"
-          fullWidth
-          margin="dense"
         />
         <Button
           type="submit"
@@ -57,7 +61,7 @@ const LoginPage: React.FC = () => {
         >
           Log in
         </Button>
-      </form>
+      </Stack>
     </Container>
   )
 }
