@@ -52,7 +52,7 @@ const forceRefetch = <T>({
 // Adapted from https://stackoverflow.com/a/74844699
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
+    baseUrl: import.meta.env.VITE_API_URL,
     // prepareHeaders adapted from https://redux-toolkit.js.org/rtk-query/api/fetchBaseQuery#setting-default-headers-on-requests
     prepareHeaders(headers, api) {
       if (api.type == 'query') return

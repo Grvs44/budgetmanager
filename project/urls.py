@@ -5,7 +5,7 @@ from django.contrib.auth.views import logout_then_login
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('budgetmanager/', include('budgetmanager.urls')),
+    path('budgetmanager/api/', include('budgetmanager.urls')),
     path('admin/', admin.site.urls),
     path('accounts/logout/?next=<str:login_url>', logout_then_login, name='logout'),
     path('accounts/profile/', RedirectView.as_view(url='/budgetmanager/')),
