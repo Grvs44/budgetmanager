@@ -1,4 +1,5 @@
 # pylint: disable=no-member,unused-argument
+from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import Q
 from django.db.utils import IntegrityError
@@ -238,3 +239,48 @@ def manifest_view(request):
 
 def service_worker_view(request):
     return render(request, 'budgetmanager/service-worker.js', content_type='text/javascript')
+
+# Adapted from Grvs44/Inclusive-Vennues
+
+
+class UserView(APIView):
+    '''API endpoint for viewing current user details'''
+
+    def get(self, request):
+        '''Handle GET request'''
+        return Response({
+            'firstName': request.user.first_name,
+            'lastName': request.user.last_name,
+            'username': request.user.username
+        } if request.user.is_authenticated else None)
+
+
+class LoginView(APIView):
+    '''API endpoint for logging in with username and password'''
+
+    def post(self, request):
+        '''Handle POST request'''
+        user = authenticate(
+            request,
+            username=request.data.get('username'),
+            password=request.data.get('password')
+        )
+        if user is None:
+            return Response({'detail': 'Incorrect username or password'}, status.HTTP_401_UNAUTHORIZED)
+        login(request, user)
+        return Response({
+            'firstName': request.user.first_name,
+            'lastName': request.user.last_name,
+            'username': request.user.username
+        })
+
+
+class LogoutView(APIView):
+    '''API endpoint for logging out'''
+
+    def post(self, request):
+        '''Handle POST request'''
+        if request.user.is_authenticated:
+            logout(request)
+            return Response(None, status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not logged in'}, status.HTTP_401_UNAUTHORIZED)
