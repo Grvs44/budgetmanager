@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import Q
 from django.db.utils import IntegrityError
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -253,15 +253,3 @@ class JoinBudgetView(APIView):
         except IntegrityError as e:
             raise RestValidationError(
                 {'detail': 'You have already joined this budget'}) from e
-
-
-def index_view(request):
-    return render(request, 'budgetmanager/index.html')
-
-
-def manifest_view(request):
-    return render(request, 'budgetmanager/manifest.txt', content_type='application/manifest+json')
-
-
-def service_worker_view(request):
-    return render(request, 'budgetmanager/service-worker.js', content_type='text/javascript')
