@@ -1,4 +1,5 @@
 # pylint: disable=no-member,unused-argument
+from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import Q
 from django.db.utils import IntegrityError
@@ -189,10 +190,11 @@ class UserViewSet(
 ):
     queryset = models.Budget.get_user_model().objects
     serializer_class = serializers.UserSerializer
-    permission_classes = (IsAuthenticated,)
     pagination_class = Pagination
 
     def get_queryset(self):
+        if (self.request.user.is_anonymous):
+            return self.queryset.none()
         return self.queryset.filter(
             Q(id=self.request.user.id) |
             Q(id__in=models.BudgetShare.objects.filter(
@@ -205,8 +207,33 @@ class UserViewSet(
 
     @action(methods=('GET',), detail=False, url_path='me')
     def get_current_user(self, request):
+        if (request.user.is_anonymous):
+            return Response(None, status.HTTP_204_NO_CONTENT)
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+    # Login,logout adapted from Grvs44/Inclusive-Venues
+    @action(methods=('POST',), detail=False)
+    def login(self, request):
+        '''Log in user'''
+        user = authenticate(
+            request,
+            username=request.data.get('username'),
+            password=request.data.get('password')
+        )
+        if user is None:
+            return Response({'detail': 'Incorrect username or password'}, status.HTTP_401_UNAUTHORIZED)
+        login(request, user)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    @action(methods=('POST',), detail=False)
+    def logout(self, request):
+        '''Log out current user'''
+        if request.user.is_authenticated:
+            logout(request)
+            return Response(None, status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not logged in'}, status.HTTP_401_UNAUTHORIZED)
 
 
 class JoinBudgetView(APIView):
