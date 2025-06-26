@@ -5,6 +5,11 @@ export type User = {
   username: string
 }
 
+export type UserLogin = {
+  username: string
+  password: string
+}
+
 export type Settings = {
   currency: string
 }

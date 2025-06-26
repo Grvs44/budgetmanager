@@ -14,6 +14,7 @@ import type {
   UpdatePayee,
   UpdatePayment,
   User,
+  UserLogin,
 } from './types'
 
 const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
@@ -54,24 +55,63 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
   }),
-  tagTypes: ['Budget', 'BudgetTotal', 'Payee', 'PayeeTotal', 'Payment'],
+  tagTypes: ['Budget', 'BudgetTotal', 'Payee', 'PayeeTotal', 'Payment', 'User'],
   endpoints: (builder) => ({
     // User
-    getCurrentUser: builder.query<User, void>({
+    getCurrentUser: builder.query<User | undefined, void>({
       query: () => 'user/me/',
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const query = await queryFulfilled
+      providesTags: (result) =>
+        result ? [{ type: 'User', id: result.id }] : [],
+      keepUnusedDataFor: 60000,
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        const query = await queryFulfilled
+        if (query.data) {
           dispatch(
             apiSlice.util.upsertQueryData('getUser', query.data.id, query.data),
           )
-        } catch (e: any) {
-          if (e.error.status === 403)
-            location.replace(
-              import.meta.env.VITE_LOGIN_URL + encodeURI(location.pathname),
-            )
-          else console.error(e)
         }
+      },
+    }),
+    // login,logout adapted from Grvs44/Inclusive-Venues
+    login: builder.mutation<void, UserLogin>({
+      query: (body) => ({
+        url: 'user/login/',
+        method: 'POST',
+        body,
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        const query = await queryFulfilled
+        dispatch(
+          apiSlice.util.updateQueryData(
+            'getCurrentUser',
+            undefined,
+            () => query.data,
+          ),
+        )
+      },
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: 'user/logout/',
+        method: 'POST',
+      }),
+      invalidatesTags: [
+        { type: 'Budget' },
+        { type: 'BudgetTotal' },
+        { type: 'Payee' },
+        { type: 'PayeeTotal' },
+        { type: 'Payment' },
+        { type: 'User' },
+      ],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        await queryFulfilled
+        dispatch(
+          apiSlice.util.updateQueryData(
+            'getCurrentUser',
+            undefined,
+            () => undefined,
+          ),
+        )
       },
     }),
     getUser: builder.query<User, any>({
@@ -316,6 +356,8 @@ export const apiSlice = createApi({
 
 export const {
   useGetCurrentUserQuery,
+  useLoginMutation,
+  useLogoutMutation,
   useGetUserQuery,
   useGetTotalQuery,
   useJoinBudgetMutation,
