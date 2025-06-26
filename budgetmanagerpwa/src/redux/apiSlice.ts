@@ -17,7 +17,6 @@ import type {
   UserLogin,
 } from './types'
 
-const headers = { 'X-CSRFToken': Cookies.get('csrftoken') }
 const PARTIAL = -1
 
 const nullNumber = (value: string | null) => (value ? Number(value) : Infinity)
@@ -54,6 +53,12 @@ const forceRefetch = <T>({
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.BASE_URL + import.meta.env.VITE_API_URL,
+    // prepareHeaders adapted from https://redux-toolkit.js.org/rtk-query/api/fetchBaseQuery#setting-default-headers-on-requests
+    prepareHeaders(headers, api) {
+      if (api.type == 'query') return
+      const csrfToken = Cookies.get('csrftoken')
+      if (csrfToken) headers.set('X-CSRFToken', csrfToken)
+    },
   }),
   tagTypes: ['Budget', 'BudgetTotal', 'Payee', 'PayeeTotal', 'Payment', 'User'],
   endpoints: (builder) => ({
@@ -126,7 +131,6 @@ export const apiSlice = createApi({
         url: 'join/',
         method: 'POST',
         body,
-        headers,
       }),
     }),
 
@@ -156,7 +160,6 @@ export const apiSlice = createApi({
         url: 'budget/',
         method: 'POST',
         body,
-        headers,
       }),
       invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
@@ -165,7 +168,6 @@ export const apiSlice = createApi({
         url: `budget/${id}/`,
         method: 'PATCH',
         body,
-        headers,
       }),
       async onQueryStarted({ id }: Entity, { dispatch, queryFulfilled }) {
         try {
@@ -202,7 +204,6 @@ export const apiSlice = createApi({
       query: ({ id }) => ({
         url: `budget/${id}/`,
         method: 'DELETE',
-        headers,
       }),
       invalidatesTags: [{ type: 'Budget', id: PARTIAL }],
     }),
@@ -235,7 +236,6 @@ export const apiSlice = createApi({
         url: 'payee/',
         method: 'POST',
         body,
-        headers,
       }),
       invalidatesTags: [{ type: 'Payee', id: PARTIAL }],
     }),
@@ -244,7 +244,6 @@ export const apiSlice = createApi({
         url: `payee/${id}/`,
         method: 'PATCH',
         body,
-        headers,
       }),
       async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
         try {
@@ -275,7 +274,6 @@ export const apiSlice = createApi({
       query: ({ id }) => ({
         url: `payee/${id}/`,
         method: 'DELETE',
-        headers,
       }),
       invalidatesTags: [{ type: 'Payee', id: PARTIAL }],
     }),
@@ -299,7 +297,6 @@ export const apiSlice = createApi({
         url: 'payment/',
         method: 'POST',
         body,
-        headers,
       }),
       invalidatesTags: [{ type: 'Payment', id: PARTIAL }],
     }),
@@ -308,7 +305,6 @@ export const apiSlice = createApi({
         url: `payment/${id}/`,
         method: 'PATCH',
         body,
-        headers,
       }),
       async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
         try {
@@ -347,7 +343,6 @@ export const apiSlice = createApi({
       query: ({ id }) => ({
         url: `payment/${id}/`,
         method: 'DELETE',
-        headers,
       }),
       invalidatesTags: [{ type: 'Payment', id: PARTIAL }],
     }),
