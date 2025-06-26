@@ -13,11 +13,15 @@ export default function App() {
   const user = useGetCurrentUserQuery()
   const { title } = useSelector((state: State) => state.title)
 
-  window.addEventListener('beforeinstallprompt', (event: Event) => {
-    event.preventDefault()
-    dispatch(setShow(true))
-    dispatch(setDeferredPrompt(event))
-  })
+  React.useEffect(
+    () =>
+      window.addEventListener('beforeinstallprompt', (event: Event) => {
+        event.preventDefault()
+        dispatch(setShow(true))
+        dispatch(setDeferredPrompt(event))
+      }),
+    [],
+  )
 
   return user.isLoading ? (
     <Box
