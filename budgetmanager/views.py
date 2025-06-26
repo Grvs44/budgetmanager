@@ -190,10 +190,11 @@ class UserViewSet(
 ):
     queryset = models.Budget.get_user_model().objects
     serializer_class = serializers.UserSerializer
-    permission_classes = (IsAuthenticated,)
     pagination_class = Pagination
 
     def get_queryset(self):
+        if (self.request.user.is_anonymous):
+            return self.queryset.none()
         return self.queryset.filter(
             Q(id=self.request.user.id) |
             Q(id__in=models.BudgetShare.objects.filter(
@@ -208,6 +209,29 @@ class UserViewSet(
     def get_current_user(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+    # Login,logout adapted from Grvs44/Inclusive-Venues
+    @action(methods=('POST',), detail=False)
+    def login(self, request):
+        '''Log in user'''
+        user = authenticate(
+            request,
+            username=request.data.get('username'),
+            password=request.data.get('password')
+        )
+        if user is None:
+            return Response({'detail': 'Incorrect username or password'}, status.HTTP_401_UNAUTHORIZED)
+        login(request, user)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    @action(methods=('POST',), detail=False)
+    def logout(self, request):
+        '''Log out current user'''
+        if request.user.is_authenticated:
+            logout(request)
+            return Response(None, status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not logged in'}, status.HTTP_401_UNAUTHORIZED)
 
 
 class JoinBudgetView(APIView):
@@ -239,48 +263,3 @@ def manifest_view(request):
 
 def service_worker_view(request):
     return render(request, 'budgetmanager/service-worker.js', content_type='text/javascript')
-
-# Adapted from Grvs44/Inclusive-Vennues
-
-
-class UserView(APIView):
-    '''API endpoint for viewing current user details'''
-
-    def get(self, request):
-        '''Handle GET request'''
-        return Response({
-            'firstName': request.user.first_name,
-            'lastName': request.user.last_name,
-            'username': request.user.username
-        } if request.user.is_authenticated else None)
-
-
-class LoginView(APIView):
-    '''API endpoint for logging in with username and password'''
-
-    def post(self, request):
-        '''Handle POST request'''
-        user = authenticate(
-            request,
-            username=request.data.get('username'),
-            password=request.data.get('password')
-        )
-        if user is None:
-            return Response({'detail': 'Incorrect username or password'}, status.HTTP_401_UNAUTHORIZED)
-        login(request, user)
-        return Response({
-            'firstName': request.user.first_name,
-            'lastName': request.user.last_name,
-            'username': request.user.username
-        })
-
-
-class LogoutView(APIView):
-    '''API endpoint for logging out'''
-
-    def post(self, request):
-        '''Handle POST request'''
-        if request.user.is_authenticated:
-            logout(request)
-            return Response(None, status.HTTP_204_NO_CONTENT)
-        return Response({'detail': 'Not logged in'}, status.HTTP_401_UNAUTHORIZED)
