@@ -207,6 +207,8 @@ class UserViewSet(
 
     @action(methods=('GET',), detail=False, url_path='me')
     def get_current_user(self, request):
+        if (request.user.is_anonymous):
+            return Response(None, status.HTTP_204_NO_CONTENT)
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
