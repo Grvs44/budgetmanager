@@ -1,13 +1,22 @@
 # Budget Manager
 
+A web app for keeping track of budgets, payees, and payments.
+
+This repository contains the server-side Django app, which manages the database and provides the REST API.
+To get the front-end React app please see [budgetmanagerpwa](https://github.com/Grvs44/budgetmanagerpwa).
+
 ## Setup
+
+To install, run `pip install budgetmanager`
+
+Create a new Django project (or use an existing project) and update the files below.
 
 - `urls.py`:
 
   ```Python
   from django.urls import include, path
   urlpatterns = [
-    path('budgetmanager/', include('budgetmanager.urls')),
+    path('budgetmanager/api/', include('budgetmanager.urls')),
     ...
   ]
   ```
